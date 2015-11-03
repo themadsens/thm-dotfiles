@@ -1,0 +1,69 @@
+
+# Readline settings
+set bell-style visible
+set show-all-if-ambiguous on
+set visible-stats on
+set input-meta on
+set convert-meta off
+set output-meta on
+set expand-tilde on
+set completion-ignore-case on
+set completion-query-items 10000
+
+# Bindings - make it somewhat more like tcsh
+"\C-r": redraw-current-line
+"\C-d": delete-char-or-list
+
+# Menu completion on Shift-TAB go back with Shift-F1 or F1
+"\e[Z": menu-complete
+"\e[1;2~": menu-complete
+"\e[1;2P": menu-complete-backward
+"\eO2P": menu-complete-backward
+"\e`": menu-complete-backward
+
+# More line editing
+$if Bash
+" ": magic-space
+$endif
+"\d": forward-backward-delete-char
+"\C-h": backward-delete-char
+"\C-x\C-h": backward-kill-line
+"\C-x\C-s": reverse-search-history
+"\C-x\C-f": forward-search-history
+"\C-s": reverse-search-history
+#"\C-w": backward-kill-word
+"\C-w": unix-word-rubout
+"\ew": unix-filename-rubout
+"\eu": undo
+"\e " magic-space
+
+# CTRL Arrow up and down searches for what is typed so far
+"\e[1;9A": history-search-backward
+"\e[1;9B": history-search-forward
+"\e[1;3A": history-search-backward
+"\e[1;3B": history-search-forward
+"\e[1;2A": history-search-backward
+"\e[1;2B": history-search-forward
+"\e\e[A": history-search-backward
+"\e\e[B": history-search-forward
+
+"\e[1;9D": backward-word
+"\e[1;9C": forward-word
+"\e[1;3D": backward-word
+"\e[1;3C": forward-word
+"\e[1;2D": backward-word
+"\e[1;2C": forward-word
+"\e[D": backward-char
+"\e[C": forward-char
+"\e\e[D": backward-word
+"\e\e[C": forward-word
+
+
+# Misc
+"\C-xsk": dump-functions
+# At least Rdlf has it
+"\C-xsh": dump-history
+
+"\C-xkr": kill-region
+"\C-xcr": copy-region-as-kill
+
