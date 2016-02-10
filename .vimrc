@@ -160,6 +160,7 @@ set complete=.,w,b,u,d         " The ,t,i from the default was too much, now ,d
 set isfname-==                 " No = allows 'gf' in File=<Path> Constructs
 set shiftwidth=4
 set softtabstop=4
+set number
 set expandtab
 set spelllang=en_us
 set equalprg=csb
@@ -187,10 +188,10 @@ nmap (     :bprev<CR>
 nmap )     :bnext<CR>
 nmap F     :files<CR>
 "nmap Q     :bdelete<CR>
-"nmap !Q    :bdelete!<CR>
+nmap !Q    :bdelete!<CR>
 nmap Q     :call PrevBuf(1)<CR>
 nmap ZQ    :call PrevBuf(0)<CR>
-nmap !Q    :call PrevBuf(1,"!")<CR>
+"nmap !Q    :call PrevBuf(1,"!")<CR>
 nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
 nmap zs    :call ToggleOpt("spell")<CR>
@@ -198,6 +199,17 @@ nmap zn    :call ToggleOpt("number")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zc    :call ToggleOpt("ignorecase")<CR>
 nmap [s    :exe "g/".@/."/p"<CR>
+
+" Bashify command line
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+cnoremap <C-F> <Right>
+cnoremap <C-B> <Left>
+cnoremap <Esc>b <S-Left>
+cnoremap <Esc>f <S-Right>
+
+map <MiddleMouse> <Nop>
+imap <MiddleMouse> <Nop>
 
 function! ToggleOpt(opt)
     exe "set inv".a:opt
@@ -441,7 +453,8 @@ endfunc
 
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
-   if &makeprg == "mvn"
+   if &makeprg == "mmvn" || &makeprg == "mvn" || current_compiler == "mvn"
+      setlocal makeprg=mmvn
       if makeArgs =~ '\<here\>' 
          let makeArgs = substitute(makeArgs, '\<here\>', '', 'g')
          let here = 1
@@ -730,7 +743,7 @@ function! VimBuddy()
 
     if g:actual_curbuf != bufnr("%")
         " Not my buffer, sleeping
-        nereturn "|-o"
+        return "|-o"
     elseif s:vimbuddy_err != v:errmsg
         let v:errmsg = v:errmsg . " "
         let s:vimbuddy_err = v:errmsg

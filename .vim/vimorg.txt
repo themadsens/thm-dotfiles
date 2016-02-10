@@ -1,0 +1,127 @@
+1. SVNAdd [<file>|<dir>|%]
+    Add and Commit File(s)/Directories to svn repo. SVNAdd is supported as a command and also as an
+    operation from SVNStatus and SVNBrowse output. Available options are to just add or add and commit 
+
+2. SVNCommit[!] [<file>|<dir>|%]
+     Performs svn commit. A new buffer will be opened to accept comments. The buffer will list
+     the files which are candidates for commit. Files/Directories can also be updated in this buffer. 
+     A commit can be forced with no comments with a bang. SVNCommit is supported as a command and 
+     also as an operation from the SVNStatus|SVNBrowseWorkingCopy|SVNBrowseBuffer output window. 
+
+3. SVNBlame [<file>|<dir>|%]
+     Vertically splits the blame info for the file in bufffer. Scrollbinds to the file.
+
+4. SVNStatus [ <dir> | . [q] [u]]
+     Get the output of svn status. With the listed files in the split buffer which states the filename
+     and status, the following are few of the operations supported
+       - Open file under cursor or all 
+       - SVN info, SVN Diff 
+       - SVN Commit selected/marked files, opens a commit log for accepting comments (svn ci)
+       - SVN Add selected/marked files as new repo elements (svn add)
+
+5. SVNLog [<file> | <dir> | . | % [,nooflogs]]
+     Lists the log for the current file in buffer.  The output displays the revision, author, comments 
+     and the revision when the branch was created. With the revisions listed can diff the required 
+     revisions with the file in buffer. Also provides mechanism to diff the file across branches/trunk. 
+     A menu will be displayed to list revisions from available branches and trunk. This requires that
+     g:svnj_branch_url and g:svnj_trunk_url be defined. 
+
+     - Diff revision(s) from current working copy or across branches/trunk
+     - List Affected/Modified files for the revision (most useful with dirs)
+     - SVN Diff :HEAD | :PREV  with selected revision (most useful with dirs)
+     - Open marked revisons or revison under cursor as new file - newbuffer or vspilt
+     - View SVN Info and Log of revision
+
+6. SVNDiff
+   Immediate diff the file in buffer with the previous revision. If there are more than one file in 
+   buffer Ctrl-n/Ctrl-p will close the current diff and move to the next/prev file in buffer.
+
+7. SVNBrowse
+   Browse the svn repository, working copy files, buffer files, favorites, bookmarks
+
+     - SVNBrowse
+         This command brings up a menu of available options for browsing.
+     - SVNBrowseRepo [<dir>|/]
+         This command lists files/directories from the repository. The current directory should be 
+         a working copy for the plugin to pick up the svn path.
+     - SVNBrowseWorkingCopy [<dir>]
+         This command lists files/directories from the current directory. 
+     - SVNBrowseMyList
+         This command lists files/directories specified using g:svnj_browse_mylist see 
+         :help g:svnj_browse_mylist 
+     - SVNBrowseBookMarks
+           While browsing the repo/working copy you can bookmarks the dir/files 
+           All of the book marked files will be listed as output. 
+           These bookmarked files/dirs are available only for the current vim session unless caching 
+           is enabled, Once vim is closed all bookmarks are lost if caching is not enabled.
+     -SVNBrowseBuffer
+           List the files from Buffer
+
+     Cache for browsing:
+         The caching feature is off by default, On enabling the caching the listing of files for 
+     SVNBrowseRepo and SVNBrowseWorkingCopy will be faster. There are many levels at which the caching
+     can be enabled see help:g:svnj_cache_dir
+
+    Some of the operations supported are
+      - Recursive/Non-recursive listing of files from directory
+      - Open file(s) in new buffer or vertical split
+      - Navigate up/down the directory, Jump to Respository Root/Working Root/Home where applicable
+      - SVN info, SVN Log
+      - Bookmark the dir/file. To persist the bookmarks across sessions see :help g:svnj_browse_bookmarks_cache
+      - SVN Checkout (svn co)
+          Hint : Use Bookmarks or MyList feature to store the repo root so that can be browsed 
+                 when need to checkout.  
+      - SVN Copy (Paste) the selected urls to new dir location, (svn cp)
+          The paste on repo requires a commit so a buffer will be opened to enter comments for the commit
+      - SVN Add, SVN Commit
+
+ 8. SVNCommits [ <dir> | . | [,nooflogs]]
+      Get the list of files checked in across project revision. This command lists the output of svn log 
+      of the project directory.  
+
+9. SVNClearCache
+     The cache/persistency is not enabled by default. please see :help SVNClearCache for more info.
+
+10. SVNInfo [<file> | <dir> | % | . ]
+     Will display svn info.
+
+Recomended settings at .vimrc
+
+let g:svnj_custom_statusbar_ops_hide = 1
+    Supported operations are listed on the status line of the svnj_window. With growing support for
+    many commands, recomend to hide it. You can still have a quick glance of supported operations by
+    pressing ?
+
+let g:svnj_browse_cache_all = 1
+    This enables caching, Listing of files will be faster, On MAC/Unix the default location is $HOME/.cache.
+    A new directory svnj will be created in the specified directory.
+
+    For windows this option must be specified along with the cache dir
+    let g:svnj_cache_dir="C:/Users/user1"
+
+let g:svnj_branch_url = ["svn://127.0.0.1/Path/until/branches/", "svn://127.0.0.1/Path/until/tags/"]
+    This settings when available will provide menu's to navigate available branches and tags for SVNLog
+
+let g:svnj_trunk_url = "svn://127.0.0.1/Path/until/trunk";
+    This settings when available will provide menu's to navigate trunk files for SVNLog
+
+Global Options  :help svnj-options and :help svnj-customize
+
+ +  g:svnj_max_logs, g:svnj_max_open_files, g:svnj_max_diff,
+    g:svnj_window_max_size, g:svnj_warn_branch_log, g:svnj_browse_max_files_cnt,
+    g:svnj_browse_repo_max_files, g:svnj_sticky_on_start, g:svnj_send_soc_command
+
+ + g:svnj_browse_cache_all, g:svnj_browse_bookmarks_cache, g:svnj_browse_repo_cache,
+   g:svnj_browse_workingcopy_cache, g:svnj_browse_cache_max_cnt
+
+ + g:svnj_signs, g:svnj_ignore_files, 
+
+ + g:svnj_browse_mylist
+
+ + g:svnj_branch_url, g:svnj_trunk_url
+
+ + g:svnj_custom_fuzzy_match_hl, g:svnj_custom_menu_color, g:svnj_custom_error_color,
+   g:svnj_custom_prompt_color, g:svnj_custom_statusbar_hl, g:svnj_custom_statusbar_title
+   g:svnj_custom_statusbar_title, g:svnj_custom_statusbar_ops_hl, 
+   g:svnj_custom_statusbar_sel_hl, g:svnj_custom_statusbar_ops_hide,
+   g:svnj_custom_sticky_hl, g:svnj_custom_commit_files_hl, g:svnj_custom_commit_header_hl

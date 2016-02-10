@@ -4,13 +4,14 @@ umask 022
 
 if [ -n "$PS1" ] ;then
    #[[ $0 != -* && $- != *l* ]] && . /etc/profile 
+   unalias -a
    source /etc/profile 
 
    if [[ $PATH != $HOME/bin:* ]] ;then
        PATH=$HOME/bin:/usr/local/bin:/opt/local/bin:$PATH
    fi
 
-   for f in bash_completion grc.bashrc ;do
+   for f in bash_completion ;do
       if [ -f $(brew --prefix)/etc/$f ]; then
          source $(brew --prefix)/etc/$f
       fi
@@ -29,6 +30,7 @@ if [ -n "$PS1" ] ;then
    export JBOSS_HOME=/opt/wildfly
    export AMPCOM_HOME=/opt/ampcom
    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
+   export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
 
    __col() {
       [[ $TERM == xterm*  || $TERM == screen || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
@@ -42,7 +44,6 @@ if [ -n "$PS1" ] ;then
    alias l='      less -R'
    alias v='      vimless'
    alias m='      mark'
-   alias df='     df -k'
    alias ll='     ls -la'
    alias ls='     ls -G'
    alias where='  type -a'
@@ -51,19 +52,27 @@ if [ -n "$PS1" ] ;then
    alias svnhead="svnlog --limit=20"
    alias rehash=" hash -r"
    alias sort='   LC_ALL=C sort'
-   alias reset='  exec env PATH=/bin:/usr/bin bash'
+   alias reload=' exec env PATH=/bin:/usr/bin bash'
    alias xsel='   xclip -o'
    alias sel='    pbpaste'
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
    alias unquot=' sel | cut -d\" -f2'
 
-   if type -a colourify>/dev/null ;then
-      for c in svn hg git ;do
-         #mainly for <cmd> diff
-         alias $c="colourify $c"
+   GRC=`which grc`
+   if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
+      colorize() { $GRC -es ${COLORARG:-"--colour=auto"} "$@"; }
+      for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df \
+               svh hg git cat
+      do
+         eval "$c() { colorize '$c' \"\$@\"; }"
       done
+   else
+      colorize() { "$@"; }
    fi
+
+   diff() { colorize diff -u "$@"; }
+   df()   { colorize df -k "$@"; }
 
    export SVN=svn+ssh://ampsvn/srv/ampep
    svnlast()   { if [[ $# -ge 1 ]] ;then svnlog -p -l 25 "$@" ;else svnlog -p -a $USER -l 25 ;fi; }
@@ -80,7 +89,8 @@ if [ -n "$PS1" ] ;then
                      --cmd 'set readonly noswapfile' \
                       -c 'set mouse=a' \
                       -c 'runtime macros/less.vim' "${@:--}"; }
-   p()         { "$@" | less -R;}
+   p()         { COLORARG=" " "$@" | less -R;}
+   pg()        { $GRC -es "$@" | less -R;}
    pv()        { if [[ $# -eq 1 && -e $1 ]] ;then vimless $1 ;else "$@" | vimless ;fi }
    vis()       { vi +set\ hlsearch $(which "$@"); }
    _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
@@ -95,8 +105,17 @@ if [ -n "$PS1" ] ;then
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
    e()         { lua -e "print($*)"; }
 
-   =()         { local i e i="${@//p/+}"; i="${i//m/*}";
-                 e="$(($i))"; printf "%d -- 0x%x\n" $e $e; }
+   =()         {
+      #local i e
+      #i="${@//p/+}"
+      #i="${i//m/*}"
+      #e="$(($i))"
+      #printf "%d -- 0x%x\n" $e $e
+      lua-5.3 -e "val = ${*//@/*}
+                  print(string.format('%s -- 0x%x', val, val//1))"
+   }
+
+   rmline() { sed -i '' "$1 d" "$2"; }
 
    tac() {
       awk '
@@ -150,7 +169,7 @@ if [ -n "$PS1" ] ;then
       local p=${p/$HOME/\~}
       local V=''
       stln "-- $HostnTty ${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }- $p --"
-      itit "$Tty - $(sed 's/\([a-zA-Z][a-zA-Z]\)[a-zA-Z]*/\1/g' <<< ${AMPROOT##*/}) - ${p##*/}"
+      itit "$Tty - $(cut -c1-3 <<< ${AMPROOT##*/}) - ${p##*/}"
    }
 
    sshwrap() {
@@ -164,7 +183,7 @@ if [ -n "$PS1" ] ;then
    function ssh()      { sshwrap ssh "$@"; }
    function aussh()    { sshwrap aussh "$@"; }
    function au-sshgw() { sshwrap au-sshgw "$@"; }
-   function tail()     { itit "$Tty - TAIL $@" ; command tail "$@"; }
+   function tail()     { itit "$Tty - TAIL $@" ; colorize tail "$@"; }
    function cu()       { itit "$Tty - CU $@"   ; command cu "$@"; }
    function locate()
    {
@@ -174,11 +193,33 @@ if [ -n "$PS1" ] ;then
          command locate "$@"
       fi
    }
+   function ws2 () {
+      local O=$1
+      local U=$2
+      local H=$3
+      local P=$4
+      shift ; shift
+      shift ; shift
+      #echo "P: $P"
+      curl -w '\n-----------\n%{http_code}: %{size_header} + %{size_download} B\n' \
+         -u$U -k -H 'content-type: application/json' \
+         -X$O https://${H}$P "$@"
+   }
    function ws () {
+      local O=$1
+      local P=$2
+      local R=${P%%/*}
+      shift ; shift
+      case $R in
+         (ws|lightWs|glams|aasweb|startgrid|aasws|gis) ;; 
+         #(*)  P=aasws/$P ;;
+      esac
+      #echo "P: $P"
       curl -w '\n-----------\n%{http_code}: %{size_header} + %{size_download} B\n' \
          -uampfm3:ccswe124 -k -H 'content-type: application/json' \
-         -X$1 http://localhost:8000/aasws/$2 $3 $4 $5 $6
+         -X$O http://localhost:8000/$P "$@"
    }
+   function findTests() { find . -name surefire-reports | xargs -I % open %/index.html; }
 
    function timerep() {
       local timeRep=$TIMESHOW ; [[ $timeRep ]] || timeRep=$TIMEREPORT
@@ -211,9 +252,11 @@ if [ -n "$PS1" ] ;then
    function tim() { TIMESHOW=0 ; "$@"; }
 
    function exitrep() {
-      declare -a P=( ${PIPESTATUS[@]} )
-      local Last=$((${#P[*]} - 1))
-      [[ ${P[$Last]} -ne 0 ]] && echo " E:${P[$Last]}"
+      #[[ "$HISTCMD" == "$LASTCMD" ]] && return
+      #declare LASTCMD=$HISTCMD
+      local -a ESTAT=( ${PIPESTATUS[@]} )
+      local Last=$((${#ESTAT[*]} - 1))
+      [[ ${ESTAT[$Last]} -ne 0 ]] && echo " E:${ESTAT[$Last]}"
    }
 
    function profile_check() {
@@ -224,11 +267,12 @@ if [ -n "$PS1" ] ;then
       _profile_time=$curtime
    }
 
-   PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check'
+   PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; declare -a ESTAT=( ${PIPESTATUS[@]} )'
    if [[ -d ~/.keychain && "$UID" -ne 0 ]] ;then
       #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
+      HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
       keychain --quiet ~/.ssh/id_dsa
-      . ~/.keychain/`uname -n`-sh
+      eval `keychain --quiet --eval`
    fi
 
    if [[ -d /opt/toolchain/. ]] ;then
@@ -267,9 +311,9 @@ if [ -n "$PS1" ] ;then
    }
    alias amp=amptree
    complete -C 'amptree --completions' amp
-   amptree --nocd ep
-   #amptree --nocd embedded
-   complete -F _command -o filenames p pv
+   [ -z "$AMPROOT" ] || amptree --nocd ep
+   test $AMPROOT || amptree --nocd ep
+   complete -F _command -o filenames p pv pg
    complete -c vis env where 
 fi
 # vim: set sw=3 sts=3 et:
