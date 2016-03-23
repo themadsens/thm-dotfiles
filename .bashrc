@@ -63,7 +63,7 @@ if [ -n "$PS1" ] ;then
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
       colorize() { $GRC -es ${COLORARG:-"--colour=auto"} "$@"; }
       for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df \
-               svh hg git cat
+               svn hg git cat
       do
          eval "$c() { colorize '$c' \"\$@\"; }"
       done
@@ -89,6 +89,7 @@ if [ -n "$PS1" ] ;then
                      --cmd 'set readonly noswapfile' \
                       -c 'set mouse=a' \
                       -c 'runtime macros/less.vim' "${@:--}"; }
+   jatt()      { curl -u fm:ccswe124 $1 | grcat conf.log | less -R; } # View jira attachment
    p()         { COLORARG=" " "$@" | less -R;}
    pg()        { $GRC -es "$@" | less -R;}
    pv()        { if [[ $# -eq 1 && -e $1 ]] ;then vimless $1 ;else "$@" | vimless ;fi }
@@ -267,12 +268,13 @@ if [ -n "$PS1" ] ;then
       _profile_time=$curtime
    }
 
-   PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; declare -a ESTAT=( ${PIPESTATUS[@]} )'
+   PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check'
    if [[ -d ~/.keychain && "$UID" -ne 0 ]] ;then
       #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
       HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
-      keychain --quiet ~/.ssh/id_dsa
+      #keychain --quiet ~/.ssh/id_dsa
       eval `keychain --quiet --eval`
+      #alias kcload='eval `keychain --quiet --eval`'
    fi
 
    if [[ -d /opt/toolchain/. ]] ;then
