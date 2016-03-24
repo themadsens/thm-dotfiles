@@ -1,5 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_cnt =4
 let g:netrw_dirhist_1='/Users/fm/amplex/embedded/arm9/agentframework/agents/gioabus-driver/Config'
 let g:netrw_dirhist_2='/Volumes/ZeroBraneStudio/ZeroBraneStudio.app/Contents/ZeroBraneStudio/bin/lua.app'
 let g:netrw_dirhist_3='/Users/fm/Documents/Arduino/libraries/MaxMatrix'
+let g:netrw_dirhist_4='/Users/fm/amplex/ep/greenwise/common-ui/src/main/webapp/modules/panels/lightcontrol'
