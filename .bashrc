@@ -162,6 +162,9 @@ if [ -n "$PS1" ] ;then
        *)       stln() { :; } ; itit() { :; }
        ;;
    esac
+   if [[ "$TMUX" ]] ;then
+      itit() { printf "\ek%s\e\\" "$*" ; }
+   fi
    HostnTty=`uname -n | cut -d. -f1 | tr '[a-z]' '[A-Z]'`:`tty | cut -c10-`
    Tty=`tty | cut -c10-`
    stdir() {
@@ -170,7 +173,11 @@ if [ -n "$PS1" ] ;then
       local p=${p/$HOME/\~}
       local V=''
       stln "-- $HostnTty ${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }- $p --"
-      itit "$Tty - $(cut -c1-3 <<< ${AMPROOT##*/}) - ${p##*/}"
+      if [[ "$TMUX" ]] ;then
+         itit "$Tty-$(cut -c1-3 <<< ${AMPROOT##*/})-${p##*/}"
+      else
+         itit "$Tty - $(cut -c1-3 <<< ${AMPROOT##*/}) - ${p##*/}"
+      fi
    }
 
    sshwrap() {
