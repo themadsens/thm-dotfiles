@@ -58,6 +58,7 @@ if [ -n "$PS1" ] ;then
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
    alias unquot=' sel | cut -d\" -f2'
+   alias jslint=' jshint --reporter=/usr/local/lib/node_modules/jshint-stylish'
 
    GRC=`which grc`
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
@@ -202,9 +203,10 @@ if [ -n "$PS1" ] ;then
       shift ; shift
       shift ; shift
       #echo "P: $P"
-      curl -w '\n-----------\n%{http_code}: %{size_header} + %{size_download} B\n' \
+      curl -w '\n---- CURL STAT ----\n%{http_code}: %{size_header} + %{size_download}B %{time_total}sTOT %{time_pretransfer}sPRE\n' \
          -u$U -k -H 'content-type: application/json' \
-         -X$O https://${H}$P "$@"
+         -X$O https://${H}$P "$@" \
+         | mawk '/^---- CURL STAT ----$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
    }
    function ws () {
       local O=$1
@@ -275,6 +277,7 @@ if [ -n "$PS1" ] ;then
       #keychain --quiet ~/.ssh/id_dsa
       eval `keychain --quiet --eval`
       #alias kcload='eval `keychain --quiet --eval`'
+      alias squid-ssh-keys='ssh-add ~/.ssh/nopf/*'
    fi
 
    if [[ -d /opt/toolchain/. ]] ;then
