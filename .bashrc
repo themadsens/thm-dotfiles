@@ -12,8 +12,8 @@ if [ -n "$PS1" ] ;then
    fi
 
    for f in bash_completion ;do
-      if [ -f $(brew --prefix)/etc/$f ]; then
-         source $(brew --prefix)/etc/$f
+      if [ -f /usr/local/etc/$f ]; then
+         source /usr/local/etc/$f
       fi
    done
 
@@ -262,8 +262,12 @@ if [ -n "$PS1" ] ;then
       [[ ${ESTAT[$Last]} -ne 0 ]] && echo " E:${ESTAT[$Last]}"
    }
 
+   function file_modtime() {
+      [[ $(uname -s) = Darwin ]] && stat -s %m "$@" || stat -c %Y "$@"
+   }
+
    function profile_check() {
-      local curtime=$(stat -f %m $HOME/.bashrc)
+      local curtime=$(file_modtime $HOME/.bashrc)
       if [[ $_profile_time && $_profile_time != $curtime ]] ;then
          source $HOME/.bashrc
       fi
