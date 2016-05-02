@@ -19,12 +19,12 @@ endif
 
 let g:loaded_quickfixsigns = 99 " Disable for now
 execute pathogen#infect()
-set runtimepath+=~/.vim/eclimstuff
 
 syntax on
 filetype plugin indent on
-augroup filetype
+augroup filetypedetect
 autocmd BufEnter *.r set ft=xdefaults
+autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
 augroup END
 
 set tags=/opt/toolchain/include/tags,/usr/include/tags
@@ -311,6 +311,17 @@ function! BufEnterGlobalOpts()
       nmap <Del>      ]]zz
    endif
 
+endfunc
+
+function! SetFileTypeOnLoad()
+	if (!did_filetype() || tolower(&ft) == "conf") && expand("<amatch>") !~ g:ft_ignore_pat
+      let line1 = tolower(getline(1))
+      if line1 =~ "lua"
+	      setlocal filetype=lua
+      elseif line1 =~ "node"
+	      setlocal filetype=javascript
+      endif
+  endif
 endfunc
 
 function! SetFileTypeOpts()
