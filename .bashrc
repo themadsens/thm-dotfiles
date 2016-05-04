@@ -263,7 +263,7 @@ if [ -n "$PS1" ] ;then
    }
 
    function file_modtime() {
-      [[ $(uname -s) = Darwin ]] && stat -s %m "$@" || stat -c %Y "$@"
+      [[ $(uname -s) = Darwin ]] && stat -f %m "$@" || stat -c %Y "$@"
    }
 
    function profile_check() {
