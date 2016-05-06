@@ -12,9 +12,9 @@ if [ -n "$PS1" ] ;then
    fi
 
    for f in bash_completion ;do
-      if [ -f /usr/local/etc/$f ]; then
-         source /usr/local/etc/$f
-      fi
+      for d in /etc/ /usr/local/etc ;do
+         [ -f $d/$f ] && source $d/$f
+      done
    done
 
    # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
@@ -118,6 +118,19 @@ if [ -n "$PS1" ] ;then
    }
 
    rmline() { sed -i '' "$1 d" "$2"; }
+
+   tmux-attach() {
+      case $(tmux list-sessions 2>/dev/null | wc -l) in
+         0) : ;;
+         1) tmux attach ;;
+         *)
+            tmux list-sessions 
+            read -n 1 -p "Select command: " N < /dev/tty > /dev/tty;
+            tmux attach -t $N
+            ;;
+      esac
+   }
+   tmux-ssh() { ssh "$@" -t 'PS1=x ; . ~/.bashrc ; tmux-attach'; }
 
    tac() {
       awk '
