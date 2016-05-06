@@ -285,7 +285,10 @@ augroup Private
    autocmd FileType    * call SetFileTypeOpts()
 
    " Handle global (non bufferspecific) options
-   autocmd BufEnter * call BufEnterGlobalOpts()
+   autocmd BufEnter * call BufEnterGlobalOpts()      
+
+   autocmd InsertEnter * call system("tmux set mouse off")
+   autocmd InsertLeave * call system("tmux set mouse on")
 augroup end
 
 function! BufEnterGlobalOpts()

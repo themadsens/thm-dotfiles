@@ -12,9 +12,9 @@ if [ -n "$PS1" ] ;then
    fi
 
    for f in bash_completion ;do
-      if [ -f /usr/local/etc/$f ]; then
-         source /usr/local/etc/$f
-      fi
+      for d in /etc/ /usr/local/etc ;do
+         [ -f $d/$f ] && source $d/$f
+      done
    done
 
    # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
@@ -45,7 +45,11 @@ if [ -n "$PS1" ] ;then
    alias v='      vimless'
    alias m='      mark'
    alias ll='     ls -la'
-   alias ls='     ls -G'
+   if [[ $(uname -s) = Darwin ]] ;then
+      alias ls='  ls -G'
+   else
+      alias ls='  ls --color=auto'
+   fi
    alias where='  type -a'
    alias watch='  watch -d -p'
    alias grep='   grep --color=auto'
@@ -59,6 +63,13 @@ if [ -n "$PS1" ] ;then
    alias se='     vim -g --remote'
    alias unquot=' sel | cut -d\" -f2'
    alias jslint=' jshint --reporter=/usr/local/lib/node_modules/jshint-stylish'
+   alias gitll='  git log --graph --pretty=oneline --abbrev-commit'
+   alias gitlog=" git log --graph --pretty=format:'%C(bold)%h%Creset%C(magenta)%d%Creset %s %C(yellow)<%an> %C(cyan)(%cr)%Creset' --abbrev-commit --date=relative"
+   # From http://blogs.atlassian.com/2014/10/advanced-git-aliases/ # Show commits since last pull
+   alias gitnew=" git log HEAD@{1}..HEAD@{0}"
+   # Add uncommitted and unstaged changes to the last commit
+   alias gitcommitall="git commit -a --amend -C HEAD"
+
 
    GRC=`which grc`
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
@@ -119,6 +130,19 @@ if [ -n "$PS1" ] ;then
 
    rmline() { sed -i '' "$1 d" "$2"; }
 
+   tmux-attach() {
+      case $(tmux list-sessions 2>/dev/null | wc -l) in
+         0) : ;;
+         1) tmux attach ;;
+         *)
+            tmux list-sessions 
+            read -n 1 -p "Select command: " N < /dev/tty > /dev/tty;
+            tmux attach -t $N
+            ;;
+      esac
+   }
+   tmux-ssh() { ssh "$@" -t 'PS1=x ; . ~/.bashrc ; tmux-attach'; }
+
    tac() {
       awk '
          BEGIN {N=0; delete A}
@@ -166,7 +190,7 @@ if [ -n "$PS1" ] ;then
    if [[ "$TMUX" ]] ;then
       itit() { printf "\ek%s\e\\" "$*" ; }
    fi
-   HostnTty=`uname -n | cut -d. -f1 | tr '[a-z]' '[A-Z]'`:`tty | cut -c10-`
+   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10-`
    Tty=`tty | cut -c10-`
    stdir() {
       local p=${PWD/$AMPROOT/@}
