@@ -141,7 +141,7 @@ if [ -n "$PS1" ] ;then
             ;;
       esac
    }
-   tmux-ssh() { ssh "$@" -t 'PS1=x ; . ~/.bashrc ; tmux-attach'; }
+   tmux-ssh() { ssh "$@" -X -t 'PS1=x ; . ~/.bashrc ; tmux-attach'; }
 
    tac() {
       awk '
