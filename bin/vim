@@ -1,3 +1,0 @@
-#!/bin/sh
-stty start ^- stop ^-
-exec /Applications/MacVim.app/Contents/MacOS/Vim "$@"
