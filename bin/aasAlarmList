@@ -1,0 +1,25 @@
+#!/usr/bin/env ttnode
+// Parse alarm json from /aasws/alarm/all
+
+require('lodash');
+var sprintf = require('sprintf-js').sprintf;
+var dt = require('datetimejs');
+var fs = require('fs');
+
+function d2s(d) {
+  return dt.strftime(d, "%y-%m-%d %H:%M:%S");
+}
+
+function state(st) {
+  sn = [ false, "OPEN", "IGNORED", "PENDING", "CLOSED", "ACKED"];
+  return sn[st] || "ST:"+st;
+}
+
+fn = process.argv.length > 1 ? process.argv[1] : '/dev/stdin';
+var al = JSON.parse(fs.readFileSync(fn));
+console.log(sprintf("%5s %20s %17s %17s %5s", "TYPE", "NAME", "OPEN", "CLOSE", "STATE"));
+_.each(al, function(a) {
+  console.log(sprintf("%5s %20s %17s %17s %5s", a.alarmType.id, a.alarmType.name,
+                                                d2s(a.openTime), d2s(a.closeTime), state(a.state)));
+});
+// vim: set sw=3 sts=3 et ft=javascript:

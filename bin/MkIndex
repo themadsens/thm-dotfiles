@@ -1,0 +1,94 @@
+#!/bin/bash
+Dir=.
+[ $# -gt 0 ] && Dir=$1
+cd $Dir
+rm -f .glimpse_filenames .glimpse_filenames_index .glimpse_filetimes \
+      .glimpse_index .glimpse_messages .glimpse_partitions .glimpse_statistics \
+      tags amplex-trees webservices.txt
+
+pruneArgs() {
+    local argstr=""
+    if [[ -f pom.xml ]] && grep -q dk.amplex pom.xml ;then
+        excl='lib log logs target *-exploded *-nobuild dojo-* uglify\* GWjs *-dist'
+    elif [[ -f ionic.project ]] ;then
+        excl='platforms node_modules plugins cordova-plugins'
+    fi
+    for name in .svn .git CVS $excl ;do
+        if [ "$1" = "find" ] ;then
+            argstr=$argstr" -name $name -prune -o "
+        else
+            argstr=$argstr" --exclude=$name "
+        fi
+    done
+    printf "%s\n" $argstr
+}
+#lua - $(pruneArgs ctags) << EOF
+#    for i,a in ipairs(arg) do print(string.format("%s: '%s'", i, a)) end
+#EOF
+#exit
+
+if  ! [[ -d arm9 || ${PWD##*/} == 'arm9' ]] ;then
+    find . $(pruneArgs find) \
+        -type f -print | cut -c3- \
+    | command grep -v -E '^tags$|\.glimpse_|.o$|.pdf$' \
+    | glimpseindex-tt -n -F -H $Dir | awk '!/^Indexing /'
+    echo "Creating tags"
+    # Exclude apparently oldish dojo versions in preference of 1.3
+    ctags --recurse $(pruneArgs ctags) \
+        --langdef=Jsp --langmap=Jsp:.jsp --regex-Jsp='/<div id="([^"]+)"/\1_jspdiv/' \
+        --langdef=Props --langmap=Props:.properties --regex-Props='/^([a-zA-Z][^=]+)=/\1_langdef/' \
+        --links=no --excmd=number --extra=+fq --totals=yes --sort=foldcase \
+    2>&1 | grep -v 'ctags: Warning: ignoring null tag' 
+    if [[ -f pom.xml ]] && grep -q dk.amplex pom.xml ;then
+       echo -n "Creating paths .. "
+       find `pwd` -type d -name amplex | grep -v /target/  \
+           | grep '/dk/amplex$' | sed 's,/dk/amplex$,,' > amplex-trees
+       echo -n " wsnames .. "
+       find `pwd` -type d -name webapp                 >> amplex-trees
+        amp-glimpse -n -w '@Path\(' | sed 's,.*/dk/amplex/,dk/amplex/,' \
+            | awk -F: 'NF>2 {printf "%-65s:%s\n", $1$2, $3}' > webservices.txt
+    fi
+    echo done
+    exit
+fi
+
+# ELSE
+find . \
+  -name .svn -prune -o  -name rootdisk -prune -o -name  shadows -prune -o -name \*-pak -prune -o \
+  -name doxygen -prune -o -type f -print | cut -c3- \
+  | command grep -v -E '^tags$|\.glimpse_|\.pdf$|\.o$|\.so$|\.so\.|\.a$|/mapfile$' \
+  | while read L ;do
+       read -n4 T < "$L"; [[ $T != ?ELF && $T != BZh* && $T != $'\x1f\x8b\x08'* ]] && echo "$L"
+    done \
+  | glimpseindex-tt -n -F -H $Dir | awk '!/^Indexing /'
+echo -n "Creating tags ... "
+ctags --recurse --exclude=.svn --exclude=rootdisk --exclude=\*-pak \
+      --sort=no --links=no --excmd=number -f - --extra=+fq --totals=yes \
+| { X=$(mktemp -t mkiXXXXXX); rm -f $X; ctags -f $X /dev/null; cat $X -; rm -f $X; } \
+| gawk -F '\t' '
+      /^!_TAG_FILE_SORTED/ {sub(/[0-9]/, "2")}
+      {print} 
+      $NF == "F" && $1 ~ /\.h$/ {
+        file = $2
+        #print "Searching " file " .." >"/dev/stderr"
+        lno = 0
+        while (getline l <file) {
+            lno++
+            if (l ~ /^MessageNodeType\(/) {
+                split(substr(l, 17), arg, ",")
+                tag = gensub(/^ */, "", 1, arg[1]) 
+                print tag "\t" file "\t" lno " \"\tt"
+                #tags=tags " " tag
+                extra++
+            }
+        }
+      }
+      $NF == "f" && $1 ~ /:/ && $2 ~ /\.lua$/ {
+        npath = split($1, pth, ":")
+        print pth[npath] "\t" $2 "\t" $3 "\tf"
+      }
+      END {print extra+0 " extra tags  added" tags >"/dev/stderr"}
+  ' > tags
+LC_ALL=C sort --ignore-case -o tags tags
+       
+echo done

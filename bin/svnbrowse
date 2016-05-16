@@ -1,0 +1,69 @@
+#!/usr/bin/env ttlua
+
+local function copyrec(s, d)
+    d = d or {}
+    for k,v in pairs(s) do d[k] = v end
+    return d
+end
+
+-- From http://lua-users.org/wiki/SplitJoin
+function string.split(str, pat)
+   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
+   local fpat = "(.-)" .. pat
+   local last_end = 1
+   local s, e, cap = str:find(fpat, 1)
+   while s do
+      if s ~= 1 or cap ~= "" then
+	 table.insert(t,cap)
+      end
+      last_end = e+1
+      s, e, cap = str:find(fpat, last_end)
+   end
+   if last_end <= #str then
+      cap = str:sub(last_end)
+      table.insert(t, cap)
+   end
+   return t
+end
+
+function string.urlencode(str)
+   if (str) then
+      str = string.gsub (str, "\n", "\r\n")
+      str = string.gsub (str, "([^%w/_.-])",
+         function (c) return string.format ("%%%02X", string.byte(c)) end)
+      str = string.gsub (str, " ", "+")
+   end
+   return str    
+end
+
+local function cmdread(s, f)
+  local ifd = io.popen(s)
+  local ret = ifd:read(f or "*line")
+  ifd:close()
+  return ret
+end
+
+local lines = cmdread("svn info '"..arg[1].."'", "*a"):split("\n")
+local lmap = {}
+
+for _,l in ipairs(lines) do
+    local k,v = l:match("([^:]*): *(.*)")
+    if v then lmap[k] = v end
+end
+
+local root = lmap["Repository Root"]
+local relpath = lmap["Relative URL"]
+
+if root and relpath then
+    local url
+    if root:match("/srv/ampep$") then
+        url = "http://ampsvn/viewcvs.cgi/AmpEP"
+    elseif root:match("/srv/ampemb$") then
+        url = "http://ampsvn/viewcvs.cgi/AmpEmb"
+    end
+    if url then
+        local cmd = "open "..url..relpath:match("^%^?(.*)"):urlencode().."?view=markup"
+        -- local cmd = "open -a firefox "..url..relpath:match("^%^?(.*)"):urlencode().."?view=markup"
+        os.execute(cmd)
+    end
+end

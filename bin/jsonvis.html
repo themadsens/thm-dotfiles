@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>~/bin/jsonvis.html</title>
+<meta name="Generator" content="Vim/7.4">
+<meta name="plugin-version" content="vim7.4_v1">
+<meta name="syntax" content="sh">
+<meta name="settings" content="use_css,pre_wrap,no_foldcolumn,expand_tabs,prevent_copy=">
+<meta name="colorscheme" content="none">
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #000000; background-color: #ffffff; }
+body { font-family: monospace; color: #000000; background-color: #ffffff; }
+* { font-size: 1em; }
+.Statement { color: #804000; }
+.Comment { color: #0000c0; }
+.Constant { color: #c00000; }
+.Special { color: #c000c0; }
+.PreProc { color: #c000c0; }
+-->
+</style>
+
+<script type='text/javascript'>
+<!--
+
+-->
+</script>
+</head>
+<body>
+<pre id='vimCodeElement'>
+<span class="Comment">#!/bin/bash</span>
+
+<span class="PreProc">(</span><span class="Special"> printf </span><span class="Statement">&quot;</span><span class="Constant">console.log('FILE: </span><span class="PreProc">$1</span><span class="Special">\134</span><span class="Constant">n-----------</span><span class="Special">\134</span><span class="Constant">n', </span><span class="Statement">&quot;</span><span class="Statement">;</span><span class="Special"> cat </span><span class="PreProc">$1</span><span class="Special"> </span><span class="Statement">;</span><span class="Special"> </span><span class="Statement">echo</span><span class="Constant"> </span><span class="Statement">&quot;</span><span class="Constant">);</span><span class="Statement">&quot;</span><span class="Constant"> </span><span class="PreProc">)</span> <span class="Statement">&gt;</span> /tmp/jsonvis.js
+cat <span class="Statement">&lt;&lt;  EOF</span><span class="Constant"> &gt; /tmp/jsonvis.html</span>
+<span class="Constant">    &lt;html&gt;</span>
+<span class="Constant">    &lt;head&gt;</span>
+<span class="Constant">    &lt;script src=&quot;file:///tmp/jsonvis.js&quot;&gt;&lt;/script&gt;</span>
+<span class="Constant">    &lt;title&gt;Inspect &quot;</span><span class="PreProc">$1</span><span class="Constant">&quot;&lt;/title&gt;</span>
+<span class="Constant">    &lt;/head&gt;</span>
+<span class="Constant">    &lt;body&gt;</span>
+<span class="Constant">    &lt;h1&gt;Right click &quot;inspect&quot; and open &quot;console&quot; to view data&lt;/h1&gt;</span>
+<span class="Constant">    &lt;/body&gt;</span>
+<span class="Constant">    &lt;/html&gt;</span>
+<span class="Statement">EOF</span>
+open /tmp/jsonvis.html
+</pre>
+</body>
+</html>
+<!-- vim: set foldmethod=manual : -->

@@ -1,0 +1,48 @@
+#!/usr/bin/env tclsh
+# connect to host or ip on port through the SOCKS4(a) proxy. authenticate with username (default empty)
+# returns a socket that can be used to send and receive traffic from the remote host
+
+proc socks4connect {proxy_host proxy_port host port {username {}}} {
+   set connect_request \x04\x01
+   append connect_request [binary format S $port]
+   if {[regexp {[0-9]+.[0-9]+.[0-9]+.[0-9]+} $host]} {
+       set use_host false
+       append connect_request [binary format c4 [split $host .]]
+   } else {
+       # ip address 0.0.0.x is always invalid and signals that a hostname is specified
+       set use_host true
+       append connect_request [binary format c4 [split 0.0.0.1 .]]
+   }
+   append connect_request $username
+   append connect_request \x00
+   if {$use_host} {
+       append connect_request $host
+       append connect_request \x00
+   }
+
+   set s [socket $proxy_host $proxy_port]
+   fconfigure $s -translation binary -buffering none
+   puts -nonewline $s $connect_request
+
+   set response [read $s 8]
+   if {[string index $response 1] ne "\x5a"} {
+       error "connection request rejected by proxy"
+   } else {
+       return $s
+   }
+}
+
+set p(rh) "127.0.0.1"
+set params  [split $env(QUERY_STRING) &] 
+foreach par $params { 
+    foreach {name val} [split $par =] break 
+    regsub -all {\+} $val " " val 
+    regsub -all {%([0-9A-F][0-9][A-F])} $val {[format "%c" 0x\1]} val 
+    set p($name) [subst -novariables -nobackslashes $val] 
+}
+
+set s [socks4connect "127.0.0.1" $p(lp) $p(rh) $p(rp)]
+chan copy stdin $s -command {}
+chan copy $s stdout -command {set doexit 0}
+vwait doexit
+exit $doexit

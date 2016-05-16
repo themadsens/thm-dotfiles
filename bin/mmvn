@@ -1,0 +1,23 @@
+#!/usr/bin/env ttlua
+
+local posix = require "lposix"
+posix.putenv("MAVEN_OPTS", "-Xmx1024m -XX:MaxPermSize=1024m")
+
+local opts = {
+    skipTests      = "true",
+    performRelease = "false"
+}
+local mvnArgs = {}
+
+for i,a in ipairs(arg) do
+    local key, val = a:match("-D(%a[%w_]*)=(%a[%w_]*)")
+    if val then
+        opts[key] = val
+    else
+        table.insert(mvnArgs, a)
+    end
+end
+for key, val in pairs(opts) do
+    table.insert(mvnArgs, "-D"..key.."="..val)
+end
+posix.exec("mvn", unpack(mvnArgs))

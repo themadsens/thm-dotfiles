@@ -1,0 +1,7 @@
+#!/usr/bin/env ttluajit
+---
+-- Watch output from many files
+--
+local ljsyscall = require "ljsyscall"
+local lposix = require "lposix"
+
