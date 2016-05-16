@@ -1,0 +1,50 @@
+#!/usr/bin/env ttnode
+//
+// Parse alarm json from /aasws/alarm/all
+//
+// [
+//   {
+//     "siteIds": [],
+//     "alarmType": {
+//       "displayLevel": 10,
+//       "severity": 10,
+//       "customer": {
+//         "id": "33"
+//       },
+//       "description": null,
+//       "canBeIgnored": false,
+//       "mustBeAcknowledged": true,
+//       "name": "Motion Detected",
+//       "id": "5000"
+//     },
+//     "boxId": 1702,
+//     "closeTime": 1460201841556,
+//     "openTime": 1460201821679,
+//     "state": 3,
+//     "id": "232004"
+//   }
+// ]
+//
+var _ = require('lodash');
+var sprintf = require('sprintf-js').sprintf;
+var dt = require('datetimejs');
+var fs = require('fs');
+
+function d2s(d) {
+  return dt.strftime(new Date(d), "%y-%m-%d %H:%M:%S");
+}
+
+function state(st) {
+  sn = [false, "OPEN", "IGNORED", "PENDING", "CLOSED", "ACKED"];
+  return sn[st] || "ST:"+st;
+}
+
+// console.log("ARG: #%d - %j", process.argv.length, process.argv);
+fn = process.argv.length > 2 ? process.argv[2] : '/dev/stdin';
+var al = _.sortBy(JSON.parse(fs.readFileSync(fn)), 'openTime');
+console.log(sprintf("%5s %30s %17s %17s %7s\n%s", "TYPE", "NAME", "OPEN", "CLOSE", "STATE", _.repeat('-', 80)));
+_.each(al, function(a) {
+  console.log(sprintf("%5s %30s %17s %17s %7s", a.alarmType.id, a.alarmType.name,
+                                                d2s(a.openTime), d2s(a.closeTime), state(a.state)));
+});
+// vim: set sw=3 sts=3 et ft=javascript:

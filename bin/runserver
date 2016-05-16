@@ -1,0 +1,4 @@
+#!/bin/bash
+
+( /opt/wildfly/bin/standalone.sh& )
+( /opt/ampcom/scripts/startAmpCom.sh& )

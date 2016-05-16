@@ -1,0 +1,5 @@
+#!/usr/bin/env ttlua
+print("0: '"..arg[0].."'")
+for i, a in ipairs(arg) do
+    print(i..": '"..a.."'")
+end

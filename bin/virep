@@ -1,0 +1,74 @@
+#!/usr/bin/env ttlua
+
+
+local function copyrec(s, d)
+    d = d or {}
+    for k,v in pairs(s) do d[k] = v end
+    return d
+end
+
+local function findandset(line, pattern, ret)
+    local t = { line:find(pattern) }
+    return t[1] and copyrec({ start = t[1], stop = t[2], select(3, unpack(t)) }, ret)
+                 or nil
+end
+
+local function regsub_s(t, reg, sub)
+  local num
+  t.s, num = string.gsub(t.s, reg, sub)
+  t.s = string.gsub(t.s, "^%s*(.-)%s*$", "%1") -- Trim
+  return num > 0
+end
+
+local function cmdread(s, f)
+  local ifd = io.popen(s)
+  local ret = ifd:read(f or "*line")
+  ifd:close()
+  return ret
+end
+
+local line,file,modified,pid,running
+local pids = {}
+local fd = io.popen("sh -c 'vi -r 2>&1'", "r")
+while true do
+    local t = {}
+
+    line = fd:read("*line")
+    if not line then break end
+    if findandset(line, "^ *In directory (.*)", t) then
+        io.write(t[1].."\n")
+        io.write("MOD   PID   TTY FILE\n")
+    elseif findandset(line, "^ *file name: (.*)", t) then
+        file = t[1]
+    elseif findandset(line, "^ *modified: (%a*)", t) then
+        modified = t[1] ~= "no"
+    elseif findandset(line, "^ *process ID: (%d*)(.*)", t) then
+        pid = t[1]
+	tty = { s = "" }
+        if string.find(t[2], "(still running)", 1, true) ~= nil then
+	  if pids["pid-"..pid] then
+	    tty.s = pids["pid-"..pid]
+	  else
+	    local cmd
+            if cmdread("uname") == "Linux" then
+                cmd = "ps --no-headers --format tty --pid " .. pid
+            else
+                cmd = "ps -o tty= -p " .. pid
+            end
+	    tty.s = cmdread(cmd)
+	    if     regsub_s(tty, "tty", "") then
+	    elseif regsub_s(tty, "pts/", "pt") then
+	    elseif regsub_s(tty, "tts/", "t") then
+	    elseif regsub_s(tty, "[?][?]", "GVIM") then
+	    end
+	    pids["pid-"..pid] = tty.s
+	  end
+	end
+        if file and modified ~= nil then
+            io.write(string.format(" %s  %5d %5s %s\n", modified and "+" or "-",
+                                   pid, tty.s, file))
+        end
+        line,file,modified,pid,running = nil
+    end
+end
+

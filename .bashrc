@@ -8,7 +8,7 @@ if [ -n "$PS1" ] ;then
    source /etc/profile 
 
    if [[ $PATH != $HOME/bin:* ]] ;then
-       PATH=$HOME/bin:/usr/local/bin:/opt/local/bin:$PATH
+       PATH=$HOME/bin:$HOME/bin2:/usr/local/bin:/opt/local/bin:$PATH
    fi
 
    for f in bash_completion ;do

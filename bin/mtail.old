@@ -1,0 +1,222 @@
+#!/usr/bin/env ttlua
+--[[
+  $Id: mtail 24331 2011-10-13 12:11:25Z fm $
+  (C) Copyright 2007 Amplex, fm@amplex.dk
+
+  ABSTRACT: Tail on multiple cycling log files
+--]]
+
+local posix = {}
+if not pcall(function()
+                posix = require("posix")
+             end)
+then
+   local syscall
+   if not pcall(function()
+                   syscall = require("syscall")
+                end)
+   then
+      error("Either posix or syscall libs must be available")
+   end
+   posix.access = syscall.access
+   posix.close  = syscall.close
+   --posix.dup    = function(f) return syscall.dup(f):getfd() end
+   posix.dup    = syscall.dup
+   posix.exec   = syscall.exec
+   posix.fork   = syscall.fork
+   posix.fstat  = syscall.fstat
+   posix.getcwd = syscall.getcwd
+   --posix.pipe   = function() local x,y = syscall.pipe() ; return x:getfd(), y:getfd() end
+   posix.pipe   = syscall.pipe
+   posix.read   = syscall.read
+   posix.sleep  = syscall.sleep
+   posix.stat   = syscall.stat
+end
+
+local iometa = getmetatable(io.stdin)
+if not iometa.getfd then 
+   iometa.getfd = iometa.fileno
+end
+
+local interp = arg[-1]
+for i = -2, -1000, -1 do
+   if not arg[i] then break end
+   interp = arg[i]
+end
+if (posix.waitid and interp ~= "mtail" ) then
+   posix.exec(interp, {"mtail", "--", arg[0], unpack(arg)})
+end
+
+local FileC = { lastInode = 0, id = -1, fd = nil, }
+
+function FileC:checkRead()
+   if not self.fd then return false end
+
+   local pos = self.fd:seek("cur")
+   local sep; if pos == 0 then sep = "*" else sep = ":" end
+   local tail = self.fd:read("*a")
+   local size = 0
+   local utll = false
+   
+   if #tail == 0 then return false end
+   for line,eol in tail:gmatch("([^\r\n]*)([\r]?[\n]?)") do
+      if #line + #eol == 0 then break end
+      if #eol == 0 then utll=true; break end
+
+      size = size + #line + #eol
+      io.stdout:write(string.format("%02d%s%s%s\n", self.id, sep, timeStamp(),
+                          (line:gsub("%c", function(c)
+                              if c:byte() ~= 9 then -- escape all CTRL's but TAB
+                                 return "^"..string.char(c:byte() + 64)
+                              end
+                           end))))
+      sep = ":"
+   end
+   self.fd:seek("set", pos + size)
+   if utll then return false end -- Force stat check
+   return true
+end
+
+function FileC:checkEnd()
+   if self:checkRead() then
+      return -- Something to read - Skip stat test
+   end
+
+   local st = posix.stat(self.path)
+   local hadFd = self.fd ~= nil
+   if not st or st.ino ~= self.lastInode then
+      if self.fd then
+         self:checkRead() -- Make sure there is no more to read now that he is done with it
+         self.fd:close()
+         self.fd = nil
+      end
+   end
+   if not self.fd then
+      local fd,err = io.open(self.path, "r")
+      if fd == nil and hadFd then
+         self.lastInode = 0
+         io.stdout:write(self.id.."!Disappeared: "..self.path..": "..err..
+                         "at "..os.date().."\n")
+      elseif fd then
+         self.fd = fd
+         self.lastInode = posix.fstat(fd:getfd()).ino
+         self.fd:setvbuf("no")
+      end
+   end
+   self:checkRead()
+end
+
+local function FileC_new(path, lines, id)
+   local fd,err = io.open(path, "r")
+   local ret = setmetatable({path=path, fd=fd, id=id}, { __index = FileC })
+   if fd then
+      fd:setvbuf("no")
+      ret.lastInode = posix.stat(path, "ino")
+      local pos = fd:seek("end")
+      local size = 0
+      local oldPos = 0
+      while lines > 0 and pos > 0 do
+         oldPos = pos
+         local backUp = math.min(oldPos, 4096);
+         pos = fd:seek("set", oldPos - backUp)
+         local line = fd:read(backUp)
+         fd:seek("set", pos)
+         local nseps = 0
+         line:reverse():gsub("[\n]?[\r]?[^\r\n]*", function(c)
+                                                      nseps = nseps + 1
+                                                      size = size + #c
+                                                   end,
+                             lines)
+         lines = lines - nseps
+         --print(oldPos, pos, "''"..line:sub(1, 20).."''", nseps, size)
+      end
+      fd:seek("set", math.max(oldPos - size, 0))
+   else
+      io.stdout:write("!!Cannot open "..err.."\n")
+   end
+   return ret
+end
+
+local function backtraceonerror(err)
+   if (err and not string.find(err, "interrupted!")) then
+      io.stderr:write(err, "\n")
+   end
+end
+
+local function main(args)
+   local flist = {}
+   local dlist = {}
+   local lines = 10
+   local inotify =  posix.access("/sbin/inotifyd", "x")
+   if 0 == #args or args[1] == "-h" then
+      io.stderr:write("Usage: mtail [-<lines>] file [[-<lines>] file] ...\n")
+      os.exit(1)
+   end
+   if (_G.atexit) then
+      _G.atexit(backtraceonerror)
+   end
+   io.stdout:setvbuf("line")
+
+   for _,arg in ipairs(args) do
+      if arg:find("^-%d+") then
+         if 0 - arg > 0 then
+            lines = 0 - arg
+         end
+      else
+         flist[#flist + 1] = FileC_new(arg, lines, #flist + 1)
+      end
+   end
+   if #flist == 0 then return end
+
+   --
+   -- Select one of 
+   -- Linux: inotifywait -m --format %w files ....
+   -- Osx  : fswatch --monitor=kqueue_monitor files ...
+   --
+
+   if cmd then
+      -- Somehow popen got the fd closed along the way ... Do it ourselves
+      local inp, out = posix.pipe()
+      if posix.fork() == 0 then
+         if posix.close then posix.close(inp) else posix.dup(0, inp) end
+         posix.dup(out, 1)
+         posix.exec(unpack(cmd))
+         os.exit(0)
+      end
+
+      for _,f in pairs(flist) do f:checkEnd() end
+      if inp then
+         local rest = ""
+         while true do
+            local str = assert(posix.read(inp))
+            local lines = {}
+            rest = string.gsub(rest..str, "([^\n]*)\n", function(s)
+               lines[s] = true
+               return ""
+            end)
+            for l in pairs(lines) do
+               local t, d, f = l:match("([^\t]*)\t([^\t]*)[\t]?([^\t]*)")
+               local o = dirs[d][f]
+               if o then o:checkEnd() end
+            end
+            if #str == 0 then break end
+         end
+         return
+      end
+   end
+   -- Fallback
+   while true do
+      for _,f in pairs(flist) do
+         --io.stdin:read("*l") 
+         posix.sleep(0.2) -- Check 5 files per second
+
+         local r,e = pcall(function()
+            f:checkEnd()
+         end)
+         if not r then print(x, f, r ,e) end
+      end
+   end
+end
+
+main(arg)
+-- vim: set sw=3 sts=3 et nu:

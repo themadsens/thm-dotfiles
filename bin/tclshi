@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+exec rlwrap --command tclshi --file . --remember --histsize 9999 tclsh
