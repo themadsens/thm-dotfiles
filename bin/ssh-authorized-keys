@@ -1,0 +1,14 @@
+#!/bin/bash
+# From https://gist.github.com/hvr/662196
+IGNORE_LINES="^#|^$"
+
+for f in authorized_keys{,2} ;do
+    echo "-----  $f  -----"
+    cat $HOME/.ssh/$f | \
+    while read line ;do
+        [[ "$line" =~ $IGNORE_LINES ]] && continue
+        cat > /tmp/pubkey <<< $line
+        ssh-keygen -l -f /tmp/pubkey
+    done
+done
+rm -f /tmp/pubkey
