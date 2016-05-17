@@ -57,8 +57,11 @@ if [ -n "$PS1" ] ;then
    alias rehash=" hash -r"
    alias sort='   LC_ALL=C sort'
    alias reload=' exec env PATH=/bin:/usr/bin bash'
-   alias xsel='   xclip -o'
-   alias sel='    pbpaste'
+   if [[ $(uname -s) = Darwin ]] ;then
+      alias sel=' pbpaste'
+   else
+      alias sel=' xclip -o'
+   fi
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
    alias unquot=' sel | cut -d\" -f2'
