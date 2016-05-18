@@ -135,7 +135,8 @@ if [ -n "$PS1" ] ;then
 
    tmux-attach() {
       case $(tmux list-sessions 2>/dev/null | wc -l) in
-         1|0) tmux attach ;;
+         0) tmux ;;
+         1) tmux attach ;;
          *)
             tmux list-sessions 
             read -n 1 -p "Select command: " N < /dev/tty > /dev/tty;
