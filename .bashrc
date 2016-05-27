@@ -144,7 +144,7 @@ if [ -n "$PS1" ] ;then
             ;;
       esac
    }
-   tmux-ssh() { ssh "$@" -A -X -t 'PS1=x ; . ~/.bashrc ; tmux-attach'; tput reset; }
+   tmux-ssh() { ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'; tput reset; }
 
    tac() {
       awk '
@@ -309,7 +309,7 @@ if [ -n "$PS1" ] ;then
    }
 
    PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check'
-   if [[ -d ~/.keychain && "$UID" -ne 0 ]] ;then
+   if [[ -d ~/.keychain && "$UID" -ne 0 && "$PS1" != "tmux-ssh-" ]] ;then
       #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
       HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
       #keychain --quiet ~/.ssh/id_dsa
