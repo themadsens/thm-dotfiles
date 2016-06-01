@@ -325,7 +325,7 @@ if [ -n "$PS1" ] ;then
    }
 
    PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check'
-   if [[ -d ~/.keychain && "$UID" -ne 0 && "$PS1" != "tmux-ssh-" ]] ;then
+   if [[ -d ~/.keychain && "$UID" -ne 0 && -z "$SSH_AUTH_SOCK" ]] ;then
       #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
       HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
       #keychain --quiet ~/.ssh/id_dsa
