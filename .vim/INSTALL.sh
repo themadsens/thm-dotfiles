@@ -5,6 +5,7 @@ cd bundle
     https://github.com/vim-scripts/matchit.zip
     https://github.com/JalaiAmitahl/maven-compiler.vim
     https://github.com/junegunn/vim-easy-align
+    https://github.com/pangloss/vim-javascript
 EOF
 ) | \
 while read rep ;do
