@@ -120,6 +120,7 @@ if [ -n "$PS1" ] ;then
    f()         { awk -v N="$*" 'BEGIN {split(N, Nr, / |,/)}
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
    e()         { lua -e "print($*)"; }
+   del()       { echo -e "$2 d\nw\nq" | ed -s $1; }
 
    =()         {
       #local i e
@@ -179,8 +180,8 @@ if [ -n "$PS1" ] ;then
          for ((I=0; I<${#C[@]}; I++ )) ;do echo "$(__idx $I): ${C[$I]}" > /dev/tty ;done
          read -n 1 -p "Select command: " N </dev/tty >/dev/tty
          if [[ $N = [0-9A-Z] && ${#C[$(__idx $N)]} > 0 ]] ;then
-            echo "  ...  Running [$N]" >/dev/tty
-            echo "${C[$(__idx $N)]}"
+            echo -e "\b${C[$(__idx $N)]}" >/dev/tty
+            echo -E "${C[$(__idx $N)]}"
          else
             echo '' >/dev/tty
          fi

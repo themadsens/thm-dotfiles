@@ -344,7 +344,7 @@ function! SetFileTypeOpts()
    else
       inoremap # #
    endif
-   if index(["c","cpp","java","jsp","javascript"], ft) >= 0
+   if index(["c","cpp","java","jsp"], ft) >= 0
       setlocal cindent
       " Match open brace above )
       setlocal cinoptions=(0,w1,u0,:1,=2
@@ -358,6 +358,7 @@ function! SetFileTypeOpts()
       setlocal sw=2 ts=2
       compiler mvn
       setlocal includeexpr=JspPath(v:fname)
+      setlocal cinkeys-=:
    endif
    if ft == "sh"
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--') 
