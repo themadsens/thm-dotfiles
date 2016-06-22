@@ -27,7 +27,7 @@ autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
 augroup END
 
 set tags=/opt/toolchain/include/tags,/usr/include/tags
-set path=.,include,../include,/opt/toolchain/include,/usr/include
+set path=.,,include,../include,/opt/toolchain/include,/usr/include
 
 if has("win32")
    behave xterm
@@ -353,7 +353,7 @@ function! SetFileTypeOpts()
       " NO autowrap while typing in source code files
       setlocal formatoptions-=t
    endif
-   if index(["java","jsp","javascript"], ft) >= 0
+   if index(["java","jsp"], ft) >= 0
       " Ampep java settings
       setlocal sw=2 ts=2
       compiler mvn
@@ -371,6 +371,9 @@ function! SetFileTypeOpts()
       call TextEnableCodeSnip('javascript', '<script type=.text/javascript.>', '</script>') |
    elseif ft == "xml"
       call TextEnableCodeSnip('sql', '<sql>', '</sql>') |
+   elseif ft == "javascript"
+     compiler jshint
+     setlocal sw=2 ts=2
    end
 endfunc
 
@@ -477,7 +480,9 @@ endfunc
 
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
-   if &makeprg == "mmvn" || &makeprg == "mvn" || current_compiler == "mvn"
+   if makeArgs == 'jshint' and &ft == 'javascript' 
+      setlocal makeprg=jshint
+   elseif &makeprg == "mmvn" || &makeprg == "mvn" || current_compiler == "mvn"
       setlocal makeprg=mmvn
       if makeArgs =~ '\<here\>' 
          let makeArgs = substitute(makeArgs, '\<here\>', '', 'g')
