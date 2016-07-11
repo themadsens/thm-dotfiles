@@ -1,4 +1,4 @@
-" vim: set ts=3 sw=3 et:
+ret =" vim: set ts=3 sw=3 et:
 """
 """ %Z%%E% %U%, %I% %P%
 """ (C) Copyright 2000 CCI-Europe. Author : fma
@@ -26,25 +26,25 @@ autocmd BufEnter *.r set ft=xdefaults
 autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
 augroup END
 
-set tags=/opt/toolchain/include/tags,/usr/include/tags
-set path=.,,include,../include,/opt/toolchain/include,/usr/include
+setglobal tags=/opt/toolchain/include/tags,/usr/include/tags
+setglobal path=.,,include,../include,/opt/toolchain/include,/usr/include
 
 if has("win32")
    behave xterm
-   set directory=C:/temp/preserve//   " Home of the swap files_
+   setglobal directory=C:/temp/preserve//   " Home of the swap files_
    if filereadable('C:\Programs\NT_SFU\Shell\grep.EXE')
-      set grepprg=grep\ -n            " Use POSIX grep if available
+      setglobal grepprg=grep\ -n            " Use POSIX grep if available
    endif
 
    " Let VIM know about VisualC++ include files
    if exists("$include")
       let more = substitute($include, ';', ',', 'g')
       let more = substitute(more, ' ', '\\\\\\ ', 'g')
-      execute "set path+=" . more
+      execute "setglobal path+=" . more
       let g:incdirs = g:incdirs.",".more
 
       let more = substitute($include, ';', '\\\\\\tags,', 'g')
-      execute "set tags+=" . substitute(more, ' ', '\\\\\\ ', 'g') . '\\tags'
+      execute "setglobal tags+=" . substitute(more, ' ', '\\\\\\ ', 'g') . '\\tags'
       unlet more
    endif
 
@@ -54,26 +54,26 @@ if has("win32")
    endif
 
    if has("gui_running")
-      set guifont=Courier_New:h9
+      setglobal guifont=Courier_New:h9
       " System menu and quick minimize
       map <M-Space> :simalt ~<CR>
       map <M-n> :simalt ~n<CR>
       " Size the GUI window. Delay positioning until window is created
-      set lines=50
-      set columns=82
+      setglobal lines=50
+      setglobal columns=82
       augroup AutoPos
       autocmd BufEnter * winp 200 50 | autocmd! AutoPos
       augroup END
    endif
 else
    if (&term == "cygwin") " This seem to have some quirks, work around some
-      set directory=/var/preserve/
+      setglobal directory=/var/preserve/
       " Make <End> work
-      exe "set t_@7=\e[4~"
+      exe "setglobal t_@7=\e[4~"
       " Make <Home> work
-      exe "set t_kh=\e[1~"
+      exe "setglobal t_kh=\e[1~"
    else
-      set directory=/var/preserve//
+      setglobal directory=/var/preserve//
       if has("gui_running")
          let &guifont="Bitstream Vera Sans Mono 8"
       else
@@ -81,16 +81,16 @@ else
          " source $VIMRUNTIME/menu.vim
 
          " Make <End> work - Some options cannot be assigned to with 'let'
-         "exe "set t_@7=\<Esc>OF"
+         "exe "setglobal t_@7=\<Esc>OF"
 
          " Must be _very_ slow to handle triple cl"icks
-         set mousetime=1500
+         setglobal mousetime=1500
          "if &ttymouse == "xterm2"
          "   " The xterm2 mode will flood us with messages
-         "   set ttymouse=xterm
+         "   setglobal ttymouse=xterm
          "endif
          if (&term == "screen")
-            set ttymouse=xterm2
+            setglobal ttymouse=xterm2
          endif
 
          " Save and restore the "shell" screen on enter and exit
@@ -108,10 +108,10 @@ else
          endif
 
          " Make <Del> mappings work
-         " exe 'set t_kb=\x08'
-         " exe 'set t_kD=\x7f'
+         " exe 'setglobal t_kb=\x08'
+         " exe 'setglobal t_kD=\x7f'
 
-         exe "set t_Co=16"
+         exe "setglobal t_Co=16"
 
          " Make shifted cursor keys work.
          " For the necessary xmodmap commands, see :help hpterm
@@ -131,59 +131,66 @@ else
 endif
 
 if has("gui_running")
-    set title icon
-    set titlestring=%F%(\ --\ %a%)
-    set iconstring=%f
+    setglobal title icon
+    setglobal titlestring=%F%(\ --\ %a%)
+    setglobal iconstring=%f
 else
-    set notitle noicon         " Do _not_ mess with title string of my xterm
+    setglobal notitle noicon         " Do _not_ mess with title string of my xterm
 endif
 
-set showcmd                    " Show chars for command in progress on ruler
-set exrc                       " Allow .vimrc in current dir
-set hidden                     " Dont unload buffers BEWARE OF :q! and :qa! !!!
-set backspace=indent,eol       " Can ^H/^W/^U across lines in insert
-set sidescroll=5
-set scrolloff=4
-set textwidth=100
-set whichwrap=h,l,<,>,[,]      " Do not backspace/space across line boundaries
-set autoindent
-set winheight=10               " Make new windows this high
-set cmdheight=2                " status line area height - higher for quickfix
-set laststatus=2               " always with statusline
-set showmatch
-set autowrite                  " write files back at ^Z, :make etc.
-set mouse=nv                   " Use xterm mouse mode in insert/cmdline/prompt
-set clipboard=autoselect       " Visual to/from clipboard
-set fileformats=unix,dos,mac
-set showbreak=________         " Show me where long lines break
-set showfulltag                " Insert function prototype in ^X^]
-set incsearch nohlsearch       " Search while typing, 'zx' toggles highlighting
-set helpheight=100             " Maximize help windows
-set shortmess=ato              " Brief messages to avoid 'Hit Return' prompts
-set formatoptions=crqlo        " Comment handling / Dont break while typing
-set history=100
-set viminfo='20,\"500          " Keep history listings across sessions
-set wildmenu                   " Show completion matches on statusline
-set wildmode=list:longest,full
-set complete=.,w,b,u,d         " The ,t,i from the default was too much, now ,d
-set isfname-==                 " No = allows 'gf' in File=<Path> Constructs
-set shiftwidth=4
-set softtabstop=4
-set number
-set expandtab
-set spelllang=en_us
-set equalprg=csb
-set visualbell
-set printfont=:h7.5
-set printoptions=number:y,duplex:off,left:5mm,top:5mm,bottom:5mm,right:5mm
-set virtualedit=block
-set noignorecase
-set smartcase
-set nofoldenable
+setglobal showcmd                    " Show chars for command in progress on ruler
+setglobal exrc                       " Allow .vimrc in current dir
+setglobal hidden                     " Dont unload buffers BEWARE OF :q! and :qa! !!!
+setglobal backspace=indent,eol       " Can ^H/^W/^U across lines in insert
+setglobal sidescroll=5
+setglobal scrolloff=4
+setglobal textwidth=100
+setglobal whichwrap=h,l,<,>,[,]      " Do not backspace/space across line boundaries
+setglobal autoindent
+setglobal winheight=10               " Make new windows this high
+setglobal cmdheight=2                " status line area height - higher for quickfix
+setglobal laststatus=2               " always with statusline
+setglobal showmatch
+setglobal autowrite                  " write files back at ^Z, :make etc.
+setglobal mouse=nv                   " Use xterm mouse mode in insert/cmdline/prompt
+setglobal clipboard=autoselect       " Visual to/from clipboard
+setglobal fileformats=unix,dos,mac
+setglobal showbreak=________         " Show me where long lines break
+setglobal showfulltag                " Insert function prototype in ^X^]
+setglobal incsearch nohlsearch       " Search while typing, 'zx' toggles highlighting
+setglobal helpheight=100             " Maximize help windows
+setglobal shortmess=ato              " Brief messages to avoid 'Hit Return' prompts
+setglobal formatoptions=crqlo        " Comment handling / Dont break while typing
+setglobal history=100
+setglobal viminfo='20,\"500          " Keep history listings across sessions
+setglobal wildmenu                   " Show completion matches on statusline
+setglobal wildmode=list:longest,full
+setglobal complete=.,w,b,u,d         " The ,t,i from the default was too much, now ,d
+setglobal isfname-==                 " No = allows 'gf' in File=<Path> Constructs
+setglobal shiftwidth=4
+setglobal softtabstop=4
+setglobal number
+setlocal  number
+setglobal expandtab
+setglobal spelllang=en_us
+setglobal equalprg=csb
+setglobal visualbell
+setglobal printfont=:h7.5
+setglobal printoptions=number:y,duplex:off,left:5mm,top:5mm,bottom:5mm,right:5mm
+setglobal virtualedit=block
+setglobal noignorecase
+setglobal smartcase
+setglobal nofoldenable
 
 let c_gnu = 1
 let c_no_curly_error = 1
 "let &errorformat = 
+
+" Disaster prevention
+vmap u <Esc>
+vmap U <Esc>
+vnoremap gu u
+vnoremap gU U
 
 " For running edit-compile-edit (quickfix)
 nmap <Esc>n :cnext<CR>
@@ -226,8 +233,8 @@ function! ToggleOpt(opt)
 endfunction
 
 " These seem to be suitable for hitting all keys in mapping within timeout
-set timeoutlen=500
-set ttimeoutlen=50
+setglobal timeoutlen=500
+setglobal ttimeoutlen=50
 
 " Make cursor keys jump out of insert. Your preference may differ
 imap <Left>     <Esc>
@@ -277,7 +284,7 @@ hi NonText                                     ctermfg=lightgray
 hi Visual                           cterm=Inverse ctermfg=grey ctermbg=black
 
 if &term == "ansi" || &term == "console" || &term == "linux"
-   set background=dark
+   setglobal background=dark
    hi statusLine ctermfg=black
    hi statusLineNC ctermfg=black ctermbg=yellow
 endif
@@ -326,12 +333,12 @@ function! BufEnterGlobalOpts()
 endfunc
 
 function! SetFileTypeOnLoad()
-	if (!did_filetype() || tolower(&ft) == "conf") && expand("<amatch>") !~ g:ft_ignore_pat
+   if (!did_filetype() || tolower(&ft) == "conf") && expand("<amatch>") !~ g:ft_ignore_pat
       let line1 = tolower(getline(1))
       if line1 =~ "lua"
-	      setlocal filetype=lua
+         setlocal filetype=lua
       elseif line1 =~ "node"
-	      setlocal filetype=javascript
+         setlocal filetype=javascript
       endif
   endif
 endfunc
@@ -352,6 +359,7 @@ function! SetFileTypeOpts()
    if index(["tcl","postscr","c","cpp","java","jsp"], ft) >= 0
       " NO autowrap while typing in source code files
       setlocal formatoptions-=t
+      setlocal sw=4 ts=4
    endif
    if index(["java","jsp"], ft) >= 0
       " Ampep java settings
@@ -363,14 +371,17 @@ function! SetFileTypeOpts()
    if ft == "sh"
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--') 
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
+      setlocal sw=4 ts=4
    elseif ft == "java"
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
    elseif ft == "lua"
       call TextEnableCodeSnip('c', 'cdef\[\[', '\]\]') |
+      setlocal sw=4 ts=4
    elseif ft == "jsp"
       call TextEnableCodeSnip('javascript', '<script type=.text/javascript.>', '</script>') |
    elseif ft == "xml"
       call TextEnableCodeSnip('sql', '<sql>', '</sql>') |
+      setlocal sw=2 ts=2
    elseif ft == "javascript"
      compiler jshint
      setlocal sw=2 ts=2
@@ -421,8 +432,8 @@ function! SetBufferOpts()
 endfunc
 
 " Testing
-"set title titlestring=%<%F%=%l/%L-%P titlelen=70
-"set rulerformat=%l,%c%_%t-%P
+"setglobal title titlestring=%<%F%=%l/%L-%P titlelen=70
+"setglobal rulerformat=%l,%c%_%t-%P
 
 function! VarExists(s,v)
    if exists(a:v)
@@ -480,8 +491,14 @@ endfunc
 
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
-   if makeArgs == 'jshint' and &ft == 'javascript' 
+   if makeArgs == 'jshint' && &ft == 'javascript' 
       setlocal makeprg=jshint
+      let makeArgs = '%'
+   elseif findfile("gulpfile.js", ".;") != "" && &ft == 'javascript' 
+      setlocal makeprg="gulp"
+      if makeArgs == ""
+         let makeArgs = 'lint'
+      endif
    elseif &makeprg == "mmvn" || &makeprg == "mvn" || current_compiler == "mvn"
       setlocal makeprg=mmvn
       if makeArgs =~ '\<here\>' 
@@ -499,7 +516,7 @@ function! MakePrg(mkArg)
          endif
       endif
    endif
-   echomsg "make ".makeArgs." in: ".getcwd()
+   echomsg "make ".makeArgs." in: ".getcwd()." with: '".&makeprg."'"
    exe "make ".makeArgs
    if exists("oldwd")
       exe "cd ".fnameescape(oldwd)
@@ -669,12 +686,12 @@ nmap gmd :Glimpse NodeType.<C-R><C-W><CR>
 
 let vimrcdir = expand("<sfile>:h")."/.vim/macros"
 func! CciPostLoad(Pattern, File)
-	augroup CciAutoLoad
-	exe "autocmd BufNewFile ".a:Pattern "source ".g:vimrcdir."/".a:File
-	    \ ." |let b:isNew = 1 |  autocmd! CciAutoLoad BufNewFile ".a:Pattern
-	augroup CCIstart
-	exe "autocmd BufNewFile ".a:Pattern "let b:autohdr = 1"
-	augroup END
+   augroup CciAutoLoad
+   exe "autocmd BufNewFile ".a:Pattern "source ".g:vimrcdir."/".a:File
+       \ ." |let b:isNew = 1 |  autocmd! CciAutoLoad BufNewFile ".a:Pattern
+   augroup CCIstart
+   exe "autocmd BufNewFile ".a:Pattern "let b:autohdr = 1"
+   augroup END
 endfunc
 call CciPostLoad("GLM::*", "srcmgr.vim")
 call CciPostLoad("GLW::*", "srcmgr.vim")
@@ -683,40 +700,51 @@ delfunction CciPostLoad
 "exe "source  ".expand("<sfile>:h")."/dot/usr/vim/"."newfmgr.vim"
 
 nmap              gG      :call OpenSpec("GLW::<C-R><C-W>")<CR>
-vmap              gG      :call VisualOpenSpec("GLM::")<CR>
+vmap              gG      :call OpenSpec("GLM::".VisVal())<CR>
 command! -nargs=1 Glimpse  call OpenSpec("GLM::<args>")
 command! -nargs=1 GlimpseW call OpenSpec("GLW::<args>")
 
 func! OpenSpec(str)
-	let Str = a:str
+   let Str = a:str
    let g:GlimpsePath = b:GlimpsePath
-	exe "edit ".Str
+   exe "edit ".Str
    call histadd("cmd", "edit ".Str)
 endfunction
 
-func! VisualOpenSpec(Pre)
+func! VisVal()
   let Col1 = col("'<")  
   let Col2 = col("'>")  
   if line("'<") != line("'>") | return | endif
   let Str = strpart(getline(line("'<")), Col1 - 1, Col2 - Col1 + 1)
-  let Str = substitute(Str, " ", ".", "g")
-  call OpenSpec(a:Pre.Str)
+  return substitute(Str, " ", ".", "g")
 endfunc
+
+func! Search(pat, wordwise)
+   if a:wordwise
+      let @/ = "\\<".a:pat."\\>"
+   else
+      let @/ = a:pat
+   endif
+   call feedkeys("n")
+endfunc
+vmap gv <Esc>:call Search(VisVal(), 0)<CR>
+vmap gw <Esc>:call Search(VisVal(), 1)<CR>
 
 command! -nargs=? SvnWeb let _ = system("svnbrowse " . expand((len("<args>")?"<args>":"%").":p") )
 command! -nargs=? RemoteSend let _ = system("vim -g --remote " . expand((len("<args>")?"<args>":"%").":p") )
 
 " Find amplex java imports
-set suffixesadd=.java
-nmap gf :call GoFile()<CR>
-function! GoFile()
+setglobal suffixesadd=.java
+nmap gf :call GoFile("gf")<CR>
+nmap gF :call GoFile("gF")<CR>
+function! GoFile(cmd)
     if !exists("b:ampdirs") 
-        normal! gf
+        exe "normal! ".a:cmd
         return
     endif
     let savePath = &path
     let &l:path = &path.",".b:ampdirs
-    normal! gf
+    exe "normal! ".a:cmd
     let &l:path = savePath
 endfunc
 
@@ -740,7 +768,7 @@ function! ShowSyn()
    return synIDattr(synID(line("."), col("."), 1), "name")." "
 endfunc
 
-set statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
+setglobal statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
               \%{VarExists(',GZ','b:zipflag')},%1*%{CaseStat()}%*]%)\ %02c%V(%02B)C\ %3l/%LL\ %P
 hi User1          term=reverse,bold cterm=NONE,bold ctermfg=red  ctermbg=grey gui=bold guifg=red guibg=gray
 hi User2          term=reverse      cterm=NONE      ctermfg=blue ctermbg=grey guifg=darkblue guibg=gray
@@ -794,12 +822,12 @@ function! VimBuddy()
         else
             let str = ":-/"
         endif
-		  let s:vimbuddy_onemore = str
-		  return str
-	 elseif s:vimbuddy_onemore != ""
-		let str = s:vimbuddy_onemore
-		let s:vimbuddy_onemore = ""
-		return str
+        let s:vimbuddy_onemore = str
+        return str
+    elseif s:vimbuddy_onemore != ""
+      let str = s:vimbuddy_onemore
+      let s:vimbuddy_onemore = ""
+      return str
     endif
 
     if ! exists("b:lastcol")
@@ -832,9 +860,9 @@ endfunction
 
 
 if exists("load_less")
-   set directory=
-   set statusline=%3l/%LL\ %P\ %o/%{line2byte(line(\"$\")+1)-1}\ %=%<%f%a
-   set cmdheight=1
+   setglobal directory=
+   setglobal statusline=%3l/%LL\ %P\ %o/%{line2byte(line(\"$\")+1)-1}\ %=%<%f%a
+   setglobal cmdheight=1
 endif
 
 call SetBufferOpts() " Why is this needed ?? it is mapped to BufNewFile!!
