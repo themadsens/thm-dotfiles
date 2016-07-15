@@ -1,0 +1,39 @@
+#!/bin/bash
+# Modify etc/greenwise.properties, run mvn deploy, restore etc/greenwise.properties
+
+die() {
+	echo "$@"
+	exit 1
+}
+
+[[ $# -ge 1 ]] || die "Usage: $(basename $0): <psqlrc-alias> [updatedb]"
+
+makeprop() {
+	DBSPEC=$(awk "/conn_${1}_gw/ {gsub(/[\\\:@\\/;]+/, "'"'" "'"'", \$4); print \$4}" $HOME/.psqlrc)
+
+	# set conn_fyn_oc    '\\connect postgresql://oc:leir6Iej@localhost:5446/opencity;
+	read PG GW_USER GW_PASS LOC GW_PORT GW_DBNM <<< $DBSPEC
+	[[ $PG = postgresql && $LOC = localhost ]] || die "Invalid line in .psqlrc"
+
+cat << EOF
+db.flavour=postgresql
+db.user=${GW_USER}
+db.password=${GW_PASS}
+
+#PostgreSQL
+db.url=jdbc:postgresql://localhost:${GW_PORT}/${GW_DBNM}
+db.driver=org.postgresql.Driver
+EOF
+
+}
+
+if [[ "$2" = updatedb ]] ;then
+	[[ -f etc/greenwise.properties ]] || die "Run from greenwise/greenwise folder"
+	makeprop $1 > etc/tmp_prop || die "Cannot find spec for $1"
+	mv etc/greenwise.properties etc/greenwise.properties.$$ || die " Cannot backup etc/greenwise.properties"
+	mv etc/tmp_prop etc/greenwise.properties
+	mvn -DskipTests deploy
+	mv -f etc/greenwise.properties.$$ etc/greenwise.properties
+else
+	makeprop $1
+fi
