@@ -303,6 +303,7 @@ if [ -n "$PS1" ] ;then
       rm -f /tmp/.time$$
    }
    TIMEREPORT=1
+   TIMEFORMAT="%Uu %Ss %2R %P%%"
    function tim() { TIMESHOW=0 ; "$@"; }
 
    function exitrep() {
