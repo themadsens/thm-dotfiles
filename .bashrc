@@ -146,6 +146,7 @@ if [ -n "$PS1" ] ;then
       esac
    }
    tmux-ssh() { ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'; tput init; }
+   alias tsel='tmux show-buffer'
 
    tac() {
       awk '
