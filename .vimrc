@@ -269,6 +269,10 @@ map <F2> :r $SCCSHOME/SccsHeaders/static.hdr<CR>
 inoremap <Del> <C-H>
 cnoremap <Del> <C-H>
 
+" EasyAlign
+nmap ga <Plug>(EasyAlign)
+vmap ga <Plug>(EasyAlign)
+
 " List multiple matches at CTRL-]
 nmap <C-]>      :T <C-R><C-W><CR>
 " Tag "preview" window
@@ -499,7 +503,7 @@ function! MakePrg(mkArg)
       if makeArgs == ""
          let makeArgs = 'lint'
       endif
-   elseif &makeprg == "mmvn" || &makeprg == "mvn" || current_compiler == "mvn"
+   elseif &makeprg == "mmvn" || &makeprg == "mvn" || (exists("current_compiler") && current_compiler == "mvn")
       setlocal makeprg=mmvn
       if makeArgs =~ '\<here\>' 
          let makeArgs = substitute(makeArgs, '\<here\>', '', 'g')
