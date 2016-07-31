@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+exec rlwrap --command ttluai --file . --remember --histsize 9999 ttlua

@@ -67,11 +67,13 @@ if [ -n "$PS1" ] ;then
    alias unquot=' sel | cut -d\" -f2'
    alias jslint=' jshint --reporter=/usr/local/lib/node_modules/jshint-stylish'
    alias gitll='  git log --graph --pretty=oneline --abbrev-commit'
-   alias gitlog=" git log --graph --pretty=format:'%C(bold)%h%Creset%C(magenta)%d%Creset %s %C(yellow)<%an> %C(cyan)(%cr)%Creset' --abbrev-commit --date=relative"
+   alias gitll=" git log --graph --pretty=format:'%C(bold)%h%Creset%C(magenta)%d%Creset %s %C(yellow)<%an> %C(cyan)(%cr)%Creset' --abbrev-commit --date=relative"
    # From http://blogs.atlassian.com/2014/10/advanced-git-aliases/ # Show commits since last pull
    alias gitnew=" git log HEAD@{1}..HEAD@{0}"
    # Add uncommitted and unstaged changes to the last commit
-   alias gitcommitall="git commit -a --amend -C HEAD"
+   alias gitappend="git commit -a --amend -C HEAD"
+   alias gitst="    git status"
+   gitdiff() { R=$1; shift; git diff ${R}^..$R "$@"; }
 
 
    GRC=`which grc`
@@ -91,6 +93,7 @@ if [ -n "$PS1" ] ;then
 
    export SVN=svn+ssh://ampsvn/srv/ampep
    svnlast()   { if [[ $# -ge 1 ]] ;then svnlog -p -l 25 "$@" ;else svnlog -p -a $USER -l 25 ;fi; }
+   gitlast()   { if [[ $# -ge 1 ]] ;then gitlog -p -l 25 "$@" ;else gitlog -p -a $USER -l 25 ;fi; }
    svnminfo()  { svn mergeinfo $SVN/trunk/embedded \
                                --show-revs ${@:-eligible} | \
                  xargs -i svnlog '-{}' svn+ssh://ampsvn/srv/ampemb/trunk/embedded; }
@@ -218,7 +221,7 @@ if [ -n "$PS1" ] ;then
       if [[ $p = @/* ]] ;then Path=${p:2}; else Path=""; fi
       local p=${p/$HOME/\~}
       local V=''
-      stln "-- $HostnTty ${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }- $p --"
+      stln "-- $HostnTty ${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }- ${AMPROOT##*/} - $p --"
       if [[ "$TMUX" ]] ;then
          itit "$Tty-$(cut -c1-3 <<< ${AMPROOT##*/})-${p##*/}"
       else

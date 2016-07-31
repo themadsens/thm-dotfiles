@@ -83,7 +83,7 @@ else
          " Make <End> work - Some options cannot be assigned to with 'let'
          "exe "setglobal t_@7=\<Esc>OF"
 
-         " Must be _very_ slow to handle triple cl"icks
+         " Must be _very_ slow to handle triple clicks
          setglobal mousetime=1500
          "if &ttymouse == "xterm2"
          "   " The xterm2 mode will flood us with messages
@@ -495,7 +495,7 @@ endfunc
 
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
-   if makeArgs == 'jshint' && &ft == 'javascript' 
+   if makeArgs == 'jshint' || &ft == 'javascript' 
       setlocal makeprg=jshint
       let makeArgs = '%'
    elseif findfile("gulpfile.js", ".;") != "" && &ft == 'javascript' 
@@ -618,8 +618,14 @@ function! SvnBlame(f)
    setlocal bufhidden=hide
    setlocal noswapfile
    set filetype=diff
+
+   let git=""
+   call system("git svn info")
+   if v:shell_error == 0
+      let git="git "
+   endif
   
-   let cmd = "svn blame ".shellescape(fnamemodify(f, ":p"))
+   let cmd = git."svn blame ".shellescape(fnamemodify(f, ":p"))
    " echom "F: '".f."' CMD: '".cmd."'"
    exe "buffer ".tmpbuf
    exe "normal S-- AUTH: ".f
@@ -738,18 +744,21 @@ command! -nargs=? SvnWeb let _ = system("svnbrowse " . expand((len("<args>")?"<a
 command! -nargs=? RemoteSend let _ = system("vim -g --remote " . expand((len("<args>")?"<args>":"%").":p") )
 
 " Find amplex java imports
-setglobal suffixesadd=.java
 nmap gf :call GoFile("gf")<CR>
 nmap gF :call GoFile("gF")<CR>
 function! GoFile(cmd)
+    let saveSfx = &suffixesadd
+    setlocal suffixesadd=.java,.js,.jsp
     if !exists("b:ampdirs") 
         exe "normal! ".a:cmd
+        let &l:suffixesadd = saveSfx
         return
     endif
     let savePath = &path
     let &l:path = &path.",".b:ampdirs
     exe "normal! ".a:cmd
     let &l:path = savePath
+    let &l:suffixesadd = saveSfx
 endfunc
 
 " For use as includeexpr in ftplugin/*.vim
@@ -771,6 +780,45 @@ function! ShowSyn()
    endif
    return synIDattr(synID(line("."), col("."), 1), "name")." "
 endfunc
+
+function! JumpBuffers()
+   let jumptxt = ""
+   redir! => jumptxt
+   silent jumps
+   redir END
+   let byName = {}
+   let byIndex = []
+   for line in reverse(split(jumptxt, '\n'))
+      let name = strpart(line, 16)
+      let bufno = bufnr(name)
+      if len(name) > 0 && bufno >= 0 && !has_key(byName, name)
+         let byIndex += [{'name': name, 'bufno': bufno, 'ix': len(byIndex)+1}]
+         let byName[name] = len(byIndex)
+      endif
+   endfor
+   if v:count > 0
+      if len(byIndex) >= v:count
+         echomsg "Count ".v:count." Jumps to ".byIndex[v:count-1].bufno
+         execute "buffer ".byIndex[v:count-1].bufno
+      endif
+      return
+   endif
+   echohl Special
+   echo "No Buffer Name"
+   echohl None
+   for ent in byIndex
+      echo printf("%2d %6d %s", ent.ix, ent.bufno, ent.name)
+   endfor
+   let ix = input("Type number and <Enter> (empty cancels): ") + 0
+   if ix > 0 && ix <= len(byIndex)
+      execute "buffer ".byIndex[ix-1].bufno
+   endif
+endfunc
+" Note this overrides :goto
+nmap go :<C-U>call JumpBuffers()<CR>
+nmap <C-G><C-O> 2go
+" Remap builtin 'go'
+nnoremap g<C-O> go
 
 setglobal statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
               \%{VarExists(',GZ','b:zipflag')},%1*%{CaseStat()}%*]%)\ %02c%V(%02B)C\ %3l/%LL\ %P
@@ -862,6 +910,7 @@ function! VimBuddy()
     return ":-)"
 endfunction
 
+au! CursorHold * redraw!
 
 if exists("load_less")
    setglobal directory=
