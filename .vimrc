@@ -581,19 +581,31 @@ function! SvnDiff(f)
    setlocal bufhidden=hide
    setlocal noswapfile
    set filetype=diff
+
+   let diff="svn diff "
+   let git=0
+   call system("git svn info")
+   if v:shell_error == 0
+      let diff="git diff HEAD "
+      let git=1
+   endif
   
    if bufexists(f)
       exe "buffer ".bufnr(f) 
       if &modified
          let tmp = tempname()
          exe "write ".fnameescape(tmp)
-         call system("svn cat ".shellescape(fnamemodify(f, ":p"))." > ".shellescape(tmp.".orig"))
+         if git
+            call system("git show HEAD:./".f." > ".shellescape(tmp.".orig"))
+         else
+            call system("svn cat ".shellescape(fnamemodify(f, ":p"))." > ".shellescape(tmp.".orig"))
+         endif
          let cmd = "diff -u ".shellescape(tmp.".orig")." ".shellescape(tmp)." ; rm ".shellescape(tmp)."{,.orig}"
       endif
       exe "buffer ".curbuf
    endif
    if !exists("cmd")
-      let cmd = "svn diff ".shellescape(fnamemodify(f, ":p"))
+      let cmd = diff.shellescape(fnamemodify(f, ":p"))
    endif
    " echom "F: '".f."' CMD: '".cmd."'"
    exe "buffer ".tmpbuf

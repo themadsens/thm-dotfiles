@@ -66,13 +66,15 @@ if [ -n "$PS1" ] ;then
    alias se='     vim -g --remote'
    alias unquot=' sel | cut -d\" -f2'
    alias jslint=' jshint --reporter=/usr/local/lib/node_modules/jshint-stylish'
-   alias gitll='  git log --graph --pretty=oneline --abbrev-commit'
    alias gitll=" git log --graph --pretty=format:'%C(bold)%h%Creset%C(magenta)%d%Creset %s %C(yellow)<%an> %C(cyan)(%cr)%Creset' --abbrev-commit --date=relative"
    # From http://blogs.atlassian.com/2014/10/advanced-git-aliases/ # Show commits since last pull
    alias gitnew=" git log HEAD@{1}..HEAD@{0}"
    # Add uncommitted and unstaged changes to the last commit
    alias gitappend="git commit -a --amend -C HEAD"
    alias gitst="    git status"
+   alias gitup="    git svn rebase"
+   alias gitget="   sh -x -c 'git stash -u ; git svn rebase ; git stash pop'"
+   alias gitcommit="git add \* ; git commit"
    gitdiff() { R=$1; shift; git diff ${R}^..$R "$@"; }
 
 
@@ -319,7 +321,7 @@ if [ -n "$PS1" ] ;then
    }
 
    function file_modtime() {
-      [[ $(uname -s) = Darwin ]] && stat -f %m "$@" || stat -c %Y "$@"
+      [[ $(uname -s) = Darwin ]] && stat  -L -f %m "$@" || stat -c %Y "$@"
    }
 
    function profile_check() {
