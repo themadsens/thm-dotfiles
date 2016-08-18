@@ -147,7 +147,14 @@ if [ -n "$PS1" ] ;then
 
    rmline() { sed -i '' "$1 d" "$2"; }
 
+   tmux-x-attach() {
+      xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2&>1 &
+      DISPLAY=:9 tmux-attach "$@"
+      xpra detach :9
+   }
+
    tmux-attach() {
+      xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2&>1 &
       case $(tmux list-sessions 2>/dev/null | wc -l) in
          0) tmux ;;
          1) tmux attach ;;
@@ -158,7 +165,7 @@ if [ -n "$PS1" ] ;then
             ;;
       esac
    }
-   tmux-ssh() { ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'; tput init; }
+   tmux-ssh() { ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-x-attach'; tput init; }
    alias tsel='tmux show-buffer'
 
    tac() {
@@ -359,7 +366,11 @@ if [ -n "$PS1" ] ;then
       _profile_time=$curtime
    }
 
-   PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check'
+   function tmux_update() {
+      [[ "$TMUX" ]] && eval $(tmux show-environment -s)
+   }
+
+   PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; tmux_update'
    if [[ -d ~/.keychain && "$UID" -ne 0 && -z "$SSH_AUTH_SOCK" ]] ;then
       #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
       HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
@@ -376,7 +387,7 @@ if [ -n "$PS1" ] ;then
    function amptree()  {
       if [ $# -eq 0 ] ;then echo $AMPROOT ; return ;fi
       if [ $1 == --completions ] ;then
-         ( cd ~/amplex ; ls -1d */arm9 */ampep) | cut -d/ -f1 | command grep "^$3"
+         ( cd ~/amplex ; command ls -1d */arm9 */ampep) | cut -d/ -f1 | command grep "^$3"
          return 
       fi
       local noCD=""
