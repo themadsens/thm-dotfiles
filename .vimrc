@@ -495,7 +495,7 @@ endfunc
 
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
-   if makeArgs == 'jshint' || &ft == 'javascript' 
+   if makeArgs == 'jshint'
       setlocal makeprg=jshint
       let makeArgs = '%'
    elseif findfile("gulpfile.js", ".;") != "" && &ft == 'javascript' 
@@ -503,6 +503,9 @@ function! MakePrg(mkArg)
       if makeArgs == ""
          let makeArgs = 'lint'
       endif
+   elseif &ft == 'javascript' 
+      setlocal makeprg=jshint
+      let makeArgs = '%'
    elseif &makeprg == "mmvn" || &makeprg == "mvn" || (exists("current_compiler") && current_compiler == "mvn")
       setlocal makeprg=mmvn
       if makeArgs =~ '\<here\>' 
@@ -584,7 +587,7 @@ function! SvnDiff(f)
 
    let diff="svn diff "
    let git=0
-   call system("git svn info")
+   call system("git log -1")
    if v:shell_error == 0
       let diff="git diff HEAD "
       let git=1
