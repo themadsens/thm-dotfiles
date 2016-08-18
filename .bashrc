@@ -148,6 +148,7 @@ if [ -n "$PS1" ] ;then
    rmline() { sed -i '' "$1 d" "$2"; }
 
    tmux-x-attach() {
+      ps -f -u fm | grep -v grep | grep -q 'xpra start' || xpra start :9
       xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2>&1 &
       DISPLAY=:9 tmux-attach "$@"
       xpra detach :9
@@ -354,7 +355,7 @@ if [ -n "$PS1" ] ;then
    }
 
    function file_modtime() {
-      [[ $(uname -s) = Darwin ]] && stat  -L -f %m "$@" || stat -c %Y "$@"
+      [[ $(uname -s) = Darwin ]] && stat  -L -f %m "$@" || stat -L -c %Y "$@"
    }
 
    function profile_check() {
