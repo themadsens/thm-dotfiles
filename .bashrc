@@ -72,10 +72,18 @@ if [ -n "$PS1" ] ;then
    # Add uncommitted and unstaged changes to the last commit
    alias gitappend="git commit -a --amend -C HEAD"
    alias gitst="    git status"
-   alias gitup="    git svn rebase"
-   alias gitget="   sh -x -c 'git stash -u ; git svn rebase ; git stash pop'"
    alias gitcommit="git add \* ; git commit"
    gitdiff() { R=$1; shift; git diff ${R}^..$R "$@"; }
+   gitup() {
+      echo -e "Stashing .. \c"
+      git stash save --include-untracked __GITGET__
+      git svn mkdirs > /dev/null
+      git svn rebase
+      if git stash list | grep -q __GITGET__ ;then
+         echo -e "Unstash .. \c"
+         git stash pop
+      fi
+   }
 
 
    GRC=`which grc`
@@ -180,28 +188,47 @@ if [ -n "$PS1" ] ;then
       local -a C
       local -i I
       local N
+      local RC=0
       eval $(command grep "$@" ~/.bash_history | uniq | command tail -35 | tac \
              | gawk '{print "C[" I++ "]=\047" gensub("\047", "\047\\\\\047\047", "g", $0) "\047"}')
       if [[ ${#C[@]} > 0 ]] ;then
          for ((I=0; I<${#C[@]}; I++ )) ;do echo "$(__idx $I): ${C[$I]}" > /dev/tty ;done
          read -n 1 -p "Select command: " N </dev/tty >/dev/tty
+         if [[ $N = '!' ]]  ;then
+            read -n 1 -p " : " N </dev/tty >/dev/tty
+            RC=5
+         fi
          if [[ $N = [0-9A-Z] && ${#C[$(__idx $N)]} > 0 ]] ;then
             echo -e "\b${C[$(__idx $N)]}" >/dev/tty
             echo -E "${C[$(__idx $N)]}"
+            return $RC
          else
             echo '' >/dev/tty
          fi
       fi
+      return 1
    }
    h() {
       set -o noglob
-      local ___Very_UnL1leLy_7ar=$(__h "$@")
-      history -s $___Very_UnL1leLy_7ar
+      local ___Very_UnL1leLy_7ar
+      ___Very_UnL1leLy_7ar=$(__h "$@")
+      local RC=$?
+      [[ $RC -ne 1 ]] && history -s $___Very_UnL1leLy_7ar
       set +o noglob
-      eval $___Very_UnL1leLy_7ar
+      case $RC in
+         0) eval $___Very_UnL1leLy_7ar ;;
+         5) echo "Do <UP> or '!!' to use .." ;;
+      esac
    }
    alias hi="history|tail"
    alias hist="history"
+   run() { open "/Applications/${1}.app"; }
+   __run() {
+      mapfile -t COMPREPLY < <(ls -1d /Applications/{,*/}*.app | \
+                               grep -i "/$2" | \
+                               sed -e 's,^/Applications/,,' -e 's/.app$//' -e 's/ /\\ /g');
+   }
+   complete -F __run run
 
    case $TERM in
        sun-cmd) stln() { printf "\033]l %s \033" "$*"; } ; itit() { :; }
