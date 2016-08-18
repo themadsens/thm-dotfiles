@@ -148,13 +148,12 @@ if [ -n "$PS1" ] ;then
    rmline() { sed -i '' "$1 d" "$2"; }
 
    tmux-x-attach() {
-      xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2&>1 &
+      xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2>&1 &
       DISPLAY=:9 tmux-attach "$@"
       xpra detach :9
    }
 
    tmux-attach() {
-      xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2&>1 &
       case $(tmux list-sessions 2>/dev/null | wc -l) in
          0) tmux ;;
          1) tmux attach ;;
