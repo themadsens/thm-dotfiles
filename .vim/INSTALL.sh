@@ -6,6 +6,7 @@ cd bundle
     https://github.com/JalaiAmitahl/maven-compiler.vim
     https://github.com/junegunn/vim-easy-align
     https://github.com/pangloss/vim-javascript
+	https://github.com/leafgarland/typescript-vim.git
 EOF
 ) | \
 while read rep ;do
