@@ -135,6 +135,13 @@ if [ -n "$PS1" ] ;then
    e()         { lua -e "print($*)"; }
    del()       { echo -e "$2 d\nw\nq" | ed -s $1; }
 
+   exit() {
+      [[ "$SSH_CONNECTION" ]] && builtin exit "$@"
+      read -t 60 -p "Really exit? [y/N] " ans
+      [[ "$ans" = [yY]* || $? -gt 128 ]] && builtin exit "$@"
+      echo "Phew!"
+   }
+
    =()         {
       #local i e
       #i="${@//p/+}"
@@ -416,8 +423,7 @@ if [ -n "$PS1" ] ;then
    }
    alias amp=amptree
    complete -C 'amptree --completions' amp
-   [ -z "$AMPROOT" ] || amptree --nocd ep
-   test $AMPROOT || amptree --nocd ep
+   [ -z "$AMPROOT" ] && amptree --nocd epgit
    complete -F _command -o filenames p pv pg
    complete -c vis env where 
 fi
