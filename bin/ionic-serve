@@ -1,3 +1,3 @@
 #!/bin/sh
 exec rlwrap --command ionic-serve --file . --remember --histsize 9999 \
-            ionic serve --nobrowser --lab --all --serverlogs --consolelogs 
+            ionic serve --nobrowser --lab --all --serverlogs #--consolelogs 

@@ -236,7 +236,7 @@ if [ -n "$PS1" ] ;then
    }
    alias hi="history|tail"
    alias hist="history"
-   run() { open "/Applications/${1}.app"; }
+   run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
    __run() {
       mapfile -t COMPREPLY < <(ls -1d /Applications/{,*/}*.app | \
                                grep -i "/$2" | \
@@ -275,9 +275,11 @@ if [ -n "$PS1" ] ;then
    sshwrap() {
       local Cmd Host CmdU
       Cmd=$1 ; shift
-      Host=$(command ssh -o 'ProxyCommand=echo %h >/dev/fd/9' -o ControlPath=none "$@" 9>&1 2>&-)
-      CmdU=$(tr a-z A-Z <<<$Cmd)
-      itit "$Tty - $CmdU $Host"
+      if [[ `tty < /dev/stdout` == /dev/* ]] ;then
+         Host=$(command ssh -o 'ProxyCommand=echo %h >/dev/fd/9' -o ControlPath=none "$@" 9>&1 2>&-)
+         CmdU=$(tr a-z A-Z <<<$Cmd)
+         itit "$Tty - $CmdU $Host"
+      fi
       command $Cmd "$@"
    }
    function ssh()      { sshwrap ssh "$@"; }
