@@ -634,14 +634,19 @@ function! SvnBlame(f)
    setlocal noswapfile
    set filetype=diff
 
-   let git=""
+   let cmd="sh -c ".shellescape('git blame $0 | cut -c1-9,10-14,28-43,53-')." "
    call system("git svn info")
    if v:shell_error == 0
-      let git="git "
+      let cmd="git svn blame "
+   else
+      call system("svn info")
+      if v:shell_error == 0
+         let cmd="svn blame "
+      endif
    endif
   
-   let cmd = git."svn blame ".shellescape(fnamemodify(f, ":p"))
-   " echom "F: '".f."' CMD: '".cmd."'"
+   let cmd .= shellescape(fnamemodify(f, ":p"))
+   echom "F: '".f."' CMD: '".cmd."'"
    exe "buffer ".tmpbuf
    exe "normal S-- AUTH: ".f
    exe "read !".cmd 
