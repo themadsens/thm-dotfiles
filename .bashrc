@@ -275,7 +275,7 @@ if [ -n "$PS1" ] ;then
    sshwrap() {
       local Cmd Host CmdU
       Cmd=$1 ; shift
-      if [[ `tty < /dev/stdout` == /dev/* ]] ;then
+      if test -t 1 ;then
          Host=$(command ssh -o 'ProxyCommand=echo %h >/dev/fd/9' -o ControlPath=none "$@" 9>&1 2>&-)
          CmdU=$(tr a-z A-Z <<<$Cmd)
          itit "$Tty - $CmdU $Host"

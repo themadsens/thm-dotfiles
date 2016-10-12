@@ -112,6 +112,9 @@ else
          " exe 'setglobal t_kD=\x7f'
 
          exe "setglobal t_Co=16"
+         highlight LineNr cterm=NONE ctermbg=187
+         highlight CursorLine cterm=NONE ctermbg=187
+         setglobal cursorline
 
          " Make shifted cursor keys work.
          " For the necessary xmodmap commands, see :help hpterm
