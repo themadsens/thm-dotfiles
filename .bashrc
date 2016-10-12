@@ -32,10 +32,17 @@ if [ -n "$PS1" ] ;then
    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
    export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
 
+   ttprompt() {
+      case "$1" in
+         1) echo "${TOOLCHAIN_PS1_LABEL/#tt/ tt${TARGET_PLATFORM/#V26/26}}" ;;
+         *) echo "${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }" ;;
+      esac
+   }
    __col() {
       [[ $TERM == xterm*  || $TERM == screen || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
    }
-   PS1="[$(__col 1)\h $(__col 2)\W$(__col 3)\$(exitrep)$(__col 9)]\\\$ "
+   PS1="[$(__col 1)\h $(__col 2)\W$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
+   NOTTPS1=$PS1
    # eval `dircolors ~/.dircolors`
 
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
@@ -264,7 +271,7 @@ if [ -n "$PS1" ] ;then
       if [[ $p = @/* ]] ;then Path=${p:2}; else Path=""; fi
       local p=${p/$HOME/\~}
       local V=''
-      stln "-- $HostnTty ${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }- ${AMPROOT##*/} - $p --"
+      stln "-- $HostnTty $(ttprompt 2)- ${AMPROOT##*/} - $p --"
       if [[ "$TMUX" ]] ;then
          itit "$Tty-$(cut -c1-3 <<< ${AMPROOT##*/})-${p##*/}"
       else
