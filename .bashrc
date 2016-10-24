@@ -69,6 +69,7 @@ if [ -n "$PS1" ] ;then
    else
       alias sel=' xclip -o'
    fi
+   alias tsel='   tmux show-buffer'
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
    alias unquot=' sel | cut -d\" -f2'
