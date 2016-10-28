@@ -113,7 +113,7 @@ else
 
          exe "setglobal t_Co=16"
          highlight LineNr cterm=NONE ctermbg=187
-         highlight CursorLine cterm=NONE ctermbg=187
+         highlight CursorLine cterm=NONE ctermbg=186
          setglobal cursorline
 
          " Make shifted cursor keys work.
@@ -255,6 +255,8 @@ nnoremap <PageDown> <C-D>
 nnoremap <Home>     <C-Y>
 nnoremap <xHome>    <C-Y>
 nnoremap <End>      <C-E>
+nnoremap <M-Up>     <C-Y>
+nnoremap <M-Down>   <C-E>
 nmap <Insert>   [[zz
 nmap <Del>      ]]zz
 nmap <kDel>     ]]zz
