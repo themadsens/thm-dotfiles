@@ -865,6 +865,20 @@ nmap <C-G><C-O> 2go
 " Remap builtin 'go'
 nnoremap g<C-O> go
 
+function! TmuxReload()
+   for line in systemlist("tmux show-environment")
+      if line[0] == "-"
+         execute "let $".strpart(line, 1)."=''"
+      else
+         let prt = matchlist(line, '\([^=]\+\)=\(.*\)')
+         if len(prt) > 2 && len(prt[1]) > 0
+            execute 'let $'.prt[1].'="'.escape(prt[2], '\"').'"'
+         endif
+      endif
+   endfor
+endfunc
+command! TmuxReload call TmuxReload()
+
 setglobal statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
               \%{VarExists(',GZ','b:zipflag')},%1*%{CaseStat()}%*]%)\ %02c%V(%02B)C\ %3l/%LL\ %P
 hi User1          term=reverse,bold cterm=NONE,bold ctermfg=red  ctermbg=grey gui=bold guifg=red guibg=gray
