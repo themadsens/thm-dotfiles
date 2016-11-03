@@ -81,7 +81,7 @@ else
          " source $VIMRUNTIME/menu.vim
 
          " Make <End> work - Some options cannot be assigned to with 'let'
-         "exe "setglobal t_@7=\<Esc>OF"
+         "exe 'setglobal t_@7=\<Esc>OF'
 
          " Must be _very_ slow to handle triple clicks
          setglobal mousetime=1500
@@ -89,8 +89,14 @@ else
          "   " The xterm2 mode will flood us with messages
          "   setglobal ttymouse=xterm
          "endif
-         if (&term == "screen")
-            setglobal ttymouse=xterm2
+         if &term =~ '\v^(screen|tmux|xterm-)'
+           setglobal ttymouse=xterm2
+            if &term =~ '\v^(screen|tmux)'
+               execute "set <xUp>=\e[1;*A"
+               execute "set <xDown>=\e[1;*B"
+               execute "set <xRight>=\e[1;*C"
+               execute "set <xLeft>=\e[1;*D"
+            endif
          endif
 
          " Save and restore the "shell" screen on enter and exit
@@ -115,6 +121,7 @@ else
          highlight LineNr cterm=NONE ctermbg=187
          highlight CursorLine cterm=NONE ctermbg=186
          setglobal cursorline
+         set cursorline
 
          " Make shifted cursor keys work.
          " For the necessary xmodmap commands, see :help hpterm
