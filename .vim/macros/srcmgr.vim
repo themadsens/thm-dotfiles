@@ -52,7 +52,7 @@ func! SrcmgrInit()
                       let Command = Command."-i "
                    endif
 		endif
-		exe "put=system(\\\"".Command."'".strpart(b:vimedname, 5, 1000)."'\\\")"
+		exe "put=system(\\\"".Command."-n '".strpart(b:vimedname, 5, 1000)."'\\\")"
 	endif
 	set nomodified
 	syntax match MatchedPart /:.*/
