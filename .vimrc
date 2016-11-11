@@ -378,6 +378,7 @@ function! SetFileTypeOnLoad()
       endif
   endif
 endfunc
+let g:used_javascript_libs = 'underscore,angularjs'
 
 function! SetFileTypeOpts()
    let ft = &filetype
