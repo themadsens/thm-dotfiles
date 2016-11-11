@@ -8,6 +8,8 @@ cd bundle
 #   https://github.com/pangloss/vim-javascript
     https://github.com/othree/yajs.vim
     https://github.com/othree/javascript-libraries-syntax.vim
+	https://github.com/udalov/kotlin-vim
+	https://github.com/scrooloose/syntastic.git
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
