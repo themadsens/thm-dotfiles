@@ -5,10 +5,11 @@ cd bundle
     https://github.com/vim-scripts/matchit.zip
     https://github.com/JalaiAmitahl/maven-compiler.vim
     https://github.com/junegunn/vim-easy-align
-    https://github.com/pangloss/vim-javascript
-	https://github.com/leafgarland/typescript-vim.git
+#   https://github.com/pangloss/vim-javascript
+    https://github.com/othree/yajs.vim
+    https://github.com/othree/javascript-libraries-syntax.vim
 EOF
-) | \
+) | grep -v '^ *#'| \
 while read rep ;do
     dir=${rep##*/}
     echo "* $dir - $rep"
