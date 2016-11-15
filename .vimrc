@@ -74,6 +74,8 @@ else
       exe "setglobal t_kh=\e[1~"
    else
       setglobal directory=/var/preserve//
+      setglobal grepprg=ag\ --vimgrep\ $*
+      set grepformat=%f:%l:%c:%m
       if has("gui_running")
          let &guifont="Bitstream Vera Sans Mono 8"
       else
@@ -447,6 +449,13 @@ function! SetBufferOpts()
       if ! exists("tagset") && filereadable(fpath."/tags")
          exe "setlocal tags+=".fpath."/tags"
          let tagset = 1
+         if filereadable(fpath."/amplex-trees")
+            let b:ampdirs = join(readfile(fpath."/amplex-trees"), ",")
+         endif
+         if filereadable(fpath."/.gitignore")
+            let b:searchroot = fpath
+         endif
+         exe "setlocal path+=".fpath
       endif
       if strlen(glob(fpath."/include"))
          exe "setlocal path+=".fpath."/include"
@@ -456,10 +465,6 @@ function! SetBufferOpts()
       endif
       if !exists("b:GlimpsePath") && filereadable(fpath."/.glimpse_index")
          let b:GlimpsePath = fpath
-         if filereadable(fpath."/amplex-trees")
-            let b:ampdirs = join(readfile(fpath."/amplex-trees"), ",")
-         endif
-         exe "setlocal path+=".fpath
       endif
       let fpath = fnamemodify(fpath, ":h")
    endwhile
@@ -766,6 +771,25 @@ nmap              gG      :call OpenSpec("GLW::<C-R><C-W>")<CR>
 vmap              gG      :call OpenSpec("GLM::".VisVal())<CR>
 command! -nargs=1 Glimpse  call OpenSpec("GLM::<args>")
 command! -nargs=1 GlimpseW call OpenSpec("GLW::<args>")
+
+func! AgSearch(pattern, wordwise)
+   let sgSave = &grepprg
+   let pwd = getcwd()
+   if exists("b:searchroot")
+      exe "cd ".fnameescape(b:searchroot)
+   endif
+   let &grepprg = 'ag --vimgrep '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
+   exe "silent lgrep! ".shellescape(a:pattern, 1)
+   lwindow 30
+   let &grepprg = sgSave
+   call histadd("cmd", "Search".(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
+   exe "cd ".fnameescape(pwd)
+   let &ro = &ro "Force statusline update (See :help CursorHold)
+endfunc
+nmap              gs      :call AgSearch("<C-R><C-W>", 1)<CR>
+vmap              gs      :call AgSearch(VisVal(), 0)<CR>
+command! -nargs=1 Search   call AgSearch("<args>", 0)
+command! -nargs=1 SearchW  call AgSearch("<args>", 1)
 
 func! OpenSpec(str)
    let Str = a:str

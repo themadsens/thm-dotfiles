@@ -36,15 +36,19 @@ func! SrcmgrInit()
 		if     b:vimedname =~ "CMN::" | let Command = "Common "
 		elseif b:vimedname =~ "GRP::" | let Command = "Grep "
 		elseif b:vimedname =~ "GLM::" || b:vimedname =~ "GLW::"
-		   if exists("g:GlimpsePath")
-		      let Command = "glimpse-tt -H ".g:GlimpsePath." "
-                      exe "setlocal path+=".g:GlimpsePath
-                      let b:GlimpsePath = g:GlimpsePath
-		   else
-		      let Command = "amp-glimpse "
-                      let b:GlimpsePath = FindDir(".glimpse_index", "./;")
-                      exe "setlocal path+=".b:GlimpsePath
-		   endif
+                    if 0 
+                     if exists("g:GlimpsePath")
+                        let Command = "glimpse-tt -H ".g:GlimpsePath." "
+                        exe "setlocal path+=".g:GlimpsePath
+                        let b:GlimpsePath = g:GlimpsePath
+                     else
+                        let Command = "amp-glimpse "
+                        let b:GlimpsePath = FindDir(".glimpse_index", "./;")
+                        exe "setlocal path+=".b:GlimpsePath
+                     endif
+                   else
+                     let Command = "ag --vimgrep "
+                   endif
 		   if b:vimedname =~ "GLW::" 
 		      let Command = Command."-w "
 		   endif
@@ -57,13 +61,12 @@ func! SrcmgrInit()
                 exe cmd
 	endif
 	set nomodified
-	syntax match MatchedPart /:.*/
-	syntax match PathPart1 "/[^/]*$"ms=s+1 contained
-	syntax match PathPart2 "/[^/:]*:"me=e-1,ms=s+1 contained
-	syntax match LeadPath "^/[^:]*"ms=s+1 contains=PathPart1,PathPart2
+        exe "syntax match Pattern /".strpart(b:vimedname, 5, 1000)."/"
+        syntax region MatchedPart start=/:[0-9:]* /ms=e end=/$/ contains=Pattern
+	syntax match LeadPath /^[^:]*/
 	hi link MatchedPart Question
-	hi link PathPart1 Title
-	hi link PathPart2 Title
+	hi link LeadPath Title
+	hi link Pattern Todo
 
 	syntax match Hide /^|/ contained
 	syntax match Lead /^|.*/ contains=Hide
