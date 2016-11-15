@@ -26,7 +26,7 @@ if [ -n "$PS1" ] ;then
    HISTSIZE=999000
    HISTFILESIZE=999000
    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
-   export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.2
+   export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.4.1_1/
    export JBOSS_HOME=/opt/wildfly
    export AMPCOM_HOME=/opt/ampcom
    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
