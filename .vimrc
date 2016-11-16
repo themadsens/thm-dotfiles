@@ -216,9 +216,9 @@ nmap (     :bprev<CR>
 nmap )     :bnext<CR>
 nmap F     :files<CR>
 "nmap Q     :bdelete<CR>
-nmap !Q    :bdelete!<CR>
+nmap !Q    :bwipeout!<CR>
 nmap Q     :call PrevBuf(1)<CR>
-nmap ZQ    :call PrevBuf(0)<CR>
+nmap gQ    :call PrevBuf(0)<CR>
 "nmap !Q    :call PrevBuf(1,"!")<CR>
 nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
@@ -888,7 +888,7 @@ function! JumpBuffers()
    endfor
    let ix = input("Type number and <Enter> (empty cancels): ") + 0
    if ix > 0 && ix <= len(byIndex)
-      execute "buffer ".byIndex[ix-1].bufno
+      execute "keepjumps buffer ".byIndex[ix-1].bufno
    endif
 endfunc
 " Note this overrides :goto

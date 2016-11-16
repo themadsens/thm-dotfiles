@@ -16,6 +16,9 @@ if [ -n "$PS1" ] ;then
          [ -f $d/$f ] && source $d/$f
       done
    done
+   for f in ~/.bash_completion.d/* ;do
+      [ -r $f ] && source $f
+   done
 
    # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
    #. /etc/profile
