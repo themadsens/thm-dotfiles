@@ -1,0 +1,67 @@
+<Proxy *>
+              AddDefaultCharset off
+              Order deny,allow
+              Allow from all
+#Comment the following if on apache < 2.4
+              Require all granted
+</Proxy>
+              LogLevel trace2
+
+ProxyPreserveHost off
+
+ErrorDocument 503 /error/en/503.html
+ProxyPass /error/ !
+ProxyPass /documentation/ !
+ProxyPass /favicon.ico !
+
+ProxyPass /greenwise http://localhost:8000/greenwise
+ProxyPassReverse /greenwise http://localhost:8000/greenwise
+ProxyPass /gridlight  http://localhost:8000/gridlight
+ProxyPassReverse /gridlight http://localhost:8000/gridlight
+ProxyPass /changes  http://localhost:8000/changes
+ProxyPassReverse /changes http://localhost:8000/changes
+
+ProxyPass /birt  http://localhost:8000/birt
+ProxyPassReverse /birt http://localhost:8000/birt
+
+#Keep old urls for GridLight App
+ProxyPass /services/gw  http://localhost:8000/greenwise/rs
+ProxyPassReverse /services/gw http://localhost:8000/greenwise/rs
+ProxyPass /services/gl  http://localhost:8000/gridlight/rs
+ProxyPassReverse /services/gl http://localhost:8000/gridlight/rs
+
+#OpenCity
+#ProxyPass /a  http://localhost:8000/aasweb
+#ProxyPassReverse /a http://localhost:8000/aasweb
+ProxyPass /aasweb  http://localhost:8000/aasweb
+ProxyPassReverse /aasweb http://localhost:8000/aasweb
+ProxyPass /aasweb3  http://localhost:8000/aasweb3
+ProxyPassReverse /aasweb3 http://localhost:8000/aasweb3
+ProxyPass /startgrid  http://localhost:8000/startgrid
+ProxyPassReverse /startgrid http://localhost:8000/startgrid
+ProxyPass /aasws http://localhost:8000/aasws
+ProxyPassReverse /aasws http://localhost:8000/aasws
+ProxyPass /api http://localhost:8000/aasws
+ProxyPassReverse /api http://localhost:8000/aasws
+ProxyPass /sso http://localhost:8000/sso
+ProxyPassReverse /sso http://localhost:8000/sso
+ProxyPass /glams http://localhost:8000/glams
+ProxyPassReverse /glams http://localhost:8000/glams
+ProxyPass /glio http://localhost:8000/glio
+ProxyPassReverse /glio http://localhost:8000/glio
+
+#exporting-server
+ProxyPass /exporting-server http://localhost:8000/highcharts-export-web
+ProxyPassReverse /exporting-server http://localhost:8000/highcharts-export-web
+
+#Common-ui
+ProxyPass /common-ui http://localhost:8000/common-ui
+ProxyPassReverse /common-ui http://localhost:8000/common-ui
+
+#Checkmark
+ProxyPass /cm-listener http://localhost:30005
+ProxyPassReverse /cm-listener http://localhost:30005
+
+#ProxyPass / http://localhost:8000/common-ui
+#ProxyPassReverse / http://localhost:8000/common-ui
+

@@ -1,1 +1,2 @@
-/opt/toolchain/utils/scripts/bin/amp-glindex
+#!/bin/sh
+MAKEGLIMPSEINDEX=0 exec amp-glindex "$@"

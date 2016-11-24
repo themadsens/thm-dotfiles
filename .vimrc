@@ -23,6 +23,7 @@ syntax on
 filetype plugin indent on
 augroup filetypedetect
 autocmd BufEnter *.r set ft=xdefaults
+autocmd BufEnter .gitignore set ft=config
 autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
 augroup END
 
@@ -219,6 +220,7 @@ nmap F     :files<CR>
 nmap !Q    :bwipeout!<CR>
 nmap Q     :call PrevBuf(1)<CR>
 nmap gQ    :call PrevBuf(0)<CR>
+nmap gp    :call PrevBuf(0)<CR>
 "nmap !Q    :call PrevBuf(1,"!")<CR>
 nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
@@ -257,6 +259,8 @@ imap <S-Left>   <Esc>
 imap <S-Right>  <Esc>
 imap <S-Up>     <Esc>
 imap <S-Down>   <Esc>
+let g:ftplugin_sql_omni_key_right = '<C-C><Right>'
+let g:ftplugin_sql_omni_key_left  = '<C-C><Left>'
 
 " Movement with "2x3" block navigation keys. Customize to your liking
 nnoremap <PageUp>   <C-U>
@@ -575,8 +579,12 @@ autocmd Private BufReadPost * 1
 
 function! PrevBuf(closeThis, ...)
 
+
    if a:closeThis && &buftype != ""
       exe "bdelete" . (a:0 > 0 ? a:1 : "")
+      return
+   elseif a:closeThis && get(get(get(getbufinfo(winbufnr(winnr('$'))), 0, {}), 'variables', {}), 'current_syntax', '') == 'qf'
+      exe "bdelete " . winbufnr(winnr('$'))
       return
    endif
 
@@ -784,7 +792,7 @@ func! AgSearch(pattern, wordwise)
    let &grepprg = sgSave
    call histadd("cmd", "Search".(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
    exe "cd ".fnameescape(pwd)
-   let &ro = &ro "Force statusline update (See :help CursorHold)
+   redraw!
 endfunc
 nmap              gs      :call AgSearch("<C-R><C-W>", 1)<CR>
 vmap              gs      :call AgSearch(VisVal(), 0)<CR>
@@ -793,7 +801,6 @@ command! -nargs=1 SearchW  call AgSearch("<args>", 1)
 
 func! OpenSpec(str)
    let Str = a:str
-   let g:GlimpsePath = b:GlimpsePath
    exe "edit ".Str
    call histadd("cmd", "edit ".Str)
 endfunction
@@ -928,6 +935,9 @@ Stl
 " referenced from your 'statusline'
 function! VimBuddy()
     " Take a copy for others to see the messages
+    if ! exists("s:actual_curbuf")
+       return ":-)"
+    endif
     if ! exists("s:vimbuddy_msg")
         let s:vimbuddy_msg = v:statusmsg
     endif

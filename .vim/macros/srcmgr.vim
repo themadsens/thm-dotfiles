@@ -36,19 +36,7 @@ func! SrcmgrInit()
 		if     b:vimedname =~ "CMN::" | let Command = "Common "
 		elseif b:vimedname =~ "GRP::" | let Command = "Grep "
 		elseif b:vimedname =~ "GLM::" || b:vimedname =~ "GLW::"
-                    if 0 
-                     if exists("g:GlimpsePath")
-                        let Command = "glimpse-tt -H ".g:GlimpsePath." "
-                        exe "setlocal path+=".g:GlimpsePath
-                        let b:GlimpsePath = g:GlimpsePath
-                     else
-                        let Command = "amp-glimpse "
-                        let b:GlimpsePath = FindDir(".glimpse_index", "./;")
-                        exe "setlocal path+=".b:GlimpsePath
-                     endif
-                   else
-                     let Command = "ag --vimgrep "
-                   endif
+                   let Command = "ag --vimgrep "
 		   if b:vimedname =~ "GLW::" 
 		      let Command = Command."-w "
 		   endif
