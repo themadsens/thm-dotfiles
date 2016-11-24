@@ -1,5 +1,6 @@
 # [ -n "$DISPLAY" ] && export TERM=xterm-color
 SHELL=$BASH
+export LC_CTYPE=en_US.UTF-8
 umask 022
 
 if [ -n "$PS1" ] ;then
@@ -84,7 +85,11 @@ if [ -n "$PS1" ] ;then
    alias gitappend="git commit -a --amend -C HEAD"
    alias gitst="    git status"
    alias gitcommit="git add \* ; git commit"
-   gitdiff() { R=$1; shift; git diff ${R}^..$R "$@"; }
+   gitdiff() {
+      REV=''
+      [[ $# > 0 && "$1" != -* ]] && REV=${1}^..${1}; shift;
+      git diff -b $REV "$@";
+   }
    gitup() {
       echo -e "Stashing .. \c"
       git stash save --include-untracked __GITGET__
@@ -95,7 +100,6 @@ if [ -n "$PS1" ] ;then
          git stash pop
       fi
    }
-
 
    GRC=`which grc`
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
@@ -148,7 +152,8 @@ if [ -n "$PS1" ] ;then
 
    exit() {
       [[ "$SSH_CONNECTION" ]] && builtin exit "$@"
-      read -t 60 -p "Really exit? [y/N] " ans
+      [[ "$_" = */XMenu/* ]] && sleep 1 && builtin exit
+      read -n 1 -t 10 -p "Really exit. Exits in 10 sec? [y/N] " ans
       [[ "$ans" = [yY]* || $? -gt 128 ]] && builtin exit "$@"
       echo "Phew!"
    }
@@ -247,6 +252,7 @@ if [ -n "$PS1" ] ;then
    }
    alias hi="history|tail"
    alias hist="history"
+   alias hgrep="history|grep"
    run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
    __run() {
       mapfile -t COMPREPLY < <(ls -1d /Applications/{,*/}*.app | \
