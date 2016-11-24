@@ -583,7 +583,7 @@ function! PrevBuf(closeThis, ...)
    if a:closeThis && &buftype != ""
       exe "bdelete" . (a:0 > 0 ? a:1 : "")
       return
-   elseif a:closeThis && get(get(get(getbufinfo(winbufnr(winnr('$'))), 0, {}), 'variables', {}), 'current_syntax', '') == 'qf'
+   elseif a:closeThis && getbufvar(winbufnr(winnr('$')), 'current_syntax') == 'qf'
       exe "bdelete " . winbufnr(winnr('$'))
       return
    endif
