@@ -206,11 +206,11 @@ vnoremap gu u
 vnoremap gU U
 
 " For running edit-compile-edit (quickfix)
-nmap <Esc>n :cnext<CR>
-nmap <Esc>l :clist<CR>
-nmap <Esc>c :cc<CR>
-nmap <Esc>p :cprevious<CR>
-nmap <Esc>m :Make<CR>
+nmap `n :cnext<CR>
+nmap `l :clist<CR>
+nmap `c :cc<CR>
+nmap `p :cprevious<CR>
+nmap `m :Make<CR>
 
 " Various utility keys
 nmap (     :bprev<CR>
