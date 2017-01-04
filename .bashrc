@@ -100,6 +100,15 @@ if [ -n "$PS1" ] ;then
          git stash pop
       fi
    }
+   gitdcommit() {
+      echo -e "Stashing .. \c"
+      git stash save --include-untracked __GITSDC__
+      git svn dcommit
+      if git stash list | grep -q __GITSDC__ ;then
+         echo -e "Unstash .. \c"
+         git stash pop
+      fi
+   }
 
    GRC=`which grc`
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then

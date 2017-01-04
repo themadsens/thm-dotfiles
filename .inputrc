@@ -11,7 +11,7 @@ set completion-ignore-case on
 set completion-query-items 10000
 
 # Bindings - make it somewhat more like tcsh
-"\C-r": redraw-current-line
+"\C-z": redraw-current-line
 "\C-d": delete-char-or-list
 
 # Menu completion on Shift-TAB go back with Shift-F1 or F1
