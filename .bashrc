@@ -299,12 +299,11 @@ if [ -n "$PS1" ] ;then
    }
 
    sshwrap() {
-      local Cmd Host CmdU
+      local Cmd Host
       Cmd=$1 ; shift
       if test -t 1 ;then
-         Host=$(command ssh -o 'ProxyCommand=echo %h >/dev/fd/9' -o ControlPath=none "$@" 9>&1 2>&-)
-         CmdU=$(tr a-z A-Z <<<$Cmd)
-         itit "$Tty - $CmdU $Host"
+         Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@"; cat /tmp/__H; rm -f /tmp/__H)
+         itit "$Tty => $(tr a-z A-Z <<< $Host)"
       fi
       command $Cmd "$@"
    }
