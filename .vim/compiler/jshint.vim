@@ -3,5 +3,5 @@ if exists("current_compiler")
 endif
 let current_compiler = "jshint"
 
-CompilerSet errorformat=%f:\ line\ %l\\,\ col\ %c\\,\ %m,
+CompilerSet errorformat=\\[\\d\\d:\\d\\d:\\d\\d\\]%+G,%f:\ line\ %l\\,\ col\ %c\\,\ %m,
       \%D%*\\S\ Working\ directory\ changed\ to\ %f

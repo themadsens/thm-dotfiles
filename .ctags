@@ -1,3 +1,6 @@
+#--exclude=@.agignore
+--extra=+fq
+
 --langdef=kotlin
 --langmap=kotlin:.kt
 --langmap=kotlin:+.kts
@@ -12,3 +15,16 @@
 --regex-kotlin=/^[ \t]*package[ \t]+([a-zA-Z0-9_.]+)/\1/p,packages/
 --regex-kotlin=/^[ \t]*import[ \t]+([a-zA-Z0-9_.]+)/\1/p,imports/
 
+--langdef=js
+--langmap=js:.js
+--regex-js=/\.controller *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-js=/\.filter *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-js=/\.factory *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-js=/\.service *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-js=/\.directive *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
+--regex-js=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
+--regex-js=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*\(/\5/f,function/
+--regex-js=/function[ \t]+([A-Za-z0-9_$]+)[ \t]*\([^)]*\)/\1/f,function/
+--regex-js=/^let[ \t]([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/c,constant/
+--regex-js=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/c,constant/
+--regex-js=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/c,constant/

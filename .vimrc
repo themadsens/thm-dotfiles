@@ -75,7 +75,7 @@ else
       exe "setglobal t_kh=\e[1~"
    else
       setglobal directory=/var/preserve//
-      setglobal grepprg=ag\ --vimgrep\ $*
+      setglobal grepprg=ag\ --vimgrep\ --follow\ $*
       set grepformat=%f:%l:%c:%m
       if has("gui_running")
          let &guifont="Bitstream Vera Sans Mono 8"
@@ -351,14 +351,15 @@ augroup end
 
 function! BufEnterGlobalOpts()
    " Avoid '#-in-1.-column' problem with cindent & smartindent
-   if &filetype == 'c' || &filetype == 'cpp'
+   let ft = &filetype
+   if ft=='c' || ft=='cpp' || ft=='arduino'
       inoremap # #
       " Dont highligh this as an error
       hi link cCommentStartError Comment
    else
       inoremap # X<BS>#
    endif
-   if &filetype == 'java'
+   if ft == 'java'
       nmap [[ [m
       nmap ]] ]m
       nmap gd "zyiw[m/\<<C-R>z\><CR>
@@ -388,18 +389,19 @@ let g:used_javascript_libs = 'underscore,angularjs'
 
 function! SetFileTypeOpts()
    let ft = &filetype
+   " echomsg 'FILETYPE: '.ft
    if index(["tcl","poststr"], ft) >= 0
       setlocal nocindent smartindent
       inoremap # X<BS>#
    else
       inoremap # #
    endif
-   if index(["c","cpp","java","jsp"], ft) >= 0
+   if index(["c","cpp","arduino","java","jsp"], ft) >= 0
       setlocal cindent
       " Match open brace above )
       setlocal cinoptions=(0,w1,u0,:1,=2
    endif
-   if index(["tcl","postscr","c","cpp","java","jsp"], ft) >= 0
+   if index(["tcl","postscr","c","cpp","arduino","java","jsp"], ft) >= 0
       " NO autowrap while typing in source code files
       setlocal formatoptions-=t
       setlocal sw=4 ts=4
@@ -645,7 +647,7 @@ function! SvnDiff(f)
          let tmp = tempname()
          exe "write ".fnameescape(tmp)
          if git
-            call system("git show HEAD:./".f." > ".shellescape(tmp.".orig"))
+            call system("git show HEAD:".f." > ".shellescape(tmp.".orig"))
          else
             call system("svn cat ".shellescape(fnamemodify(f, ":p"))." > ".shellescape(tmp.".orig"))
          endif
@@ -706,8 +708,8 @@ nmap gkb :SvnBlame<CR>
 " Extra vim stuff
 " 
 
-map `h <Plug>jdocConvertHere
-map `c <Plug>jdocConvertCompact
+map `jh <Plug>jdocConvertHere
+map `jc <Plug>jdocConvertCompact
 
 nmap <F2> :call SetCHdr()<CR>
 
@@ -786,9 +788,10 @@ func! AgSearch(pattern, wordwise)
    if exists("b:searchroot")
       exe "cd ".fnameescape(b:searchroot)
    endif
-   let &grepprg = 'ag --vimgrep '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
-   exe "silent lgrep! ".shellescape(a:pattern, 1)
-   lwindow 30
+   let ign = filereadable(".agignore") ? " -U -p .agignore" : ""
+   let &grepprg = 'ag'.ign.' --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
+   exe "silent grep! ".shellescape(a:pattern, 1)
+   cwindow 30
    let &grepprg = sgSave
    call histadd("cmd", "Search".(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
    exe "cd ".fnameescape(pwd)
