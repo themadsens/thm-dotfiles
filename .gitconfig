@@ -1,8 +1,8 @@
 [push]
 	default = matching
 [user]
-	name = 
-	email = 
+	name = Flemming Madsen
+	email = flemming@themadsens.dk
 [core]
 	excludesfile = /Users/fm/.gitignore_global
 [difftool "sourcetree"]
