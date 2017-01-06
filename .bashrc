@@ -8,6 +8,10 @@ if [ -n "$PS1" ] ;then
    unalias -a
    source /etc/profile 
 
+   if [[ $TERM != *color* && "$COLORTERM" ]] ;then
+      export TERM=xterm-256color
+   fi
+
    if [[ $PATH != $HOME/bin:* ]] ;then
        PATH=$HOME/bin:$HOME/bin2:/usr/local/bin:/opt/local/bin:$PATH
    fi
@@ -124,6 +128,16 @@ if [ -n "$PS1" ] ;then
 
    diff() { colorize diff -u "$@"; }
    df()   { colorize df -k "$@"; }
+
+   # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
+   fixkbd() { 
+      #setxkbmap -option caps:none;
+      xcape -e 'Caps_Lock=Control_L|G';
+      xmodmap -e 'keysym Control_R = Mode_switch';
+   }
+   tpfan() {
+      sudo ~/bin2/tp-fancontrol -s 5 -S 2 -l -d
+   }
 
    export SVN=svn+ssh://ampsvn/srv/ampep
    svnlast()   { if [[ $# -ge 1 ]] ;then svnlog -p -l 25 "$@" ;else svnlog -p -a $USER -l 25 ;fi; }
