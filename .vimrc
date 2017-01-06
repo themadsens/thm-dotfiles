@@ -431,6 +431,9 @@ function! SetFileTypeOpts()
      compiler jshint
      setlocal sw=2 ts=2
    end
+   if filereadable(findfile("_vimrc", ".;"))
+      exe "source ".fnameescape(findfile("_vimrc", ".;"))
+   end
 endfunc
 
 function! SetBufferOpts()
@@ -920,6 +923,20 @@ function! TmuxReload()
    endfor
 endfunc
 command! TmuxReload call TmuxReload()
+
+function! Menu(i)
+   source $VIMRUNTIME/menu.vim
+   set wildmenu
+   set cpo-=<
+   set wcm=<C-Z>
+   map <F4> :emenu <C-Z>
+   if a:i
+      echom "You can now use <F4> to bring up the menu"
+      "call feedkeys("\<F4>")
+   end
+endfunc
+call Menu(0)
+command! Menu call Menu(1)
 
 setglobal statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
               \%{VarExists(',GZ','b:zipflag')},%1*%{CaseStat()}%*]%)\ %02c%V(%02B)C\ %3l/%LL\ %P
