@@ -331,8 +331,16 @@ if &term == "ansi" || &term == "console" || &term == "linux"
    hi statusLineNC ctermfg=black ctermbg=yellow
 endif
 
+function! Tjump(tag)
+   let [tagnm, lineno] = split(a:tag, ':')
+   exe 'tjump '.tagnm
+   if lineno
+      exe lineno
+   end
+endfunction
+
 " Use :T instead of :ta to see file names in ^D complete-lists
-command! -complete=tag_listfiles -nargs=1 T tjump <args>|
+command! -complete=tag_listfiles -nargs=1 T call Tjump("<args>")|
                                            \call histadd("cmd", "T <args>")
 
 " File type dependent settings
