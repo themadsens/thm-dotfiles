@@ -32,6 +32,15 @@ let g:tagbar_autofocus = 1
 let g:tagbar_sort = 0
 let g:tagbar_zoomwidth = 0
 let g:tagbar_type_lua = { 'replace': 1, 'ctagstype': 'MYLUA', 'kinds': [ 'f:functions', 'c:constants', ] }
+let g:tagbar_type_javascript = { 'replace': 1,
+    \ 'kinds' : [
+        \ 'v:globals',
+        \ 'c:classes',
+        \ 'p:properties',
+        \ 'm:methods',
+        \ 'f:functions',
+    \ ],
+\ }
 nmap <F3> :TagbarToggle<CR>
 
 setglobal tags=/opt/toolchain/include/tags,/usr/include/tags

@@ -15,19 +15,17 @@
 --regex-kotlin=/^[ \t]*package[ \t]+([a-zA-Z0-9_.]+)/\1/p,packages/
 --regex-kotlin=/^[ \t]*import[ \t]+([a-zA-Z0-9_.]+)/\1/p,imports/
 
---langdef=js
---langmap=js:.js
---regex-js=/\.controller *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-js=/\.filter *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-js=/\.factory *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-js=/\.service *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-js=/\.directive *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
---regex-js=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
---regex-js=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*\(/\5/f,function/
---regex-js=/function[ \t]+([A-Za-z0-9_$]+)[ \t]*\([^)]*\)/\1/f,function/
---regex-js=/^let[ \t]([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/c,constant/
---regex-js=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/c,constant/
---regex-js=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/c,constant/
+--regex-javascript=/\.controller *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-javascript=/\.filter *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-javascript=/\.factory *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-javascript=/\.service *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
+--regex-javascript=/\.directive *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
+--regex-javascript=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
+-I-regex-javascript=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*\(/\5/f,function/
+--regex-javascript=/^ +function[ \t]+([A-Za-z0-9_$]+)[ \t]*\([^)]*\)/\1/f,function/
+--regex-javascript=/^let[ \t]([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
+--regex-javascript=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
+--regex-javascript=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 
 
 --langdef=markdown
