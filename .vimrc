@@ -338,10 +338,10 @@ if &term == "ansi" || &term == "console" || &term == "linux"
 endif
 
 function! Tjump(tag)
-   let [tagnm, lineno] = split(a:tag, ':')
-   exe 'tjump '.tagnm
-   if lineno
-      exe lineno
+   let tagnm = split(a:tag, ':')
+   exe 'tjump '.tagnm[0]
+   if len(tagnm) > 1
+      exe tagnm[1]
    end
 endfunction
 
@@ -443,6 +443,7 @@ function! SetFileTypeOpts()
       setlocal sw=2 ts=2
    elseif ft == "javascript"
      compiler jshint
+     setlocal formatoptions-=t
      setlocal sw=2 ts=2
    end
    if filereadable(findfile("_vimrc", ".;"))
