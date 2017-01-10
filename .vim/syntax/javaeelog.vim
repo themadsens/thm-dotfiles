@@ -28,7 +28,7 @@ syn keyword LogWarn   contained containedin=LogLead WARN WARNING
 syn keyword LogError  contained containedin=LogLead ERROR SEVERE FATAL
 syn match ExceptError         "An error occurred at line: *[0-9]*[^:]*:.*"
 syn match ExceptCausedBy      "^Caused by:.*"
-syn match ExceptAmplex        "amplex"
+syn keyword ExceptAmplex      amplex Amplex WebException
 syn match WildflyStartStop    /^ .\+WildFly \S\+ "Tweek".\+/hs=s+1
 syn match WildflyErrors contained containedin=WildflyStartStop "(with errors)"
 
