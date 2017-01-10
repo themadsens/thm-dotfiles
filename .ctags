@@ -43,7 +43,7 @@
 --languages=-Lua
 --langdef=MYLUA
 --langmap=MYLUA:.lua
---regex-MYLUA=/^\s*function\s*(\w+):(\w+)\(.*$/\2/f,function/
+--regex-MYLUA=/^\s*function\s*(\w+)[:.](\w+)\(.*$/\2/f,function/
 --regex-MYLUA=/^\s*function\s*(\w+)\(.*$/\1/f,function/
 --regex-MYLUA=/^\s*local\s+function\s*(\w+):(\w+)\(.*$/\2/f,function/
 --regex-MYLUA=/^\s*local\s+function\s*(\w+)\(.*$/\1/f,function/
