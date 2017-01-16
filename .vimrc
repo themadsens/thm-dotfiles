@@ -222,11 +222,11 @@ vnoremap gu u
 vnoremap gU U
 
 " For running edit-compile-edit (quickfix)
-nmap `n :cnext<CR>
-nmap `l :clist<CR>
-nmap `c :cc<CR>
-nmap `p :cprevious<CR>
-nmap `m :Make<CR>
+nmap gn :cnext<CR>
+nmap gl :clist<CR>
+nmap gc :cc<CR>
+nmap gp :cprevious<CR>
+nmap gm :Make<CR>
 
 " Various utility keys
 nmap (     :bprev<CR>
@@ -236,7 +236,6 @@ nmap F     :files<CR>
 nmap !Q    :bwipeout!<CR>
 nmap Q     :call PrevBuf(1)<CR>
 nmap gQ    :call PrevBuf(0)<CR>
-nmap gp    :call PrevBuf(0)<CR>
 "nmap !Q    :call PrevBuf(1,"!")<CR>
 nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
@@ -596,13 +595,22 @@ function! MakePrg(mkArg)
       endif
    endif
    echomsg "make ".makeArgs." in: ".getcwd()." with: '".&makeprg."'"
-   exe "make ".makeArgs
+   exe "silent make ".makeArgs
+   redraw!
    if exists("oldwd")
       exe "cd ".fnameescape(oldwd)
-  endif
+   endif
 endfunc
 command! -nargs=* Make call MakePrg("<args>")
 command! -nargs=* Mvn compiler mvn | call MakePrg("<args>")
+function! MakePrgPost()
+   if len(getqflist()) > 0
+      cwindow
+   else
+      cclose
+   endif
+endfunc
+au! QuickfixCmdPost make call MakePrgPost()
 
 " Ensure --remote loads adds to the jumplist
 autocmd Private BufReadPost * 1
@@ -740,11 +748,6 @@ map `jh <Plug>jdocConvertHere
 map `jc <Plug>jdocConvertCompact
 
 nmap <F2> :call SetCHdr()<CR>
-
-map gy "*y
-map gp "*p
-map g]p "*]p
-map g[P "*[P
 
 function! SetCHdr()
    call append(0, ["/**",
