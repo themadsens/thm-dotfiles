@@ -605,7 +605,7 @@ command! -nargs=* Make call MakePrg("<args>")
 command! -nargs=* Mvn compiler mvn | call MakePrg("<args>")
 function! MakePrgPost()
    if len(getqflist()) > 0
-      cwindow
+      cwindow | cnext | cprevious | redraw
    else
       cclose
    endif
