@@ -425,7 +425,6 @@ if [ -n "$PS1" ] ;then
       #keychain --quiet ~/.ssh/id_dsa
       eval `keychain --quiet --eval`
       #alias kcload='eval `keychain --quiet --eval`'
-      alias squid-ssh-keys='ssh-add ~/.ssh/nopf/*'
    fi
 
    if [[ -d /opt/toolchain/. ]] ;then
