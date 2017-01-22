@@ -51,6 +51,7 @@ if [ -n "$PS1" ] ;then
    }
    PS1="[$(__col 1)\h $(__col 2)\W$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
    NOTTPS1=$PS1
+   [[ "$(type -p dircolors)" ]] && eval `dircolors`
    # eval `dircolors ~/.dircolors`
 
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
@@ -60,6 +61,7 @@ if [ -n "$PS1" ] ;then
    alias v='      vimless'
    alias m='      mark'
    alias ll='     ls -la'
+   alias tree='   tree -uph'
    if [[ $(uname -s) = Darwin ]] ;then
       alias ls='  ls -G'
    else
