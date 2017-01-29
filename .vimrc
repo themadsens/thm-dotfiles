@@ -454,6 +454,8 @@ function! SetFileTypeOpts()
      compiler jshint
      setlocal formatoptions-=t
      setlocal sw=2 ts=2
+   elseif ft == "python"
+     setlocal sw=2 ts=2 noet
    end
    if filereadable(findfile("_vimrc", ".;"))
       exe "source ".fnameescape(findfile("_vimrc", ".;"))
