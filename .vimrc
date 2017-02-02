@@ -662,6 +662,9 @@ function! SvnDiff(f)
       let f = bufname("%")
    endif
    let bufname = "DIFF::".f
+   let f = resolve(fnamemodify(f, ":p"))
+   let cd = "cd ".shellescape(fnamemodify(f, ":h")).";"
+   let fn = fnamemodify(f, ":t")
   
    let curbuf = bufnr("%")
    exe "edit ".bufname
@@ -673,7 +676,7 @@ function! SvnDiff(f)
 
    let diff="svn diff "
    let git=0
-   call system("git log -1")
+   call system(cd."git log -1")
    if v:shell_error == 0
       let diff="git diff HEAD "
       let git=1
@@ -685,16 +688,16 @@ function! SvnDiff(f)
          let tmp = tempname()
          exe "write ".fnameescape(tmp)
          if git
-            call system("git show HEAD:".f." > ".shellescape(tmp.".orig"))
+            call system(cd."git show HEAD:".fn." > ".shellescape(tmp.".orig"))
          else
-            call system("svn cat ".shellescape(fnamemodify(f, ":p"))." > ".shellescape(tmp.".orig"))
+            call system(cd."svn cat ".shellescape(fn)." > ".shellescape(tmp.".orig"))
          endif
          let cmd = "diff -u ".shellescape(tmp.".orig")." ".shellescape(tmp)." ; rm ".shellescape(tmp)."{,.orig}"
       endif
       exe "buffer ".curbuf
    endif
    if !exists("cmd")
-      let cmd = diff.shellescape(fnamemodify(f, ":p"))
+      let cmd = cd.diff.shellescape(fn)
    endif
    " echom "F: '".f."' CMD: '".cmd."'"
    exe "buffer ".tmpbuf
@@ -745,9 +748,8 @@ nmap gkb :SvnBlame<CR>
 "
 " Extra vim stuff
 " 
-
-map `jh <Plug>jdocConvertHere
-map `jc <Plug>jdocConvertCompact
+map gjh <Plug>jdocConvertHere
+map gjc <Plug>jdocConvertCompact
 
 nmap <F2> :call SetCHdr()<CR>
 
