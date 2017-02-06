@@ -1,0 +1,2 @@
+#!/bin/bash
+exec java -jar /Applications/Develco\ Products/SmartAMM\ Developer\ Utility\ Internal/Develco\ SmartAMM\ Developer\ Utility.jar 
