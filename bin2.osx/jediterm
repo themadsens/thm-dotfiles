@@ -1,0 +1,2 @@
+#!/bin/sh
+open /Users/fm/stuff/jediterm/.gradleBuild/JediTerm/macApp/JediTerm.app
