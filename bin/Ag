@@ -1,0 +1,17 @@
+#!/bin/bash
+# vim: set sw=3 sts=3 et:
+
+atTags() {
+    while true ;do
+       if [ -r tags ] ;then
+          echo "Searching from `pwd`:"
+          ag "$@"
+          return 0
+       fi
+       [ `pwd` = '/' ] && return 1
+       cd ..
+    done
+}
+
+( atTags "$@" ) || exit
+ag "$@"
