@@ -1,0 +1,24 @@
+#!/bin/bash
+
+NODE=1209
+CMD=''
+
+case $1 in 
+	on|1) CMD=on; shift;;
+	off|0) CMD=off; shift;;
+esac
+
+case $1 in 
+	ka*) NODE=1210 ;;
+	k*ld*) NODE=1209 ;;
+esac
+
+if [ "$CMD" ] ;then
+	curl -k -s -w 'RES: %{http_code}\n' -u amplexfm:ccswe124 -XPUT -H 'content-type: application/json' \
+					"https://demo.gridlight.dk/gridlight/rs/segment/action/${NODE}?action=${CMD}&password=ccswe124"
+else
+	curl -k -s -w 'GET: %{http_code}\n' -u amplexfm:ccswe124 -XGET -H 'content-type: application/json' \
+			"https://demo.gridlight.dk/gridlight/rs/segment/below/${NODE}" \
+			-o /tmp/light-state.out
+	cat /tmp/light-state.out | tr , '\012' | grep '"state"' | cut -d: -f2 | sed 's/"//g'
+fi
