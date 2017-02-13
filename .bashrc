@@ -12,8 +12,8 @@ if [ -n "$PS1" ] ;then
       export TERM=xterm-256color
    fi
 
-   if [[ $PATH != $HOME/bin:* ]] ;then
-       PATH=$HOME/bin:$HOME/bin2:/usr/local/bin:/opt/local/bin:$PATH
+   if [[ $PATH != $HOME/bin3:* ]] ;then
+       PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:$PATH
    fi
 
    for f in bash_completion ;do
