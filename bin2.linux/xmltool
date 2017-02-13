@@ -1,0 +1,11 @@
+#!/bin/bash
+LUADIR=${LUA_CPATH%/?.so}
+LUADIR=${LUADIR##*;}
+AGENTDIR=${LUADIR%/lua}
+case ${0##*/} in
+	xmltool) exec $AGENTDIR/libs/scripts/xmltool "$@" ;;
+	damdecode) exec $AGENTDIR/libs/scripts/damdecode "$@" ;;
+	xmlacsend) exec $AGENTDIR/messageswitch/xmlacsend/xmlacsend "$@" ;;
+esac
+echo "No such alias (yet)"
+exit 1
