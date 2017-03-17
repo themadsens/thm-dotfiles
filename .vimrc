@@ -431,7 +431,7 @@ function! SetFileTypeOpts()
    endif
    if index(["java","jsp"], ft) >= 0
       " Ampep java settings
-      setlocal sw=2 ts=2
+      setlocal sw=2 ts=2 et
       compiler mvn
       setlocal includeexpr=JspPath(v:fname)
       setlocal cinkeys-=:
@@ -439,21 +439,21 @@ function! SetFileTypeOpts()
    if ft == "sh"
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--') 
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
-      setlocal sw=4 ts=4
+      setlocal sw=4 ts=4 et
    elseif ft == "java"
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
    elseif ft == "lua"
       call TextEnableCodeSnip('c', 'cdef\[\[', '\]\]') |
-      setlocal sw=4 ts=4
+      setlocal sw=4 ts=4 et
    elseif ft == "jsp"
       call TextEnableCodeSnip('javascript', '<script type=.text/javascript.>', '</script>') |
    elseif ft == "xml"
       call TextEnableCodeSnip('sql', '<sql>', '</sql>') |
-      setlocal sw=2 ts=2
+      setlocal sw=2 ts=2 et
    elseif ft == "javascript"
      compiler jshint
      setlocal formatoptions-=t
-     setlocal sw=2 ts=2
+     setlocal sw=2 ts=2 et
    elseif ft == "python"
      setlocal sw=2 ts=2 noet
    end
@@ -656,23 +656,26 @@ function! PrevBuf(closeThis, ...)
    endif
 endf
 
+function! s:PrivBuf(name, ft)
+   exe "edit ".a:name
+   setlocal buftype=nofile
+   setlocal bufhidden=hide
+   setlocal noswapfile
+   exe "set filetype=".a:ft
+endfunc
+
 function! SvnDiff(f)
    let f = a:f
    if f == ""
       let f = bufname("%")
    endif
-   let bufname = "DIFF::".f
    let f = resolve(fnamemodify(f, ":p"))
    let cd = "cd ".shellescape(fnamemodify(f, ":h")).";"
    let fn = fnamemodify(f, ":t")
-  
+
    let curbuf = bufnr("%")
-   exe "edit ".bufname
+   call s:PrivBuf("DIFF::".f, "diff")
    let tmpbuf = bufnr("%")
-   setlocal buftype=nofile
-   setlocal bufhidden=hide
-   setlocal noswapfile
-   set filetype=diff
 
    let diff="svn diff "
    let git=0
@@ -713,15 +716,36 @@ function! SvnBlame(f)
    if f == ""
       let f = bufname("%")
    endif
-   let bufname = "AUTH::".f
+   let f = resolve(fnamemodify(f, ":p"))
+   let cd = "cd ".shellescape(fnamemodify(f, ":h")).";"
+   let fn = fnamemodify(f, ":t")
+   call s:PrivBuf("BLAME::".f, "".&ft)
   
-   let curbuf = bufnr("%")
-   exe "edit ".bufname
-   let tmpbuf = bufnr("%")
-   setlocal buftype=nofile
-   setlocal bufhidden=hide
-   setlocal noswapfile
-   set filetype=diff
+   let cmd=cd."sh -c ".shellescape("git annotate '".fn."'|cut -c3-9,11-14,26-42,52-|expand -1|sed 's/[0-9]*)//'")
+   call system("git svn info")
+   if v:shell_error == 0
+      let cmd=cd."git svn blame ".shellescape(fn)
+   else
+      call system("svn info")
+      if v:shell_error == 0
+         let cmd=cd."svn blame ".shellescape(fn)
+      endif
+   endif
+  
+   "echom "F: '".f."' CMD: '".cmd."'"
+   exe "normal S-- BLAME: ".f
+   exe "read !".cmd 
+   exe "1"
+endfunc
+command! -nargs=? -complete=buffer SvnBlame call SvnBlame(<q-args>)
+nmap gkb :SvnBlame<CR>
+
+function! SvnCommitInfo(id, ...)
+   let f = a:1
+   if f == ""
+      let f = bufname("%")
+   endif
+   call s:PrivBuf("COMMIT::".f, "diff")
 
    let cmd="sh -c ".shellescape('git blame $0 | cut -c1-9,10-14,28-43,53-')." "
    call system("git svn info")
@@ -736,13 +760,13 @@ function! SvnBlame(f)
   
    let cmd .= shellescape(fnamemodify(f, ":p"))
    echom "F: '".f."' CMD: '".cmd."'"
-   exe "buffer ".tmpbuf
    exe "normal S-- AUTH: ".f
    exe "read !".cmd 
    exe "1"
+
 endfunc
-command! -nargs=? -complete=buffer SvnBlame call SvnBlame(<q-args>)
-nmap gkb :SvnBlame<CR>
+command! -nargs=? -complete=buffer SvnCommitInfo call SvnCommitInfo(<q-args>)
+nmap gkc :SvnCommitInfo <C-R><C-W><CR>
 
 
 "
