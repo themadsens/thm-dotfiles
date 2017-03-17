@@ -318,7 +318,8 @@ if [ -n "$PS1" ] ;then
       local Cmd Host
       Cmd=$1 ; shift
       if test -t 1 ;then
-         Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@"; cat /tmp/__H; rm -f /tmp/__H)
+         Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@" 2>/dev/null;
+                cat /tmp/__H; rm -f /tmp/__H)
          itit "$Tty => $(tr a-z A-Z <<< $Host)"
       fi
       command $Cmd "$@"
