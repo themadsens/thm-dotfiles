@@ -439,6 +439,7 @@ function! SetFileTypeOpts()
    if ft == "sh"
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--') 
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
+      call TextEnableCodeSnip('javascript', '/\*JS\*/', '/\*EOF\*/') 
       setlocal sw=4 ts=4 et
    elseif ft == "java"
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
