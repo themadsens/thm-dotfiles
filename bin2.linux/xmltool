@@ -2,10 +2,15 @@
 LUADIR=${LUA_CPATH%/?.so}
 LUADIR=${LUADIR##*;}
 AGENTDIR=${LUADIR%/lua}
+export LD_LIBRARY_PATH
+for d in $AGENTDIR/libs/*/*.so ;do
+    LD_LIBRARY_PATH=${d%/*.so}:$LD_LIBRARY_PATH
+done
 case ${0##*/} in
 	xmltool) exec $AGENTDIR/libs/scripts/xmltool "$@" ;;
 	damdecode) exec $AGENTDIR/libs/scripts/damdecode "$@" ;;
 	xmlacsend) exec $AGENTDIR/messageswitch/xmlacsend/xmlacsend "$@" ;;
+    runlua) exec "$@" ;;
 esac
 echo "No such alias (yet)"
 exit 1
