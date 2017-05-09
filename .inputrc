@@ -30,7 +30,6 @@ $endif
 "\C-x\C-h": backward-kill-line
 "\C-x\C-s": reverse-search-history
 "\C-x\C-f": forward-search-history
-"\C-s": reverse-search-history
 #"\C-w": backward-kill-word
 "\C-w": unix-word-rubout
 "\ew": unix-filename-rubout
