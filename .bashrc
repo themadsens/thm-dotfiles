@@ -208,9 +208,11 @@ if [ -n "$PS1" ] ;then
          0) tmux ;;
          1) tmux attach ;;
          *)
-            tmux list-sessions 
-            read -n 1 -p "Select command: " N < /dev/tty > /dev/tty;
-            tmux attach -t $N
+            tmux list-sessions | awk '{print NR-1 ": " $0}'
+            read -n 1 -p "Select session: " N < /dev/tty > /dev/tty;
+            SES=`tmux list-sessions | awk -F: -v N=$N 'NR==N+1 {print $1}'`
+            echo "Session: $SES"
+            tmux attach -t "$SES"
             ;;
       esac
    }
