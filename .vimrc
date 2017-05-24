@@ -724,7 +724,7 @@ function! SvnBlame(f)
    let cmd=cd."sh -c ".shellescape("git annotate '".fn."'|cut -c3-9,11-14,26-42,52-|expand -1|sed 's/[0-9]*)//'")
    call system("git svn info")
    if v:shell_error == 0
-      let cmd=cd."git svn blame ".shellescape(fn)
+      let cmd="git svn blame ".shellescape(f)
    else
       call system("svn info")
       if v:shell_error == 0
@@ -732,7 +732,7 @@ function! SvnBlame(f)
       endif
    endif
   
-   "echom "F: '".f."' CMD: '".cmd."'"
+   echom "F: '".f."' CMD: '".cmd."'"
    exe "normal S-- BLAME: ".f
    exe "read !".cmd 
    exe "1"
