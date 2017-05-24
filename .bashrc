@@ -174,6 +174,7 @@ if [ -n "$PS1" ] ;then
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
    e()         { lua -e "print($*)"; }
    del()       { echo -e "$2 d\nw\nq" | ed -s $1; }
+   utf8kill()  { iconv -f utf8 -t ascii -c "$@"; }
 
    exit() {
       [[ "$SSH_CONNECTION" ]] && builtin exit "$@"
