@@ -56,6 +56,7 @@ if [ -n "$PS1" ] ;then
 
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
 
+   sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else xclip -o "$@" ;fi; }
    alias mark='echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
    alias v='      vimless'
@@ -74,11 +75,6 @@ if [ -n "$PS1" ] ;then
    alias rehash=" hash -r"
    alias sort='   LC_ALL=C sort'
    alias reload=' exec env PATH=/bin:/usr/bin bash'
-   if [[ $(uname -s) = Darwin ]] ;then
-      alias sel=' pbpaste'
-   else
-      alias sel=' xclip -o'
-   fi
    alias tsel='   tmux show-buffer'
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
@@ -174,7 +170,8 @@ if [ -n "$PS1" ] ;then
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
    e()         { lua -e "print($*)"; }
    del()       { echo -e "$2 d\nw\nq" | ed -s $1; }
-   utf8kill()  { iconv -f utf8 -t ascii -c "$@"; }
+   utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
+   utf8sel()   { sel | utf8kill; }
 
    exit() {
       [[ "$SSH_CONNECTION" ]] && builtin exit "$@"
