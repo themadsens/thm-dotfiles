@@ -446,7 +446,14 @@ function! SetFileTypeOpts()
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
    elseif ft == "lua"
       call TextEnableCodeSnip('c', 'cdef\[\[', '\]\]') |
-      setlocal sw=4 ts=4 et
+      setlocal sw=3 ts=3 et
+      syn match   luaFunc /\<seq\.map\>/
+      syn match   luaFunc /\<seq\.filter\>/
+      syn match   luaFunc /\<seq\.sort\>/
+      syn match   luaFunc /\<seq\.copy\>/
+      syn match   luaFunc /\<seq\.tpairs\>/
+      syn match   luaFunc /\<seq\.tipairs\>/
+      syn match   luaFunc /\<seq\.splice\>/
    elseif ft == "jsp"
       call TextEnableCodeSnip('javascript', '<script type=.text/javascript.>', '</script>') |
    elseif ft == "xml"
