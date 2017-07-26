@@ -6,11 +6,13 @@ cd bundle
     https://github.com/JalaiAmitahl/maven-compiler.vim
     https://github.com/junegunn/vim-easy-align
 #   https://github.com/pangloss/vim-javascript
-    https://github.com/othree/yajs.vim
+#   https://github.com/othree/yajs.vim
+    https://github.com/jelera/vim-javascript-syntax.git
     https://github.com/othree/javascript-libraries-syntax.vim
 	https://github.com/udalov/kotlin-vim
 	https://github.com/vim-scripts/dbext.vim
 	https://github.com/majutsushi/tagbar.git
+    https://github.com/tpope/vim-fugitive.git
 #	https://github.com/scrooloose/syntastic
 EOF
 ) | grep -v '^ *#'| \
