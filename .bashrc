@@ -371,23 +371,23 @@ if [ -n "$PS1" ] ;then
       [[ ! -n $timeRep ]] && return
       times > /tmp/.time$$
       local no timeStart cmd timeNow
-      timeNow=$(< /tmp/.time$$)
-      HISTTIMEFORMAT="%s "  history 1 > /tmp/.time$$
-      read no timeStart cmd < /tmp/.time$$
+      timeNow=$(tr ms\\012 '   ' < /tmp/.time$$)
+      timeStart=$(HISTTIMEFORMAT="%s "  history 1 | awk '{print $2}')
       if [[ -n $_timeprev ]] ;then
-         echo $_timeprev $timeNow | tr ms '  ' | awk '
-         {
+         local now=$(date +%s)
+         echo $_timeprev $timeNow | awk '{
+            duration = now - timeStart
             usrPrev = $5*60 + $6
             sysPrev = $7*60 + $8
             usrCur = $13*60 + $14
             sysCur = $15*60 + $16
-            total = (usrCur + sysCur) - (usrPrev + sysPrev)
+            total = (usrCur + sysCur)-(usrPrev + sysPrev)
             if (total >= timeRep) {
                printf("%.3fu %.3fs %d:%02d %.1f%%\n",
-                      usrCur - usrPrev, sysCur - sysPrev,
+                      usrCur-usrPrev, sysCur-sysPrev,
                       duration / 60, duration % 60, total / (duration?duration:total) * 100.0)
             }
-         }' timeRep=$timeRep duration=$(( $(date +%s) - $timeStart ))
+         }' timeRep=$timeRep now=$now timeStart=$timeStart
       fi
       _timeprev=$timeNow
       unset TIMESHOW

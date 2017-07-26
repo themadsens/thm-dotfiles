@@ -408,7 +408,7 @@ function! SetFileTypeOnLoad()
       endif
   endif
 endfunc
-let g:used_javascript_libs = 'underscore,angularjs'
+let g:used_javascript_libs = 'underscore,angularjs,jquery'
 
 function! SetFileTypeOpts()
    let ft = &filetype
@@ -440,6 +440,7 @@ function! SetFileTypeOpts()
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--') 
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
       call TextEnableCodeSnip('javascript', '/\*JS\*/', '/\*EOF\*/') 
+      call TextEnableCodeSnip('javascript', '#JS#', '#EOF#') 
       setlocal sw=4 ts=4 et
    elseif ft == "java"
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
@@ -794,6 +795,7 @@ function! SetCHdr()
    endif
 endfunction
 
+" From http://vim.wikia.com/wiki/VimTip857
 function! TextEnableCodeSnip(filetype,start,end) abort
   let ft=toupper(a:filetype)
   let group='textGroup'.ft

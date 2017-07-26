@@ -62,6 +62,10 @@ ProxyPassReverse /common-ui http://localhost:8000/common-ui
 ProxyPass /cm-listener http://localhost:30005
 ProxyPassReverse /cm-listener http://localhost:30005
 
+#Checkmark
+ProxyPass /cm-listenerX http://localhost:30005
+ProxyPassReverse /cm-listenerX http://localhost:30005
+
 #ProxyPass / http://localhost:8000/common-ui
 #ProxyPassReverse / http://localhost:8000/common-ui
 
