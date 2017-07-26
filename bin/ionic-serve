@@ -1,3 +1,12 @@
 #!/bin/sh
-exec rlwrap --command ionic-serve --file . --remember --histsize 9999 \
-            ionic serve --nobrowser --lab --all --serverlogs #--consolelogs 
+while true ;do
+    rlwrap --command ionic-serve --file . --remember --histsize 9999 \
+           ionic serve --nobrowser --lab --all --serverlogs "$@" #--consolelogs 
+    if grep -q dashboard ionic.config.json ;then
+        ./go_app.sh
+        echo 'Switched to app mode'
+    else
+        ./go_dashboard.sh
+        echo 'Switched to dashboard mode'
+    fi
+done
