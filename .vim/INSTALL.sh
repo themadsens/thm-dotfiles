@@ -13,6 +13,7 @@ cd bundle
 	https://github.com/vim-scripts/dbext.vim
 	https://github.com/majutsushi/tagbar.git
     https://github.com/tpope/vim-fugitive.git
+    https://github.com/junegunn/gv.vim.git
 #	https://github.com/scrooloose/syntastic
 EOF
 ) | grep -v '^ *#'| \

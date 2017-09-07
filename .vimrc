@@ -182,7 +182,7 @@ setglobal laststatus=2               " always with statusline
 setglobal showmatch
 setglobal autowrite                  " write files back at ^Z, :make etc.
 setglobal mouse=nv                   " Use xterm mouse mode in insert/cmdline/prompt
-setglobal clipboard=autoselect       " Visual to/from clipboard
+"setglobal clipboard=autoselect       " Visual to/from clipboard
 setglobal fileformats=unix,dos,mac
 setglobal showbreak=________         " Show me where long lines break
 setglobal showfulltag                " Insert function prototype in ^X^]
