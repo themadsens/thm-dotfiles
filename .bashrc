@@ -117,7 +117,7 @@ if [ -n "$PS1" ] ;then
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
       colorize() { $GRC -es ${COLORARG:-"--colour=auto"} "$@"; }
       for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df \
-               svn hg git cat
+               svn hg git cat ifconfig
       do
          eval "$c() { colorize '$c' \"\$@\"; }"
       done
@@ -206,6 +206,7 @@ if [ -n "$PS1" ] ;then
    }
 
    tmux-attach() {
+      # env | grep SSH
       case $(tmux list-sessions 2>/dev/null | wc -l) in
          0) tmux ;;
          1) tmux attach ;;
@@ -423,7 +424,7 @@ if [ -n "$PS1" ] ;then
    }
 
    function tmux_update() {
-      [[ "$TMUX" ]] && eval $(tmux show-environment -s)
+      [[ "$TMUX" ]] && eval $(tmux show-environment -s -t 0)
    }
 
    PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; tmux_update'
