@@ -57,6 +57,7 @@ if [ -n "$PS1" ] ;then
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
 
    sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else xclip -o "$@" ;fi; }
+   findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
    alias v='      vimless'
@@ -169,9 +170,13 @@ if [ -n "$PS1" ] ;then
    f()         { awk -v N="$*" 'BEGIN {split(N, Nr, / |,/)}
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
    e()         { lua -e "print($*)"; }
-   del()       { echo -e "$2 d\nw\nq" | ed -s $1; }
    utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
    utf8sel()   { sel | utf8kill; }
+
+   del()       {
+      [[ $# == 1 ]] && set ${1/:/ }
+      echo -e "$2 d\nw\nq" | ed -s $1;
+   }
 
    exit() {
       [[ "$SSH_CONNECTION" ]] && builtin exit "$@"
