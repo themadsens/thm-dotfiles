@@ -128,6 +128,13 @@ if [ -n "$PS1" ] ;then
    diff() { colorize diff -u "$@"; }
    df()   { colorize df -k "$@"; }
 
+   if [ -d ~/.qfc ] ;then
+      # See https://github.com/themadsens/qfc
+      source ~/.qfc/bin/qfc.sh
+      qfc_quick_command 'vim' '\C-p' 'vim $0'
+      qfc_quick_command 'cd' '\C-b' 'cd $0'
+   fi
+
    # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
    fixkbd() { 
       #setxkbmap -option caps:none;
