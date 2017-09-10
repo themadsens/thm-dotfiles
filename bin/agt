@@ -5,7 +5,7 @@ atTags() {
     while true ;do
        if [ -r tags ] ;then
           echo "Searching from `pwd`:"
-          ag "$@"
+          ag --ignore rootdisk "$@"
           return 0
        fi
        [ `pwd` = '/' ] && return 1
