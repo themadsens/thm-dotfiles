@@ -57,6 +57,7 @@ if [ -n "$PS1" ] ;then
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
 
    sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else xclip -o "$@" ;fi; }
+   findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
    alias v='      vimless'
@@ -116,7 +117,7 @@ if [ -n "$PS1" ] ;then
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
       colorize() { $GRC -es ${COLORARG:-"--colour=auto"} "$@"; }
       for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df \
-               svn hg git cat
+               svn hg git cat ifconfig
       do
          eval "$c() { colorize '$c' \"\$@\"; }"
       done
@@ -126,6 +127,13 @@ if [ -n "$PS1" ] ;then
 
    diff() { colorize diff -u "$@"; }
    df()   { colorize df -k "$@"; }
+
+   if [ -d ~/.qfc ] ;then
+      # See https://github.com/themadsens/qfc
+      source ~/.qfc/bin/qfc.sh
+      qfc_quick_command 'vim' '\C-p' 'vim $0'
+      qfc_quick_command 'cd' '\C-b' 'cd $0'
+   fi
 
    # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
    fixkbd() { 
@@ -169,9 +177,13 @@ if [ -n "$PS1" ] ;then
    f()         { awk -v N="$*" 'BEGIN {split(N, Nr, / |,/)}
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
    e()         { lua -e "print($*)"; }
-   del()       { echo -e "$2 d\nw\nq" | ed -s $1; }
    utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
    utf8sel()   { sel | utf8kill; }
+
+   del()       {
+      [[ $# == 1 ]] && set ${1/:/ }
+      echo -e "$2 d\nw\nq" | ed -s $1;
+   }
 
    exit() {
       [[ "$SSH_CONNECTION" ]] && builtin exit "$@"
@@ -201,6 +213,7 @@ if [ -n "$PS1" ] ;then
    }
 
    tmux-attach() {
+      # env | grep SSH
       case $(tmux list-sessions 2>/dev/null | wc -l) in
          0) tmux ;;
          1) tmux attach ;;
@@ -371,23 +384,23 @@ if [ -n "$PS1" ] ;then
       [[ ! -n $timeRep ]] && return
       times > /tmp/.time$$
       local no timeStart cmd timeNow
-      timeNow=$(< /tmp/.time$$)
-      HISTTIMEFORMAT="%s "  history 1 > /tmp/.time$$
-      read no timeStart cmd < /tmp/.time$$
+      timeNow=$(tr ms\\012 '   ' < /tmp/.time$$)
+      timeStart=$(HISTTIMEFORMAT="%s "  history 1 | awk '{print $2}')
       if [[ -n $_timeprev ]] ;then
-         echo $_timeprev $timeNow | tr ms '  ' | awk '
-         {
+         local now=$(date +%s)
+         echo $_timeprev $timeNow | awk '{
+            duration = now - timeStart
             usrPrev = $5*60 + $6
             sysPrev = $7*60 + $8
             usrCur = $13*60 + $14
             sysCur = $15*60 + $16
-            total = (usrCur + sysCur) - (usrPrev + sysPrev)
+            total = (usrCur + sysCur)-(usrPrev + sysPrev)
             if (total >= timeRep) {
                printf("%.3fu %.3fs %d:%02d %.1f%%\n",
-                      usrCur - usrPrev, sysCur - sysPrev,
+                      usrCur-usrPrev, sysCur-sysPrev,
                       duration / 60, duration % 60, total / (duration?duration:total) * 100.0)
             }
-         }' timeRep=$timeRep duration=$(( $(date +%s) - $timeStart ))
+         }' timeRep=$timeRep now=$now timeStart=$timeStart
       fi
       _timeprev=$timeNow
       unset TIMESHOW
@@ -418,7 +431,7 @@ if [ -n "$PS1" ] ;then
    }
 
    function tmux_update() {
-      [[ "$TMUX" ]] && eval $(tmux show-environment -s)
+      [[ "$TMUX" ]] && eval $(tmux show-environment -s -t 0)
    }
 
    PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; tmux_update'
