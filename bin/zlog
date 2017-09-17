@@ -1,0 +1,291 @@
+#!/usr/bin/env ttlua
+--[[
+  $Id$
+  (C) Copyright 2008 Amplex, fm@amplex.dk
+
+  ABSTRACT: Decompress, concatenate & search log/.gz files
+--]]
+local G = _G
+
+module("zfile")
+   local class = { __index = _M }
+   local match = G.string.match
+
+   function new(file, grep)
+      local fd = G.io.open(file, "r")
+      if not fd then return nil end
+
+      local magic = fd:read(2)
+      if magic == G.string.char(0x1f, 0x8b) then
+         fd = G.io.popen("gzip -d -c '"..file.."'".."|"..grep, "r")
+      else
+         fd = G.io.popen(grep.." '"..file.."'", "r")
+      end
+
+      local new = G.setmetatable({_m={}}, class)
+      new._m.line = nil
+      new._m.time = -1
+      new._m.fd = fd
+      new._m.fname = file
+      new:next()
+      return new
+   end
+
+   function next(self, grep)
+      local line = self._m.fd:read("*l")
+      self._m.line = line
+      self._m.time = -1
+      return line
+   end
+
+   function time(self)
+      if self._m.time < 0 then
+         local y,m,d,H,M,S,s,ms,eod
+         local line = self._m.line
+         m,d,H,M,S,eod = match(line, "(%d%d)\\.(%d%d), (%d%d):(%d%d):(%d[%d%.]+)( [%|%.%!])")
+         if not eod then
+            m,d,H,M,S,eod = match(line, "(%u%l%l) (%d%d) (%d%d):(%d%d):(%d%d)( )")
+            if eod then
+               m = ({Jan=1, Feb=2, Mar=3, Apr=4,  May=5,  Jun=6,
+                     Jul=7, Aug=8, Sep=9, Oct=10, Nov=11, Dec=12})[m]
+               if not m then eod = nil end
+            end
+         end
+         if eod then
+            local now = G.os.date("!*t")
+            y = G.tonumber(m) <= now.month and now.year or (now.year - 1)
+            s,ms = G.math.modf(S)
+            self._m.time = G.os.time({year=y, month=m, day=d, hour=H, min=M, sec=s}) + ms
+         else
+            self._m.time = 0
+         end
+      end
+      return self._m.time
+   end
+
+   function line(self)
+      return self._m.line
+   end
+
+   function close(self)
+      self._m.fd:close()
+   end
+G.setfenv(1, G)
+
+module("zlog")
+   local class = { __index = _M }
+
+   function new(name, grep)
+      local zf, ix, fname
+      zf = {}
+      -- open them all now in case of rotation while we run
+      for _,f in G.ipairs({"", "/var/log/"}) do
+         ix = -1
+         fname = f..name
+         zf[ix] = G.zfile.new(fname, grep)
+         while zf[ix] do
+            ix = ix + 1
+            zf[ix] = G.zfile.new(fname.."."..ix, grep) or
+                     G.zfile.new(fname.."."..ix..".gz", grep)
+         end
+         if ix ~= -1 then break end
+      end
+      ix = ix - 1
+      if ix < -1 then return nil end
+
+      local new = G.setmetatable({_m={}}, class)
+      new._m.zf = zf
+      new._m.ix = ix
+      if not new:line() then
+         new:next() -- Necessary for grep when no matching lines in 1. file
+      end
+      return new
+   end
+
+   function time(self)
+      local r =  self._m.ix >= -1 and (self._m.zf[self._m.ix]:time()) or nil
+      return r
+   end
+
+   function line(self)
+      return self._m.ix >= -1 and (self._m.zf[self._m.ix]:line()) or nil
+   end
+
+   function next(self)
+      local line = self._m.zf[self._m.ix]:next()
+      while not line do
+         self._m.zf[self._m.ix]:close()
+         self._m.ix = self._m.ix - 1
+         if (self._m.ix < -1) then
+            return nil
+         end
+         line = self._m.zf[self._m.ix]:line()
+      end
+      return line
+   end
+
+   function close(self)
+      while self._m.ix >= -1 do
+         self._m.zf[self._m.ix]:close()
+         self._m.ix = self._m.ix - 1
+      end
+   end
+G.setfenv(1, G)
+
+local function usage()
+   print([=[
+Usage:
+  zgrep <grep options> pattern files
+  zlog [-hH] [-m|--merge] [-g|--grep <grep args ...>] [-O|--offset <off>] files
+
+Description:
+  Zgrep works line ordinary grep, but opens gzip'ed files transparently.
+  It accepts grep option flags [-hHrilLnqvsoeFEABC]
+
+  Zlog opens sequences of file .. file.0.gz .. file.N.gz in either current
+  directory (.) or /var/log.
+  -h -H    Force "filename: " prefix on (-H) or off (-h)
+  --grep   Filter files through grep. Additional arguments may be grep args
+  --merge  Merge lines from log files according to timestamp
+  --offset Set timestamp offset in hours for subsequent file arguments.
+           Files and -O|--offset arguments may be interchanged.
+   ]=])
+   os.exit(0)
+end
+
+
+function main(argv)
+   local grepargs = {}
+   local files = {}
+   local offset = 0
+   local merge = false
+   local islog = string.match(argv[0], "zlog$")
+   local dogrepargs = not islog
+   local showfiles = nil
+   local pastopts
+
+   local ix = 1
+   while argv[ix] do
+      local a = argv[ix]
+      if a== '-O' or a== '--offset' then  offset = tonumber(argv[ix+1]) ix=ix+1
+      elseif pastopts or a:sub(1,1) ~= '-' then
+         pastopts = true
+         if dogrepargs then
+            grepargs[#grepargs+1] = string.gsub(a, "'", [=['"'"']=])
+            dogrepargs = false
+         else
+            files[#files+1] = {name = a, offset = offset}
+         end
+      elseif a=='-h' or a=='-H' then showfiles = a=='-H'
+      else
+         if     a== '-g' or a== '--grep' then dogrepargs = true 
+         elseif a== '-m' or a== '--merge' then merge = true
+         elseif a== '--' then pastopts = true
+         elseif dogrepargs then
+            if a:match("^-[rilLnqvsoFEABC]") then grepargs[#grepargs+1] = a
+            elseif a:match("^-[ef]") then
+               grepargs[#grepargs+1] = a
+               grepargs[#grepargs+1] = string.gsub(argv[ix+1], "'", [=['"'"']=])
+               ix = ix + 1
+            else usage()
+            end
+         else usage()
+         end
+      end
+      ix = ix+1
+   end
+   if #files == 0 then usage() end
+
+   if showfiles == nil then showfiles = #files > 1 end
+   local grepstr
+   if #grepargs > 0 then
+      grepstr = "grep '"..table.concat(grepargs, "' '").."'"
+   else
+      grepstr = "cat "
+   end
+
+   ix=1 while files[ix] do
+      local f = files[ix]
+      f.f = islog and zlog.new(f.name, grepstr) or zfile.new(f.name, grepstr)
+      if not f.f then
+         table.remove(files, ix)
+      else
+         ix = ix + 1
+      end
+   end
+
+   local maxl = 0
+   for _,f in ipairs(files) do if maxl < #f.name then maxl = #f.name end end
+   local function putline(name, l)
+      if showfiles then
+         io.write(name, ": ", string.rep(' ', maxl - #name))
+      end
+      io.write(l, '\n')
+   end
+
+   local l
+   if merge then
+      local tsort = function(a,b) return a.ftime < b.ftime end
+      for _,f in ipairs(files) do f.ftime = f.f:time() + f.offset * 3600 end
+      table.sort(files, tsort)
+
+      while #files > 1 do
+         local f,f2t = files[1], files[2].ftime
+         l = f.f:line()
+         while f.ftime <= f2t do
+            if not l then
+               f.f:close()
+               table.remove(files, 1)
+               break
+            end
+            putline(f.name, l)
+            l = f.f:next()
+            if l then f.ftime = f.f:time() + f.offset * 3600 end
+         end
+         table.sort(files, tsort)
+      end
+   end
+
+   for _,f in ipairs(files) do
+      l = f.f:line() 
+      while true do
+         if not l then break end
+         putline(f.name, l)
+         l = f.f:next()
+      end
+   end
+end
+
+--[[
+debug.sethook(function(t, l)
+   io.stderr:write("<"..l..">")
+end, "l")
+--]]
+
+--[[
+debug.sethook(function(t, l)
+   local i = debug.getinfo(2, "nS")
+   local s ="---> "..i.short_src..":"..(i.name or "<nil>").."("
+   local no = 1
+   local eos = -1
+   while #s < 100  and no < 5 do
+      local n,v = debug.getlocal(2, no)
+      if not n then
+         break
+      else
+         if i.what=="Lua" and n=="(*temporary)" then break end
+         if n:sub(1,1) == "(" then n = n:sub(2,3) end
+         s = s..n.."='"..tostring(v):sub(1,50):gsub("%c",".").."', "
+      end
+      no = no + 1
+      eos = -3
+   end
+   io.write(s:sub(1,eos)..")\n")
+   io.output():flush()
+end, "c")
+--]]
+
+if signal then signal("sigpipe", "default") end
+
+main(arg)
+-- vim: set sw=3 sts=3 et nu:
