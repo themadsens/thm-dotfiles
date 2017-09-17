@@ -5,14 +5,15 @@ umask 022
 
 if [ -n "$PS1" ] ;then
    #[[ $0 != -* && $- != *l* ]] && . /etc/profile 
+   _PS1=$PS1
    unalias -a
    source /etc/profile 
 
-   if [[ $TERM != *color* && "$COLORTERM" ]] ;then
-      export TERM=xterm-256color
+   if [[ $TERM = screen || $TERM = xterm ]] ;then
+      export TERM=${TERM}-256color
    fi
 
-   if [[ $PATH != $HOME/bin3:* ]] ;then
+   if [[ $PATH != *$HOME/bin3:* ]] ;then
        PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:$PATH
    fi
 
@@ -24,6 +25,14 @@ if [ -n "$PS1" ] ;then
    for f in ~/.bash_completion.d/* ;do
       [ -r $f ] && source $f
    done
+
+   if [[ -d ~/.qfc && $_PS1 != tmux-ssh- ]] ;then
+      # See https://github.com/themadsens/qfc
+      source ~/.qfc/bin/qfc.sh
+      qfc_quick_command 'vim' '\C-p' 'vim $0'
+      qfc_quick_command 'cd' '\C-b' 'cd $0'
+   fi
+   unset _PS1
 
    # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
    #. /etc/profile
@@ -113,7 +122,7 @@ if [ -n "$PS1" ] ;then
       fi
    }
 
-   GRC=`which grc`
+   _GRC=`which grc`
    if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
       colorize() { $GRC -es ${COLORARG:-"--colour=auto"} "$@"; }
       for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df \
@@ -124,16 +133,10 @@ if [ -n "$PS1" ] ;then
    else
       colorize() { "$@"; }
    fi
+   unset _GRC
 
    diff() { colorize diff -u "$@"; }
    df()   { colorize df -k "$@"; }
-
-   if [ -d ~/.qfc ] ;then
-      # See https://github.com/themadsens/qfc
-      source ~/.qfc/bin/qfc.sh
-      qfc_quick_command 'vim' '\C-p' 'vim $0'
-      qfc_quick_command 'cd' '\C-b' 'cd $0'
-   fi
 
    # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
    fixkbd() { 

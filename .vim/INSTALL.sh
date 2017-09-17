@@ -16,6 +16,7 @@ cd bundle
     https://github.com/junegunn/gv.vim.git
 #	https://github.com/scrooloose/syntastic
  	https://github.com/cespare/vim-toml
+ 	https://github.com/tmux-plugins/vim-tmux
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do

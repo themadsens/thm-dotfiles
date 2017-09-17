@@ -1,6 +1,6 @@
 # ln -s /Users/fm/thm-dotfiles/lemonade.toml .
 port = 2869
-host = 'localhost'
+host = '127.0.0.1'
 trans-loopback = true
 trans-localfile = true
 line-ending = 'lf'
