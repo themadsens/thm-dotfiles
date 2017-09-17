@@ -118,18 +118,20 @@ else
             endif
          endif
 
-         " Save and restore the "shell" screen on enter and exit
-         let &t_te = "\<Esc>[2J\<Esc>[?47l\<Esc>8"
-         let &t_ti = "\<Esc>7\<Esc>[?47h"
+         if has('nvim')
+            " Save and restore the "shell" screen on enter and exit
+            let &t_te = "\<Esc>[2J\<Esc>[?47l\<Esc>8"
+            let &t_ti = "\<Esc>7\<Esc>[?47h"
 
-         " tmux will only forward escape sequences to the terminal if surrounded by a DCS sequence
-         " Bar cursor on insert. Assumes iterm2
-         if exists('$TMUX')
-           let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-           let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-         else
-           let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-           let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+            " tmux will only forward escape sequences to the terminal if surrounded by a DCS sequence
+            " Bar cursor on insert. Assumes iterm2
+            if exists('$TMUX')
+              let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+              let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+            else
+              let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+              let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+            endif
          endif
 
          " Make <Del> mappings work
