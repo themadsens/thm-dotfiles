@@ -65,7 +65,7 @@ if [ -n "$PS1" ] ;then
 
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
 
-   sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else xclip -o "$@" ;fi; }
+   sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else lemonade paste ;fi; }
    findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
