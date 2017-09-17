@@ -446,6 +446,7 @@ function! SetFileTypeOpts()
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
    elseif ft == "lua"
       call TextEnableCodeSnip('c', 'cdef\[\[', '\]\]') |
+      call TextEnableCodeSnip('xml', 'xml *= *\[\[', '\]\]') |
       setlocal sw=3 ts=3 et
       syn match   luaFunc /\<seq\.map\>/
       syn match   luaFunc /\<seq\.filter\>/
