@@ -15,6 +15,7 @@ cd bundle
     https://github.com/tpope/vim-fugitive.git
     https://github.com/junegunn/gv.vim.git
 #	https://github.com/scrooloose/syntastic
+ 	https://github.com/cespare/vim-toml
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
