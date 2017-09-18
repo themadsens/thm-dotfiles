@@ -119,6 +119,8 @@ else
          endif
 
          if has('nvim')
+            set guicursor=n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20
+         else
             " Save and restore the "shell" screen on enter and exit
             let &t_te = "\<Esc>[2J\<Esc>[?47l\<Esc>8"
             let &t_ti = "\<Esc>7\<Esc>[?47h"
@@ -184,7 +186,7 @@ setglobal laststatus=2               " always with statusline
 setglobal showmatch
 setglobal autowrite                  " write files back at ^Z, :make etc.
 setglobal mouse=nv                   " Use xterm mouse mode in insert/cmdline/prompt
-setglobal clipboard=unnamed,unnamedplus
+setglobal clipboard=                 " Too intrusive with: unnamed,unnamedplus
 setglobal fileformats=unix,dos,mac
 setglobal showbreak=________         " Show me where long lines break
 setglobal showfulltag                " Insert function prototype in ^X^]
@@ -372,6 +374,20 @@ augroup Private
 
    autocmd InsertEnter * call system("tmux set mouse off")
    autocmd InsertLeave * call system("tmux set mouse on")
+   if has('nvim')
+      function! YankToClip(event)
+         let text = a:event.regcontents[:]
+         if text[-1] == ''
+            let text = text[:-2]
+         end
+         if a:event.operator == 'y' && len(text) > 0 
+            call system("lemonade copy", join(text, "\n"))
+         end
+      endfunc
+
+      autocmd FocusGained  * let @" = system("lemonade paste") | echomsg "FocusGained"
+      autocmd TextYankPost * call YankToClip(v:event)
+   end
 augroup end
 
 function! BufEnterGlobalOpts()
