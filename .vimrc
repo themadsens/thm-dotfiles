@@ -385,7 +385,7 @@ augroup Private
          end
       endfunc
 
-      autocmd FocusGained  * let @" = system("lemonade paste") | echomsg "FocusGained"
+      autocmd FocusGained  * let @" = system("lemonade paste") 
       autocmd TextYankPost * call YankToClip(v:event)
    end
 augroup end
