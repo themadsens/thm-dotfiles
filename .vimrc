@@ -141,8 +141,8 @@ else
          " exe 'setglobal t_kD=\x7f'
 
          exe "setglobal t_Co=16"
-         highlight LineNr cterm=NONE ctermbg=187
-         highlight CursorLine cterm=NONE ctermbg=186
+         " highlight LineNr cterm=NONE ctermbg=187
+         " highlight CursorLine cterm=NONE ctermbg=186
          setglobal cursorline
          set cursorline
 
@@ -1029,10 +1029,12 @@ command! Menu call Menu(1)
 
 setglobal statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
               \%{VarExists(',GZ','b:zipflag')},%1*%{CaseStat()}%*]%)\ %02c%V(%02B)C\ %3l/%LL\ %P
+
+colorscheme flemming
 hi User1          term=reverse,bold cterm=NONE,bold ctermfg=red  ctermbg=grey gui=bold guifg=red guibg=gray
 hi User2          term=reverse      cterm=NONE      ctermfg=blue ctermbg=grey guifg=darkblue guibg=gray
-hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey
-hi StatusLine     term=reverse      cterm=NONE ctermbg=grey  ctermfg=black    gui=NONE guibg=darkgrey
+"hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey
+"hi StatusLine     term=reverse      cterm=NONE ctermbg=grey  ctermfg=black    gui=NONE guibg=darkgrey
 let s:statusline = &statusline
 function! SetStl()
    let &l:statusline = s:statusline
