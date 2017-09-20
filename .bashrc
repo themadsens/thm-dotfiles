@@ -123,15 +123,15 @@ if [ -n "$PS1" ] ;then
    }
 
    _GRC=`which grc`
-   if [ "$TERM" != dumb ] && [ -n "$GRC" ] ;then
-      colorize() { $GRC -es ${COLORARG:-"--colour=auto"} "$@"; }
+   if [ "$TERM" != dumb ] && [ -n "$_GRC" ] ;then
+      colorize() { grc -es ${COLORARG:-"--colour=auto"} "$@"; }
       for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df \
                svn hg git cat ifconfig
       do
          eval "$c() { colorize '$c' \"\$@\"; }"
       done
    else
-      colorize() { "$@"; }
+      colorize() { CMD=$1 ; shift; $CMD "$@"; }
    fi
    unset _GRC
 

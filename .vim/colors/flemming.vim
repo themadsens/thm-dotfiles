@@ -17,12 +17,12 @@ endif
 
 let colors_name = "flemming"
 
-hi Normal guibg=PeachPuff guifg=Black
+hi Normal guibg=CornSilk guifg=Black
 
 hi SpecialKey term=bold ctermfg=4 guifg=Blue
 hi NonText term=bold cterm=bold ctermfg=4 gui=bold guifg=Blue
 hi Directory term=bold ctermfg=4 guifg=Blue
-hi ErrorMsg term=standout cterm=bold ctermfg=7 ctermbg=1 gui=bold guifg=White guibg=Red
+hi ErrorMsg term=standout cterm=bold ctermfg=8 ctermbg=9 gui=bold guifg=White guibg=Red
 hi IncSearch term=reverse cterm=reverse gui=reverse
 hi Search term=reverse ctermbg=227 guibg=Gold2
 hi MoreMsg term=bold ctermfg=2 gui=bold guifg=SeaGreen
@@ -62,6 +62,6 @@ hi Statement term=bold ctermfg=3 gui=bold guifg=Brown
 hi PreProc term=underline ctermfg=5 guifg=Magenta3
 hi Type term=underline ctermfg=2 gui=bold guifg=SeaGreen
 hi Ignore cterm=bold ctermfg=7 guifg=bg
-hi Error term=reverse cterm=bold ctermfg=7 ctermbg=1 gui=bold guifg=White guibg=Red
+hi Error term=reverse ctermbg=9 ctermfg=15 gui=bold guifg=White guibg=Red
 hi Todo term=standout ctermfg=0 ctermbg=3 guifg=Blue guibg=Yellow
 
