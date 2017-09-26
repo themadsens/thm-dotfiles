@@ -29,8 +29,8 @@ if [ -n "$PS1" ] ;then
    if [[ -d ~/.qfc && $_PS1 != tmux-ssh- ]] ;then
       # See https://github.com/themadsens/qfc
       source ~/.qfc/bin/qfc.sh
-      qfc_quick_command 'vim' '\C-p' 'vim $0'
-      qfc_quick_command 'cd' '\C-b' 'cd $0'
+      #qfc_quick_command 'vim' '\C-p' 'vim $0'
+      #qfc_quick_command 'cd' '\C-b' 'cd $0'
    fi
    unset _PS1
 
