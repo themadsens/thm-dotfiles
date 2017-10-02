@@ -893,6 +893,8 @@ nmap              gs      :call AgSearch("<C-R><C-W>", 1)<CR>
 vmap              gs      :call AgSearch(VisVal(), 0)<CR>
 command! -nargs=1 Search   call AgSearch("<args>", 0)
 command! -nargs=1 SearchW  call AgSearch("<args>", 1)
+nmap              gb      :Bgrep <C-R><C-W><CR>
+vmap              gb      <Esc>:exe  "Bgrep ".fnameescape(VisVal())<CR>
 
 func! OpenSpec(str)
    let Str = a:str
