@@ -20,7 +20,7 @@ let colors_name = "flemming"
 hi Normal guibg=CornSilk guifg=Black
 
 hi SpecialKey term=bold ctermfg=4 guifg=Blue
-hi NonText term=bold cterm=bold ctermfg=4 gui=bold guifg=Blue
+hi NonText term=bold cterm=bold ctermfg=7 gui=bold guifg=Blue
 hi Directory term=bold ctermfg=4 guifg=Blue
 hi ErrorMsg term=standout cterm=bold ctermfg=8 ctermbg=9 gui=bold guifg=White guibg=Red
 hi IncSearch term=reverse cterm=reverse gui=reverse
@@ -35,7 +35,7 @@ hi VertSplit term=reverse cterm=reverse gui=bold guifg=White guibg=Gray45
 hi Title term=bold ctermfg=5 gui=bold guifg=DeepPink3
 hi Visual term=reverse ctermbg=249 gui=reverse guifg=Grey80 guibg=fg
 hi WarningMsg term=standout ctermfg=1 gui=bold guifg=Red
-hi WildMenu term=standout ctermfg=0 ctermbg=3 guifg=Black guibg=Yellow
+hi WildMenu term=standout ctermfg=0 ctermbg=227 guifg=Black guibg=Yellow
 hi Folded term=standout ctermfg=4 ctermbg=7 guifg=Black guibg=#e3c1a5
 hi FoldColumn term=standout ctermfg=4 ctermbg=7 guifg=DarkBlue guibg=Gray80
 hi DiffAdd term=bold ctermbg=4 guibg=White
@@ -63,5 +63,5 @@ hi PreProc term=underline ctermfg=5 guifg=Magenta3
 hi Type term=underline ctermfg=2 gui=bold guifg=SeaGreen
 hi Ignore cterm=bold ctermfg=7 guifg=bg
 hi Error term=reverse ctermbg=9 ctermfg=15 gui=bold guifg=White guibg=Red
-hi Todo term=standout ctermfg=0 ctermbg=3 guifg=Blue guibg=Yellow
+hi Todo term=standout ctermfg=0 ctermbg=11 guifg=Blue guibg=Yellow
 

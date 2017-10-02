@@ -381,11 +381,11 @@ augroup Private
             let text = text[:-2]
          end
          if a:event.operator == 'y' && len(text) > 0 
-            call system("lemonade copy", join(text, "\n"))
+            call system(has('mac') ? "pbcopy" : "lemonade copy", text)
          end
       endfunc
 
-      autocmd FocusGained  * let @" = system("lemonade paste") 
+      autocmd FocusGained  * let @" = system(has('mac') ? "pbpaste" : "lemonade paste") 
       autocmd TextYankPost * call YankToClip(v:event)
    end
 augroup end
