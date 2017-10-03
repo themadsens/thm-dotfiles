@@ -18,7 +18,9 @@ cd bundle
  	https://github.com/cespare/vim-toml
  	https://github.com/tmux-plugins/vim-tmux
  	https://github.com/vim-scripts/Buffer-grep
-EOF
+ 	https://github.com/vim-airline/vim-airline
+ 	https://github.com/vim-airline/vim-airline-themes
+EOF`
 ) | grep -v '^ *#'| \
 while read rep ;do
     dir=${rep##*/}
