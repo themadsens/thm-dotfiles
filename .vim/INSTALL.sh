@@ -20,7 +20,7 @@ cd bundle
  	https://github.com/vim-scripts/Buffer-grep
  	https://github.com/vim-airline/vim-airline
  	https://github.com/vim-airline/vim-airline-themes
-EOF`
+EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
     dir=${rep##*/}
