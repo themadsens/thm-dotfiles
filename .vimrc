@@ -217,7 +217,7 @@ setglobal nofoldenable
 
 let c_gnu = 1
 let c_no_curly_error = 1
-"let &errorformat = 
+"let &errorformat =
 
 " Disaster prevention
 vmap u <Esc>
@@ -370,7 +370,7 @@ augroup Private
    autocmd FileType    * call SetFileTypeOpts()
 
    " Handle global (non bufferspecific) options
-   autocmd BufEnter * call BufEnterGlobalOpts()      
+   autocmd BufEnter * call BufEnterGlobalOpts()
 
    autocmd InsertEnter * call system("tmux set mouse off")
    autocmd InsertLeave * call system("tmux set mouse on")
@@ -380,12 +380,12 @@ augroup Private
          if text[-1] == ''
             let text = text[:-2]
          end
-         if a:event.operator == 'y' && len(text) > 0 
+         if a:event.operator == 'y' && len(text) > 0
             call system(has('mac') ? "pbcopy" : "lemonade copy", text)
          end
       endfunc
 
-      autocmd FocusGained  * let @" = system(has('mac') ? "pbpaste" : "lemonade paste") 
+      autocmd FocusGained  * let @" = system(has('mac') ? "pbpaste" : "lemonade paste")
       autocmd TextYankPost * call YankToClip(v:event)
    end
 augroup end
@@ -455,10 +455,10 @@ function! SetFileTypeOpts()
       setlocal cinkeys-=:
    endif
    if ft == "sh"
-      call TextEnableCodeSnip('lua', '--LUA--', '--EOF--') 
+      call TextEnableCodeSnip('lua', '--LUA--', '--EOF--')
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
-      call TextEnableCodeSnip('javascript', '/\*JS\*/', '/\*EOF\*/') 
-      call TextEnableCodeSnip('javascript', '#JS#', '#EOF#') 
+      call TextEnableCodeSnip('javascript', '/\*JS\*/', '/\*EOF\*/')
+      call TextEnableCodeSnip('javascript', '#JS#', '#EOF#')
       setlocal sw=4 ts=4 et
    elseif ft == "java"
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
@@ -581,7 +581,7 @@ map gK :call Show_g_CTRLG()<CR>
 function! Incr()
    if ! exists("g:Incr")
       let g:Incr = 0
-   else 
+   else
       let g:Incr = g:Incr + 1
    endif
    return g:Incr
@@ -603,17 +603,17 @@ function! MakePrg(mkArg)
    elseif makeArgs == 'lualint' || (&ft == 'lua' && !filereadable('Makefile'))
       setlocal makeprg=lualint
       let makeArgs = '%'
-   elseif findfile("gulpfile.js", ".;") != "" && &ft == 'javascript' 
+   elseif findfile("gulpfile.js", ".;") != "" && &ft == 'javascript'
       setlocal makeprg="gulp"
       if makeArgs == ""
          let makeArgs = 'lint'
       endif
-   elseif &ft == 'javascript' 
+   elseif &ft == 'javascript'
       setlocal makeprg=jshint
       let makeArgs = '%'
    elseif &makeprg == "mmvn" || &makeprg == "mvn" || (exists("current_compiler") && current_compiler == "mvn")
       setlocal makeprg=mmvn
-      if makeArgs =~ '\<here\>' 
+      if makeArgs =~ '\<here\>'
          let makeArgs = substitute(makeArgs, '\<here\>', '', 'g')
          let here = 1
       endif
@@ -672,7 +672,7 @@ function! PrevBuf(closeThis, ...)
          break
       endif
       let l:pos = getpos(".")
-      if l:pos[1] == l:lastPos[1] && l:pos[2] == l:lastPos[2] && 
+      if l:pos[1] == l:lastPos[1] && l:pos[2] == l:lastPos[2] &&
        \ l:lastBuf == bufnr("%")
          " We did not move, stop looping
          break
@@ -716,9 +716,9 @@ function! SvnDiff(f)
       let diff="git diff HEAD "
       let git=1
    endif
-  
+
    if bufexists(f)
-      exe "buffer ".bufnr(f) 
+      exe "buffer ".bufnr(f)
       if &modified
          let tmp = tempname()
          exe "write ".fnameescape(tmp)
@@ -737,7 +737,7 @@ function! SvnDiff(f)
    " echom "F: '".f."' CMD: '".cmd."'"
    exe "buffer ".tmpbuf
    exe "normal S-- DIFF: ".f
-   exe "read !".cmd 
+   exe "read !".cmd
    exe "1"
 endfunc
 command! -nargs=? -complete=buffer SvnDiff call SvnDiff(<q-args>)
@@ -752,7 +752,7 @@ function! SvnBlame(f)
    let cd = "cd ".shellescape(fnamemodify(f, ":h")).";"
    let fn = fnamemodify(f, ":t")
    call s:PrivBuf("BLAME::".f, "".&ft)
-  
+
    let cmd=cd."sh -c ".shellescape("git annotate '".fn."'|cut -c3-9,11-14,26-42,52-|expand -1|sed 's/[0-9]*)//'")
    call system("git svn info")
    if v:shell_error == 0
@@ -763,10 +763,10 @@ function! SvnBlame(f)
          let cmd=cd."svn blame ".shellescape(fn)
       endif
    endif
-  
+
    echom "F: '".f."' CMD: '".cmd."'"
    exe "normal S-- BLAME: ".f
-   exe "read !".cmd 
+   exe "read !".cmd
    exe "1"
 endfunc
 command! -nargs=? -complete=buffer SvnBlame call SvnBlame(<q-args>)
@@ -789,11 +789,11 @@ function! SvnCommitInfo(id, ...)
          let cmd="svn blame "
       endif
    endif
-  
+
    let cmd .= shellescape(fnamemodify(f, ":p"))
    echom "F: '".f."' CMD: '".cmd."'"
    exe "normal S-- AUTH: ".f
-   exe "read !".cmd 
+   exe "read !".cmd
    exe "1"
 
 endfunc
@@ -803,7 +803,7 @@ nmap gkc :SvnCommitInfo <C-R><C-W><CR>
 
 "
 " Extra vim stuff
-" 
+"
 map gjh <Plug>jdocConvertHere
 map gjc <Plug>jdocConvertCompact
 
@@ -811,7 +811,7 @@ nmap <F2> :call SetCHdr()<CR>
 
 function! SetCHdr()
    call append(0, ["/**",
-         \ " * @file ".strpart(bufname("%"), strridx(bufname("%"), "/")+1), 
+         \ " * @file ".strpart(bufname("%"), strridx(bufname("%"), "/")+1),
          \ " * ABSTRACT HERE << ",
          \ " *",
          \ " * $Id$",
@@ -819,7 +819,7 @@ function! SetCHdr()
          \ " * (C) Copyright ".strftime("%Y")." Amplex, ".$USER."@amplex.dk",
          \ " */"])
    call append(line('$'), ["", "// vim: set sw=3 sts=3 et:"])
-   normal 5G$ 
+   normal 5G$
    if &filetype == "c"
        set sw=3 sts=3 et
    endif
@@ -903,8 +903,8 @@ func! OpenSpec(str)
 endfunction
 
 func! VisVal()
-  let Col1 = col("'<")  
-  let Col2 = col("'>")  
+  let Col1 = col("'<")
+  let Col2 = col("'>")
   if line("'<") != line("'>") | return | endif
   let Str = strpart(getline(line("'<")), Col1 - 1, Col2 - Col1 + 1)
   return substitute(Str, " ", ".", "g")
@@ -930,7 +930,7 @@ nmap gF :call GoFile("gF")<CR>
 function! GoFile(cmd)
     let saveSfx = &suffixesadd
     setlocal suffixesadd=.java,.js,.jsp
-    if !exists("b:ampdirs") 
+    if !exists("b:ampdirs")
         exe "normal! ".a:cmd
         let &l:suffixesadd = saveSfx
         return
@@ -1137,6 +1137,15 @@ let loaded_explorer=1 " Don't want plugin/explorer.vim
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'distinguished'
 let g:airline_mode_map = {'__':'-','n':'N','i':'I','R':'R','c':'C','v':'V','V':'V','':'V','s':'S','S':'S','':'S',}
+let g:airline#extensions#tmuxline#enabled = 0
+let g:tmuxline_theme = 'powerline'
+let g:tmuxline_preset = {
+      \'a'       : '[#(uname -n | cut -d. -f1 | tr a-z A-Z)]',
+      \'win'     : ['#F', '#W'],
+      \'cwin'    : ['#F', '#W'],
+      \'x'       : '#S',
+      \'y'       : '#{?mouse,MSE,}',
+      \'z'       : '#{cpu_bg_color}#{cpu_fg_color}#{cpu_percentage}'}
 
 " echo "DONE sourcing"
 
