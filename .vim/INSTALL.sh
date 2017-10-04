@@ -20,6 +20,7 @@ cd bundle
  	https://github.com/vim-scripts/Buffer-grep
  	https://github.com/vim-airline/vim-airline
  	https://github.com/vim-airline/vim-airline-themes
+ 	https://github.com/edkolev/tmuxline.vim
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
