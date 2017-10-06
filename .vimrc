@@ -1155,7 +1155,7 @@ let g:tmuxline_preset = {
       \'cwin'    : ['#F', '#W'],
       \'x'       : '#S',
       \'y'       : '#{?mouse,MSE,}',
-      \'z'       : '#{cpu_bg_color}#{cpu_fg_color}#{cpu_percentage}'}
+      \'z'       : '#{cpu_percentage}'}
 
 " echo "DONE sourcing"
 
