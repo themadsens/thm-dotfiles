@@ -1141,7 +1141,7 @@ let g:changes_sign_text_utf8 = 0
 nmap zv :ToggleChangeView<CR>
 
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'flemming' "'distinguished'
+let g:airline_theme = 'dark' " 'flemming', 'distinguished'
 let g:airline_mode_map = {'__':'-','n':'N','i':'I','R':'R','c':'C','v':'V','V':'V','':'V','s':'S','S':'S','':'S',}
 let g:airline#extensions#whitespace#enabled = 0
 nmap zl :AirlineToggle<CR>
