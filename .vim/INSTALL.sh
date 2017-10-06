@@ -21,6 +21,7 @@ cd bundle
  	https://github.com/vim-airline/vim-airline
  	https://github.com/vim-airline/vim-airline-themes
  	https://github.com/edkolev/tmuxline.vim
+    https://github.com/chrisbra/changesPlugin.git
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
@@ -32,3 +33,4 @@ while read rep ;do
         git clone --depth=5 $rep
     fi
 done
+vi +'Helptags|quit'
