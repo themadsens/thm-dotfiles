@@ -94,7 +94,8 @@ else
       setglobal grepprg=ag\ --vimgrep\ --follow\ $*
       set grepformat=%f:%l:%c:%m
       if has("gui_running")
-         let &guifont="Bitstream Vera Sans Mono 8"
+         let &guifont="Monaco for Powerline:h10"
+         "let &guifont="Bitstream Vera Sans Mono 8"
       else
          " Uncomment line below to use :emenu. Adds ~1 second to startup time
          " source $VIMRUNTIME/menu.vim
