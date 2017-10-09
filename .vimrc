@@ -512,7 +512,7 @@ function! SetBufferOpts()
    endif
    while strlen(fpath) > 3
       if ! exists("tagset") && filereadable(fpath."/tags")
-         exe "setlocal tags+=".fpath."/tags"
+         exe "setlocal tags^=".fpath."/tags"
          let tagset = 1
          if filereadable(fpath."/amplex-trees")
             let b:ampdirs = join(readfile(fpath."/amplex-trees"), ",")
@@ -534,7 +534,7 @@ function! SetBufferOpts()
       let fpath = fnamemodify(fpath, ":h")
    endwhile
    if ! exists("tagset")
-       setlocal tags+=tags,../tags
+       setlocal tags^=tags,../tags
    endif
 endfunc
 
@@ -1157,6 +1157,12 @@ let g:tmuxline_preset = {
       \'x'       : '#S',
       \'y'       : '#{?mouse,MSE,}',
       \'z'       : '#{cpu_percentage}'}
+
+let g:easytags_async = 1
+let g:easytags_auto_highlight = 0
+let g:easytags_on_cursorhold = 0
+let g:easytags_dynamic_files = 1
+let g:easytags_events = ['BufWritePost']
 
 " echo "DONE sourcing"
 
