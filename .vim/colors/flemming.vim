@@ -48,17 +48,23 @@ hi SpellBad ctermbg=168 gui=undercurl guisp=Red
 
 highlight LineNr cterm=NONE ctermbg=187 ctermfg=3 guifg=brown
 highlight CursorLine cterm=NONE ctermbg=186
+
 hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey
 hi StatusLine     term=reverse      cterm=NONE ctermbg=grey  ctermfg=black    gui=NONE guibg=darkgrey
 hi User1          term=reverse,bold cterm=NONE,bold ctermfg=red  ctermbg=grey gui=bold guifg=red guibg=gray
 hi User2          term=reverse      cterm=NONE      ctermfg=blue ctermbg=grey guifg=darkblue guibg=gray
 
+" Changes
+hi ChangesSignTextAdd ctermbg=Darkgreen ctermfg=238 guibg=Darkgreen
+hi ChangesSignTextDel ctermbg=Darkred  ctermfg=238 guibg=red
+hi ChangesSignTextCh  ctermbg=Darkblue  ctermfg=gray guibg=blue
+
 " Colors for syntax highlighting
-hi Comment term=bold ctermfg=4 guifg=#406090
+hi Comment term=bold ctermfg=4 cterm=italic guifg=#406090
 hi Constant term=underline ctermfg=1 guifg=#c00058
 hi Special term=bold ctermfg=5 guifg=SlateBlue
 hi Identifier term=underline ctermfg=6 guifg=DarkCyan
-hi Statement term=bold ctermfg=3 gui=bold guifg=Brown
+hi Statement term=bold ctermfg=3 cterm=bold gui=bold guifg=Brown
 hi PreProc term=underline ctermfg=5 guifg=Magenta3
 hi Type term=underline ctermfg=2 gui=bold guifg=SeaGreen
 hi Ignore cterm=bold ctermfg=7 guifg=bg
