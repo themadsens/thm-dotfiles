@@ -1141,8 +1141,11 @@ let g:airline_theme = 'dark' " 'flemming', 'distinguished'
 let g:airline_mode_map = {'__':'-','n':'N','i':'I','R':'R','c':'C','v':'V','V':'V','':'V','s':'S','S':'S','':'S',}
 let g:airline_section_y = '%{ShowSyn()}%{VimBuddy()} '.
          \                '[%#__accent_red#%{Modified()}%#airline_y#%n,%#airline_y_bold#%{CaseStat()}%#airline_y#]'
-let g:airline_section_c = substitute(g:airline_section_c, '%m','','')
 let g:airline#extensions#whitespace#enabled = 0
+function! AirlineInit()
+  let g:airline_section_c = substitute(g:airline_section_c, '%m','','')
+endfunction
+autocmd User AirlineAfterInit call AirlineInit()
 nmap zl :AirlineToggle<CR>
 nmap z; :AirlineToggleWhitespace<CR>
 
