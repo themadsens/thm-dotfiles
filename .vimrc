@@ -956,6 +956,10 @@ function! CaseStat()
     return &ignorecase > 0 ? "I" : "C"
 endfunc
 
+function! Modified()
+    return &modified > 0 ? "•" : ""
+endfunc
+
 function! ShowSyn()
    if 0 == &spell
       return ""
@@ -1049,7 +1053,7 @@ Stl
 " referenced from your 'statusline'
 function! VimBuddy()
     " Take a copy for others to see the messages
-    if ! exists("s:actual_curbuf")
+    if ! exists("g:actual_curbuf")
        return ":-)"
     endif
     if ! exists("s:vimbuddy_msg")
@@ -1099,27 +1103,18 @@ function! VimBuddy()
 
     if ! exists("b:lastcol")
         let b:lastcol = col(".")
-    endif
-    if ! exists("b:lastlineno")
+        let b:linechange = 0
         let b:lastlineno = line(".")
     endif
     let num = b:lastcol - col(".")
     let b:lastcol = col(".")
-    if (num == 1 || num == -1) && b:lastlineno == line(".")
+    if num != 0 && b:lastlineno == line(".")
         " Let VimBuddy rotate his nose
-        let num = b:lastcol % 4
-        if num == 0
-            let ch = '/'
-         elseif num == 1
-            let ch = '-'
-        elseif num == 2
-            let ch = '\'
-        else
-            let ch = '|'
-        endif
-        return ":" . ch . ")"
+        let b:linechange += 1
+        return ':' . ['/', '-', '\', '|'][b:linechange % 4] . ')'
     endif
     let b:lastlineno = line(".")
+    let b:linechange = 0
 
     " Happiness is my favourite mood
     return ":-)"
@@ -1144,6 +1139,9 @@ nmap zv :ToggleChangeView<CR>
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'dark' " 'flemming', 'distinguished'
 let g:airline_mode_map = {'__':'-','n':'N','i':'I','R':'R','c':'C','v':'V','V':'V','':'V','s':'S','S':'S','':'S',}
+let g:airline_section_y = '%{ShowSyn()}%{VimBuddy()} '.
+         \                '[%#__accent_red#%{Modified()}%#airline_y#%n,%#airline_y_bold#%{CaseStat()}%#airline_y#]'
+let g:airline_section_c = substitute(g:airline_section_c, '%m','','')
 let g:airline#extensions#whitespace#enabled = 0
 nmap zl :AirlineToggle<CR>
 nmap z; :AirlineToggleWhitespace<CR>
