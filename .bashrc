@@ -160,7 +160,7 @@ if [ -n "$PS1" ] ;then
    lth()       { ls -lat "$@" | head -20; }
    # alias open='kfmclient exec'
    url()       { kfmclient openURL "$*"; }
-   vimless()   { vim --cmd 'let no_plugin_maps = 1 | let load_less = 1' \
+   vimless()   { nvim --cmd 'let no_plugin_maps = 1 | let load_less = 1' \
                      --cmd 'set readonly noswapfile' \
                       -c 'set mouse=a' \
                       -c 'runtime macros/less.vim' "${@:--}"; }
