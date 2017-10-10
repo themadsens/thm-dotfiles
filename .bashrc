@@ -84,7 +84,7 @@ if [ -n "$PS1" ] ;then
    alias svnhead="svnlog --limit=20"
    alias rehash=" hash -r"
    alias sort='   LC_ALL=C sort'
-   alias reload=' exec env PATH=/bin:/usr/bin bash'
+   alias reload=' PATH=/bin:/usr/bin exec -l bash'
    alias tsel='   tmux show-buffer'
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
