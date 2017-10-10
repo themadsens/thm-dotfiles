@@ -55,9 +55,9 @@ hi User1          term=reverse,bold cterm=NONE,bold ctermfg=red  ctermbg=grey gu
 hi User2          term=reverse      cterm=NONE      ctermfg=blue ctermbg=grey guifg=darkblue guibg=gray
 
 " Changes
-hi ChangesSignTextAdd ctermbg=Darkgreen ctermfg=238 guibg=Darkgreen
-hi ChangesSignTextDel ctermbg=Darkred  ctermfg=238 guibg=red
-hi ChangesSignTextCh  ctermbg=Darkblue  ctermfg=gray guibg=blue
+hi ChangesSignTextAdd ctermbg=150 ctermfg=238 guibg=Darkgreen
+hi ChangesSignTextDel ctermbg=210 ctermfg=238 guibg=red
+hi ChangesSignTextCh  ctermbg=109 ctermfg=238 guibg=blue
 
 " Colors for syntax highlighting
 hi Comment term=bold ctermfg=4 cterm=italic guifg=#406090
