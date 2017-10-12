@@ -957,14 +957,11 @@ function! CaseStat()
 endfunc
 
 function! Modified()
-    return &modified > 0 ? "•" : ""
+    return &modified > 0 ? "✚ " : ""
 endfunc
 
 function! ShowSyn()
-   if 0 == &spell
-      return ""
-   endif
-   return synIDattr(synID(line("."), col("."), 1), "name")." "
+   return 0 == &spell ? "" : synIDattr(synID(line("."), col("."), 1), "name")." "
 endfunc
 
 function! JumpBuffers()
@@ -1140,7 +1137,7 @@ let g:airline_powerline_fonts = 1
 let g:airline_theme = 'dark' " 'flemming', 'distinguished'
 let g:airline_mode_map = {'__':'-','n':'N','i':'I','R':'R','c':'C','v':'V','V':'V','':'V','s':'S','S':'S','':'S',}
 let g:airline_section_y = '%{ShowSyn()}%{VimBuddy()} '.
-         \                '[%#__accent_red#%{Modified()}%#airline_y#%n,%#airline_y_bold#%{CaseStat()}%#airline_y#]'
+         \                '[%#__accent_red#%{Modified()}%#airline_y#%n,%#airline_y_bold#%{CaseStat()}%#airline_y#,%02B]'
 let g:airline#extensions#whitespace#enabled = 0
 function! AirlineInit()
   let g:airline_section_c = substitute(g:airline_section_c, '%m','','')
