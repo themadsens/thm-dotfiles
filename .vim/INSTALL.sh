@@ -24,6 +24,7 @@ cd bundle
  	https://github.com/vim-airline/vim-airline-themes
  	https://github.com/edkolev/tmuxline.vim
     https://github.com/chrisbra/changesPlugin.git
+    https://github.com/edkolev/promptline.vim
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
