@@ -1,10 +1,8 @@
+#!bash
 
-#[[ $0 != -* && $- != *l* ]] && . /etc/profile 
-_PS1=$PS1
 unalias -a
-source /etc/profile 
 
-if [[ $TERM = screen || $TERM = xterm ]] ;then
+if [[ $TERM = screen || $TERM = xterm || $TERM = tmux ]] ;then
    export TERM=${TERM}-256color
 fi
 
@@ -12,31 +10,7 @@ if [[ $PATH != *$HOME/bin3:* ]] ;then
     PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:$PATH
 fi
 
-for f in bash_completion ;do
-   for d in /etc/ /usr/local/etc ;do
-      [ -f $d/$f ] && source $d/$f
-   done
-done
-for f in ~/.bash_completion.d/* ;do
-   [ -r $f ] && source $f
-done
-
-if [[ -d ~/.qfc && $_PS1 != tmux-ssh- ]] ;then
-   # See https://github.com/themadsens/qfc
-   source ~/.qfc/bin/qfc.sh
-   #qfc_quick_command 'vim' '\C-p' 'vim $0'
-   #qfc_quick_command 'cd' '\C-b' 'cd $0'
-fi
-unset _PS1
-
-# [[ $BASH_COMPLETION ]] || . /etc/bash_completion
-#. /etc/profile
-
 export SVN_EDITOR=vi
-HISTCONTROL=ignoredups
-IGNOREEOF=3
-HISTSIZE=999000
-HISTFILESIZE=999000
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
 export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.4.1_1/
 export JBOSS_HOME=/opt/wildfly
@@ -44,21 +18,8 @@ export AMPCOM_HOME=/opt/ampcom
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
 export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
 
-ttprompt() {
-   case "$1" in
-      1) echo "${TOOLCHAIN_PS1_LABEL/#tt/ tt${TARGET_PLATFORM/#V26/26}}" ;;
-      *) echo "${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }" ;;
-   esac
-}
-__col() {
-   [[ $TERM == xterm*  || $TERM == screen* || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
-}
-PS1="[$(__col 1)\h $(__col 2)\W$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
-NOTTPS1=$PS1
 [[ "$(type -p dircolors)" ]] && eval `dircolors`
 # eval `dircolors ~/.dircolors`
-
-[ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
 
 sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else lemonade paste ;fi; }
 findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
@@ -230,13 +191,6 @@ alias tsel='tmux show-buffer'
 alias hi="history|tail"
 alias hist="history"
 alias hgrep="history|grep"
-run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
-__run() {
-   mapfile -t COMPREPLY < <(ls -1d /Applications/{,*/}*.app | \
-                            grep -i "/$2" | \
-                            sed -e 's,^/Applications/,,' -e 's/.app$//' -e 's/ /\\ /g');
-}
-complete -F __run run
 
 case $TERM in
     sun-cmd) stln() { printf "\033]l %s \033" "$*"; } ; itit() { :; }
@@ -318,62 +272,6 @@ function ws () {
 }
 function findTests() { find . -name surefire-reports | xargs -I % open %/index.html; }
 
-function timerep() {
-   local timeRep=$TIMESHOW ; [[ $timeRep ]] || timeRep=$TIMEREPORT
-   [[ ! -n $timeRep ]] && return
-   times > /tmp/.time$$
-   local no timeStart cmd timeNow
-   timeNow=$(tr ms\\012 '   ' < /tmp/.time$$)
-   timeStart=$(HISTTIMEFORMAT="%s "  history 1 | awk '{print $2}')
-   if [[ -n $_timeprev ]] ;then
-      local now=$(date +%s)
-      echo $_timeprev $timeNow | awk '{
-         duration = now - timeStart
-         usrPrev = $5*60 + $6
-         sysPrev = $7*60 + $8
-         usrCur = $13*60 + $14
-         sysCur = $15*60 + $16
-         total = (usrCur + sysCur)-(usrPrev + sysPrev)
-         if (total >= timeRep) {
-            printf("%.3fu %.3fs %d:%02d %.1f%%\n",
-                   usrCur-usrPrev, sysCur-sysPrev,
-                   duration / 60, duration % 60, total / (duration?duration:total) * 100.0)
-         }
-      }' timeRep=$timeRep now=$now timeStart=$timeStart
-   fi
-   _timeprev=$timeNow
-   unset TIMESHOW
-   rm -f /tmp/.time$$
-}
-TIMEREPORT=1
-TIMEFORMAT="%Uu %Ss %2R %P%%"
-function tim() { TIMESHOW=0 ; "$@"; }
-
-function exitrep() {
-   #[[ "$HISTCMD" == "$LASTCMD" ]] && return
-   #declare LASTCMD=$HISTCMD
-   local -a ESTAT=( ${PIPESTATUS[@]} )
-   local Last=$((${#ESTAT[*]} - 1))
-   [[ ${ESTAT[$Last]} -ne 0 ]] && echo " E:${ESTAT[$Last]}"
-}
-
-function file_modtime() {
-   [[ $(uname -s) = Darwin ]] && stat  -L -f %m "$@" || stat -L -c %Y "$@"
-}
-
-function profile_check() {
-   local curtime=$(file_modtime $HOME/.bashrc)
-   if [[ $_profile_time && $_profile_time != $curtime ]] ;then
-      source $HOME/.bashrc
-   fi
-   _profile_time=$curtime
-}
-
-function tmux_update() {
-   [[ "$TMUX" ]] && eval $(tmux show-environment -s -t 0)
-}
-
-PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; tmux_update'
 if [[ -d ~/.keychain && "$UID" -ne 0 && -z "$SSH_AUTH_SOCK" ]] ;then
    #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
    HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
@@ -416,11 +314,5 @@ function amptree()  {
       cd $AMPROOT/$D
    fi
 }
-alias amp=amptree
-complete -C 'amptree --completions' amp
-[ -z "$AMPROOT" ] && amptree --nocd epgit
-complete -F _command -o filenames p pv pg
-complete -F _man vman
-complete -c vis env where 
 
 # vim: set sw=3 sts=3 et:
