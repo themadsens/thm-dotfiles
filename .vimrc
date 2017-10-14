@@ -894,8 +894,6 @@ nmap              gs      :call AgSearch("<C-R><C-W>", 1)<CR>
 vmap              gs      :call AgSearch(VisVal(), 0)<CR>
 command! -nargs=1 Search   call AgSearch("<args>", 0)
 command! -nargs=1 SearchW  call AgSearch("<args>", 1)
-nmap              gb      :Bgrep <C-R><C-W><CR>
-vmap              gb      <Esc>:exe  "Bgrep ".fnameescape(VisVal())<CR>
 
 func! OpenSpec(str)
    let Str = a:str
@@ -1162,6 +1160,10 @@ let g:easytags_on_cursorhold = 0
 let g:easytags_dynamic_files = 1
 let g:easytags_events = ['BufWritePost']
 call xolox#easytags#filetypes#add_mapping('lua', 'MYLUA')
+
+let g:brep#use_bufdo = 1   " Force searching unloaded buffers
+nmap              gb      :call brep#Grep("<C-R><C-W>", 1)<CR>
+vmap              gb      :call brep#Grep(VisVal(), 0)<CR>
 
 " echo "DONE sourcing"
 

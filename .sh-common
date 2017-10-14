@@ -105,6 +105,7 @@ tpfan() {
 }
 
 export SVN=svn+ssh://ampsvn/srv/ampep
+vman()      { nvim +"CMan $1" ; }
 svnlast()   { if [[ $# -ge 1 ]] ;then svnlog -p -l 25 "$@" ;else svnlog -p -a $USER -l 25 ;fi; }
 gitlast()   { if [[ $# -ge 1 ]] ;then gitlog -p -l 25 "$@" ;else gitlog -p -a $USER -l 25 ;fi; }
 svnminfo()  { svn mergeinfo $SVN/trunk/embedded \
@@ -150,16 +151,6 @@ exit() {
    read -n 1 -t 10 -p "Really exit. Exits in 10 sec? [y/N] " ans
    [[ "$ans" = [yY]* || $? -gt 128 ]] && builtin exit "$@"
    echo "Phew!"
-}
-
-=()         {
-   #local i e
-   #i="${@//p/+}"
-   #i="${i//m/*}"
-   #e="$(($i))"
-   #printf "%d -- 0x%x\n" $e $e
-   lua-5.3 -e "val = ${*//@/*}
-               print(string.format('%s -- 0x%x', val, val//1))"
 }
 
 rmline() { sed -i '' "$1 d" "$2"; }
