@@ -100,6 +100,8 @@ if [ -n "$PS1" ] ;then
 
    function profile_check() {
       local curtime=$(file_modtime $HOME/.bashrc)
+      local shtime=$(file_modtime /Users/fm/thm-dotfiles/.sh-common)
+      [[ $shtime > $curtime ]] && curtime=$shtime
       if [[ $_profile_time && $_profile_time != $curtime ]] ;then
          source $HOME/.bashrc
       fi
@@ -111,6 +113,16 @@ if [ -n "$PS1" ] ;then
    }
 
    PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; tmux_update'
+
+   =()         {
+      #local i e
+      #i="${@//p/+}"
+      #i="${i//m/*}"
+      #e="$(($i))"
+      #printf "%d -- 0x%x\n" $e $e
+      lua-5.3 -e "val = ${*//@/*}
+                  print(string.format('%s -- 0x%x', val, val//1))"
+   }
 
    tac() {
       awk '
