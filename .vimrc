@@ -651,14 +651,21 @@ au! QuickfixCmdPost make call MakePrgPost()
 autocmd Private BufReadPost * 1
 
 function! PrevBuf(closeThis, ...)
-
-
-   if a:closeThis && &buftype != ""
-      exe "bdelete" . (a:0 > 0 ? a:1 : "")
-      return
-   elseif a:closeThis && getbufvar(winbufnr(winnr('$')), 'current_syntax') == 'qf'
-      exe "bdelete " . winbufnr(winnr('$'))
-      return
+   if a:closeThis
+      let didClose = 0
+      if &buftype != ""
+         exe "bdelete" . (a:0 > 0 ? a:1 : "")
+         let didClose = 1
+      endif
+      for win in getwininfo()
+         if win.quickfix
+            exe "bdelete ".win.bufnr
+            let didClose = 1
+         endif
+      endfor
+      if didClose
+         return
+      end
    endif
 
    let l:curBuf = bufnr("%")
@@ -684,7 +691,6 @@ function! PrevBuf(closeThis, ...)
    endif
    if l:ok == 0
       " Failed, Restore old pos
-      let l:curPos[0] = l:curBuf
       call setpos("", l:curPos)
    endif
 endf
