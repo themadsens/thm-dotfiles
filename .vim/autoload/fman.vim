@@ -37,6 +37,9 @@ function! s:followLine()
 endfunc
 
 function! fman#fmanize(setQ)
+   if &filetype != 'man'
+      return
+   end
    only
    nmap <buffer> <Space> <C-F>
    nmap <buffer> f <C-F>
