@@ -19,11 +19,12 @@ cd bundle
 #	https://github.com/scrooloose/syntastic
  	https://github.com/cespare/vim-toml
  	https://github.com/tmux-plugins/vim-tmux
- 	https://github.com/vim-scripts/Buffer-grep
+    https://github.com/tomtom/brep_vim
  	https://github.com/vim-airline/vim-airline
  	https://github.com/vim-airline/vim-airline-themes
  	https://github.com/edkolev/tmuxline.vim
     https://github.com/chrisbra/changesPlugin.git
+    https://github.com/edkolev/promptline.vim
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
