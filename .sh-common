@@ -105,7 +105,7 @@ tpfan() {
 }
 
 export SVN=svn+ssh://ampsvn/srv/ampep
-vman()      { nvim +"CMan $1" ; }
+vman()      { nvim "+call fman#man_page(0, 1, '', '${1}')"; }
 svnlast()   { if [[ $# -ge 1 ]] ;then svnlog -p -l 25 "$@" ;else svnlog -p -a $USER -l 25 ;fi; }
 gitlast()   { if [[ $# -ge 1 ]] ;then gitlog -p -l 25 "$@" ;else gitlog -p -a $USER -l 25 ;fi; }
 svnminfo()  { svn mergeinfo $SVN/trunk/embedded \
@@ -176,7 +176,7 @@ tmux-attach() {
          ;;
    esac
 }
-tmux-ssh() { ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-x-attach'; tput init; }
+tmux-ssh() { tput smcup; ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'; tput init; tput rmcup; }
 alias tsel='tmux show-buffer'
 
 alias hi="history|tail"

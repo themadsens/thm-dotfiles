@@ -9,7 +9,7 @@ cd bundle
 #   https://github.com/othree/yajs.vim
     https://github.com/jelera/vim-javascript-syntax.git
     https://github.com/othree/javascript-libraries-syntax.vim
-	https://github.com/udalov/kotlin-vim
+#	https://github.com/udalov/kotlin-vim
 	https://github.com/vim-scripts/dbext.vim
 	https://github.com/majutsushi/tagbar.git
     https://github.com/xolox/vim-easytags
@@ -25,6 +25,8 @@ cd bundle
  	https://github.com/edkolev/tmuxline.vim
     https://github.com/chrisbra/changesPlugin.git
     https://github.com/edkolev/promptline.vim
+    https://github.com/voithos/vim-python-matchit
+#   https://github.com/codeindulgence/vim-tig
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
