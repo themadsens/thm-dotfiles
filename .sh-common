@@ -176,7 +176,11 @@ tmux-attach() {
          ;;
    esac
 }
-tmux-ssh() { tput smcup; ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'; tput init; tput rmcup; }
+tmux-ssh() {
+   tput smcup
+   ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'
+   tput init; tput rmcup; printf '\e[?1000l'
+}
 alias tsel='tmux show-buffer'
 
 alias hi="history|tail"
