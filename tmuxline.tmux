@@ -1,14 +1,14 @@
 # This tmux statusbar config was created by tmuxline.vim
 # on Thu, 05 Oct 2017
 
-setw -g pane-border-format "  #[fg=colour31]#[fg=black,bg=colour31]-- #{pane_index} #{?pane_active,#[fg=colour248],#[fg=colour238]}#[fg=black]#{?pane_active,#[bg=colour248],#[bg=colour238]}#{pane_title}#[default]#{?pane_active,#[fg=colour248],#[fg=colour238]}  "
+setw -g pane-border-format "  #[fg=colour#{?pane_active,31,242}]#[fg=black,bg=colour#{?pane_active,31,242}]-- #{pane_index} #[fg=colour#{?pane_active,244,238}]#[fg=black]#[bg=colour#{?pane_active,244,238}]#{pane_title}#[default]#[fg=colour#{?pane_active,244,238}]  "
 set -g status-justify "centre"
 set -g status "on"
 set -g status-attr "none"
 set -g message-command-bg "colour31"
 set -g status-left-length "100"
 set -g pane-active-border-fg "colour31"
-set -g pane-border-fg "colour251"
+set -g pane-border-fg "colour238"
 set -g status-bg "colour234"
 set -g message-command-fg "colour231"
 set -g message-bg "colour31"
