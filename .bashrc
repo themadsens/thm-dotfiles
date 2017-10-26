@@ -100,7 +100,7 @@ if [ -n "$PS1" ] ;then
 
    function profile_check() {
       local curtime=$(file_modtime $HOME/.bashrc)
-      local shtime=$(file_modtime /Users/fm/thm-dotfiles/.sh-common)
+      local shtime=$(file_modtime $HOME/thm-dotfiles/.sh-common)
       [[ $shtime > $curtime ]] && curtime=$shtime
       if [[ $_profile_time && $_profile_time != $curtime ]] ;then
          source $HOME/.bashrc

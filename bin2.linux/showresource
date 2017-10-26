@@ -1,0 +1,2 @@
+#!/bin/sh
+exec $AMPROOT/arm9/agentframework/devicemanager/showresource/showresource "$@"
