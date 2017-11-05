@@ -225,6 +225,10 @@ sshwrap() {
       Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@" 2>/dev/null;
              cat /tmp/__H; rm -f /tmp/__H)
       itit "$Tty => $(tr a-z A-Z <<< $Host)"
+      if [[ $Host != fm* ]] ;then
+         env TERM=${TERM%-italic} $Cmd "$@"
+         return 0
+      fi
    fi
    command $Cmd "$@"
 }
