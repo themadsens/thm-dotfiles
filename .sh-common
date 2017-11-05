@@ -190,15 +190,18 @@ alias hgrep="history|grep"
 case $TERM in
     sun-cmd) stln() { printf "\033]l %s \033" "$*"; } ; itit() { :; }
              ;;
-    xterm*|linux*|screen*)
+    xterm*|linux*|screen*|tmux*)
              stln() { printf "\033]2;%s\007" "$*" ; }
              itit() { printf "\033]1;%s\007" "$*" ; }
              ;;
     *)       stln() { :; } ; itit() { :; }
     ;;
 esac
-if [[ "$TMUX" ]] ;then
+if [[ "$TMUX" && -z "$NVIM_LISTEN_ADDRESS" ]] ;then
    itit() { printf "\ek%s\e\\" "$*" ; }
+fi
+if [[ "$NVIM_LISTEN_ADDRESS" ]] ;then
+   itit() { :; }
 fi
 HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10-`
 Tty=`tty | cut -c10-`
@@ -222,6 +225,10 @@ sshwrap() {
       Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@" 2>/dev/null;
              cat /tmp/__H; rm -f /tmp/__H)
       itit "$Tty => $(tr a-z A-Z <<< $Host)"
+      if [[ $Host != fm* ]] ;then
+         env TERM=${TERM%-italic} $Cmd "$@"
+         return 0
+      fi
    fi
    command $Cmd "$@"
 }
@@ -287,7 +294,7 @@ function amptree()  {
    fi
    local noCD=""
    if [[ $1 == --nocd ]] ;then noCD=1; shift; fi
-   AMPROOT=~/amplex/$1
+   export AMPROOT=~/amplex/$1
    CDPATH=""
    if [[ -d $AMPROOT/arm9 ]] ;then
        local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/utils,arm9/drivers}"
