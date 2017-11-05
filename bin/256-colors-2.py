@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # Ported to Python from http://www.vim.org/scripts/script.php?script_id=1349
 # Ported from list comprehensions to generators from https://gist.github.com/graven/921334
+from __future__ import print_function
+
 import itertools
 ichain = itertools.chain
 
-print "Color indexes should be drawn in bold text of the same color."
-print
+print("Color indexes should be drawn in bold text of the same color.\n")
 
 def colored():
 	yield 0
@@ -36,4 +37,4 @@ for (i, color) in enumerate(ichain(colored_palette, grayscale_palette), 16):
 	index = (bold + "%4s" + reset) % (i, str(i) + ':')
 	hex   = (normal + "%s" + reset) % (i, color)
 	newline = '\n' if i % 6 == 3 else ''
-	print index, hex, newline, 
+	print(index, hex, newline, end='')

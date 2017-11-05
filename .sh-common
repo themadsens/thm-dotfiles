@@ -97,7 +97,7 @@ df()   { colorize df -k "$@"; }
 # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
 fixkbd() { 
    #setxkbmap -option caps:none;
-   xcape -e 'Caps_Lock=Control_L|G';
+   xmodmap -e 'Caps_Lock=Control_L|G';
    xmodmap -e 'keysym Control_R = Mode_switch';
 }
 tpfan() {
