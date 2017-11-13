@@ -1,0 +1,7 @@
+#/bin/sh
+#setxkbmap -option caps:none;
+xmodmap -e 'Caps_Lock=Control_L|G';
+xmodmap -e 'keysym Control_R = Mode_switch';
+xinput set-prop "Lenovo ThinkPad Compact USB Keyboard with TrackPoint" "Evdev Wheel Emulation" 1
+xinput set-prop "Lenovo ThinkPad Compact USB Keyboard with TrackPoint" "Evdev Wheel Emulation Button" 2
+xinput set-prop "Lenovo ThinkPad Compact USB Keyboard with TrackPoint" "Evdev Wheel Emulation Timeout" 200
