@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/usr/bin/env luajit
 -- ported to Lua from https://gist.github.com/graven/921334
 -- Demonstrate using Lua coroutines as generators
 
