@@ -32,7 +32,7 @@ if [ -n "$PS1" ] ;then
       esac
    }
    __col() {
-      [[ $TERM == xterm*  || $TERM == screen* || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
+      [[ $TERM == xterm*  || $TERM == screen* || $TERM == tmux* || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
    }
    PS1="[$(__col 1)\h $(__col 2)\W$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
    NOTTPS1=$PS1
