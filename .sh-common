@@ -97,7 +97,7 @@ df()   { colorize df -k "$@"; }
 # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
 fixkbd() { 
    #setxkbmap -option caps:none;
-   xcape -e 'Caps_Lock=Control_L|G';
+   xmodmap -e 'Caps_Lock=Control_L|G';
    xmodmap -e 'keysym Control_R = Mode_switch';
 }
 tpfan() {
@@ -225,6 +225,10 @@ sshwrap() {
       Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@" 2>/dev/null;
              cat /tmp/__H; rm -f /tmp/__H)
       itit "$Tty => $(tr a-z A-Z <<< $Host)"
+      if [[ $Host != fm* ]] ;then
+         env TERM=${TERM%-italic} $Cmd "$@"
+         return 0
+      fi
    fi
    command $Cmd "$@"
 }
