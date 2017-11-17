@@ -1,0 +1,11 @@
+#!/bin/bash
+
+TITLE=''
+while [[ $# > 2 ]] ;do
+    case $1 in
+        -L) TITLE=$TITLE" -- "$2 ; shift ;;
+    esac
+    shift
+done
+
+exec vim -c 'map q :qall<CR>' -c 'map Q :qall<CR>' -d -o $1 $2
