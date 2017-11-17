@@ -1,7 +1,11 @@
 #!/bin/sh
 while true ;do
+    ./go_app.sh
     rlwrap --command ionic-serve --file . --remember --histsize 9999 \
            ionic serve --nobrowser --lab --all --serverlogs "$@" #--consolelogs 
+    if [ $? -ge 128 ] ;then
+        exit # signal'ed
+    fi
     if grep -q dashboard ionic.config.json ;then
         ./go_app.sh
         echo 'Switched to app mode'
