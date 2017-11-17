@@ -52,6 +52,7 @@ alias gitnew=" git log HEAD@{1}..HEAD@{0}"
 # Add uncommitted and unstaged changes to the last commit
 alias gitappend="git commit -a --amend -C HEAD"
 alias gitst="    git status"
+alias tigst="    tig status"
 alias gitcommit="git add \* ; git commit"
 gitdiff() {
    REV=''
@@ -245,6 +246,29 @@ function locate()
       command locate "$@"
    fi
 }
+wsHost() { # Resolve host from ~/.ssh/config
+  cat ~/.ssh/config 2>/dev/null \
+  | awk -v H="$1" '
+     $1 == "Host" {
+        found = 0;
+        for (i = 1; i <= NF; i++) { if ($i == H) found = 1; }
+     }
+     $1 == "HostName" && found { print $2; found = 2; exit; }
+     END { if (found != 2) print H; }
+  '
+}
+wsLogin() {
+  local SERVER=$(wsHost $2)
+  local LOGIN="--cookie /tmp/curl-cookie-jar.$1-$2 --cookie-jar /tmp/curl-cookie-jar.$1-$2"
+  local CODE=$(umask 077; curl -s -k -w '%{http_code}\n' $LOGIN https://$SERVER/aasws/nodes -o /dev/null)
+  if [[ $CODE = 403 ]] ;then
+    CODE=$(umask 077; curl -s -k --user $1 -w '%{http_code}\n' $LOGIN https://$SERVER/aasws/nodes -o /dev/null)
+  fi
+  if [[ $CODE != 200 ]] ;then
+    LOGIN="--user $1"
+  fi
+  echo $LOGIN
+}
 function ws2 () {
    local O=$1
    local U=$2
@@ -253,10 +277,10 @@ function ws2 () {
    shift ; shift
    shift ; shift
    #echo "P: $P"
-   curl -w '\n---- CURL STAT ----\n%{http_code}: %{size_header} + %{size_download}B %{time_total}sTOT %{time_pretransfer}sPRE\n' \
-      -u$U -k -H 'content-type: application/json' \
-      -X$O https://${H}$P "$@" \
-      | mawk '/^---- CURL STAT ----$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
+   curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
+      $(wsLogin $U $H) -k -H 'content-type: application/json' \
+      -X$O https://$(wsHost $H)$P "$@" \
+      | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
 }
 function ws () {
    local O=$1
