@@ -1,2 +1,3 @@
 #!/bin/sh
-MAKEGLIMPSEINDEX=0 exec amp-glindex "$@"
+export MAKEGLIMPSEINDEX=${GLIMPSE:=0}
+exec amp-glindex "$@"
