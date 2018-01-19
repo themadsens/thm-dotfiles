@@ -249,11 +249,11 @@ function locate()
 wsHost() { # Resolve host from ~/.ssh/config
   cat ~/.ssh/config 2>/dev/null \
   | awk -v H="$1" '
-     $1 == "Host" {
+     tolower($1) == "host" {
         found = 0;
         for (i = 1; i <= NF; i++) { if ($i == H) found = 1; }
      }
-     $1 == "HostName" && found { print $2; found = 2; exit; }
+     tolower($1) == "hostname" && found { print $2; found = 2; exit; }
      END { if (found != 2) print H; }
   '
 }
