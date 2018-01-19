@@ -215,6 +215,10 @@ setglobal virtualedit=block
 setglobal noignorecase
 setglobal smartcase
 setglobal nofoldenable
+if has('nvim')
+   setglobal list
+   setlocal  list
+end
 
 let c_gnu = 1
 let c_no_curly_error = 1
@@ -598,8 +602,8 @@ endfunc
 
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
-   if makeArgs == 'jshint'
-      setlocal makeprg=jshint
+   if makeArgs == 'jshint' || makeArgs == 'jslint'
+      setlocal makeprg=makeArgs
       let makeArgs = '%'
    elseif makeArgs == 'lualint' || (&ft == 'lua' && !filereadable('Makefile'))
       setlocal makeprg=lualint
@@ -610,7 +614,7 @@ function! MakePrg(mkArg)
          let makeArgs = 'lint'
       endif
    elseif &ft == 'javascript'
-      setlocal makeprg=jshint
+      setlocal makeprg=jslint
       let makeArgs = '%'
    elseif &makeprg == "mmvn" || &makeprg == "mvn" || (exists("current_compiler") && current_compiler == "mvn")
       setlocal makeprg=mmvn
@@ -716,11 +720,11 @@ function! SvnDiff(f)
    call s:PrivBuf("DIFF::".f, "diff")
    let tmpbuf = bufnr("%")
 
-   let diff="svn diff "
+   let diff="svn diff -x -w "
    let git=0
    call system(cd."git log -1")
    if v:shell_error == 0
-      let diff="git diff HEAD "
+      let diff="git diff -w HEAD "
       let git=1
    endif
 
@@ -734,14 +738,14 @@ function! SvnDiff(f)
          else
             call system(cd."svn cat ".shellescape(fn)." > ".shellescape(tmp.".orig"))
          endif
-         let cmd = "diff -u ".shellescape(tmp.".orig")." ".shellescape(tmp)." ; rm ".shellescape(tmp)."{,.orig}"
+         let cmd = "diff -u -w ".shellescape(tmp.".orig")." ".shellescape(tmp)." ; echo ".shellescape(tmp)."{,.orig}"
       endif
       exe "buffer ".curbuf
    endif
    if !exists("cmd")
       let cmd = cd.diff.shellescape(fn)
    endif
-   " echom "F: '".f."' CMD: '".cmd."'"
+   echom "F: '".f."' CMD: '".cmd."'"
    exe "buffer ".tmpbuf
    exe "normal S-- DIFF: ".f
    exe "read !".cmd
@@ -760,14 +764,17 @@ function! SvnBlame(f)
    let fn = fnamemodify(f, ":t")
    call s:PrivBuf("BLAME::".f, "".&ft)
 
-   let cmd=cd."sh -c ".shellescape("git annotate '".fn."'|cut -c3-9,11-14,26-42,52-|expand -1|sed 's/[0-9]*)//'")
-   call system("git svn info")
+   let cmd=cd."sh -c ".shellescape("git blame -w '".fn."'|cut -c1-9,11-14,28,31-38,60-")
+   let svninf = system(cd."git svn info")
    if v:shell_error == 0
-      let cmd="git svn blame ".shellescape(f)
+      " FIXME: Actually we should seach upward for '.git' and subtract *that* dir's URL:
+      let m = matchlist(svninf, '[^\p]URL:\s*\(\p\+\).*[^\p]Repository Root:\s*\(\p\+\)')
+      let fp = (len(m[2]) > 5 && 0 == stridx(m[1], m[2].'/trunk/')) ? strpart(m[1], len(m[2])+7).'/'.fn : fn
+      let cmd=cd."git svn blame -w ".shellescape(fp)
    else
-      call system("svn info")
+      call system(cd."svn info")
       if v:shell_error == 0
-         let cmd=cd."svn blame ".shellescape(fn)
+         let cmd=cd."svn blame -x -w ".shellescape(fn)
       endif
    endif
 
@@ -1163,6 +1170,7 @@ let g:tmuxline_preset = {
 let g:easytags_async = 1
 let g:easytags_auto_highlight = 0
 let g:easytags_on_cursorhold = 0
+let g:easytags_resolve_links = 0
 let g:easytags_dynamic_files = 1
 let g:easytags_events = ['BufWritePost']
 call xolox#easytags#filetypes#add_mapping('lua', 'MYLUA')
