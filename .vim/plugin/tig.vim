@@ -12,7 +12,7 @@ if has('nvim')
   endif
 
   if !exists('g:tig_open_command')
-    let g:tig_open_command = 'enew'
+    let g:tig_open_command = 'enew | set nonumber'
   endif
 
   function! s:tig(bang, ...)
@@ -46,4 +46,5 @@ if has('nvim')
   endfunction
 
   command! -bang -nargs=? Tig call s:tig(<bang>0, <f-args>)
+  map gt :Tig %<CR>
 endif

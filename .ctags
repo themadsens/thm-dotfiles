@@ -21,9 +21,9 @@
 --regex-javascript=/\.service *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
 --regex-javascript=/\.directive *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
 --regex-javascript=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
--I-regex-javascript=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*\(/\5/f,function/
---regex-javascript=/^ +function[ \t]+([A-Za-z0-9_$]+)[ \t]*\([^)]*\)/\1/f,function/
---regex-javascript=/^let[ \t]([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
+--regex-javascript=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*([A-Za-z_$][A-Za-z0-9_$]*[ \t]*)?\(/\5/f,function/
+--regex-javascript=/^[ \t]*function[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)[ \t]*\(/\1/f,function/
+--regex-javascript=/^(let|var)[ \t]([A-Za-z0-9_$]+)[ \t]*=[^(]+$/\2/v,global/
 --regex-javascript=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 --regex-javascript=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 

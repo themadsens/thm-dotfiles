@@ -1,0 +1,7 @@
+#!/bin/sh
+exec ptpython "$@"
+exec bpython "$@"
+
+# Should'nt get here
+echo "Please install ptpython or bpython (pip install <package>)"
+exit 1
