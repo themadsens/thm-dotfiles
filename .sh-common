@@ -279,7 +279,7 @@ function ws2 () {
    #echo "P: $P"
    curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
       $(wsLogin $U $H) -k -H 'content-type: application/json' \
-      -X$O https://$(wsHost $H)$P "$@" \
+      -X$O https://$(wsHost $H)"$P" "$@" \
       | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
 }
 function ws () {
