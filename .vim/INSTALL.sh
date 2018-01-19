@@ -10,7 +10,8 @@ cd bundle
     https://github.com/jelera/vim-javascript-syntax.git
     https://github.com/othree/javascript-libraries-syntax.vim
 #	https://github.com/udalov/kotlin-vim
-	https://github.com/vim-scripts/dbext.vim
+#	https://github.com/vim-scripts/dbext.vim
+#	https://github.com/cosminadrianpopescu/vim-sql-workbench
 	https://github.com/majutsushi/tagbar.git
     https://github.com/xolox/vim-easytags
     https://github.com/xolox/vim-misc
