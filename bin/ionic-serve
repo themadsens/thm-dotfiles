@@ -1,16 +1,17 @@
-#!/bin/sh
+#!/bin/bash
+./go_${1:-app}.sh $2
 while true ;do
-    ./go_app.sh
     rlwrap --command ionic-serve --file . --remember --histsize 9999 \
            ionic serve --nobrowser --lab --all --serverlogs "$@" #--consolelogs 
     if [ $? -ge 128 ] ;then
         exit # signal'ed
     fi
-    if grep -q dashboard ionic.config.json ;then
+    L=$(readlink ionic.config.json)
+    if [[ $L == *.app.* ]] ;then
+        ./go_dashboard.sh $2 
+        echo "Switched to dashboard ${2:+($2) }mode"
+    else
         ./go_app.sh
         echo 'Switched to app mode'
-    else
-        ./go_dashboard.sh
-        echo 'Switched to dashboard mode'
     fi
 done
