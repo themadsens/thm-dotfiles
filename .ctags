@@ -1,19 +1,17 @@
 -I--exclude=@.agignore
 --extra=+fq
 
---langdef=kotlin
---langmap=kotlin:.kt
---langmap=kotlin:+.kts
---regex-kotlin=/^[ \t]*((abstract|final|sealed|implicit|lazy)[ \t]*)*(private[^ ]*|protected)?[ \t]*class[ \t]+([a-zA-Z0-9_]+)/\4/c,classes/
---regex-kotlin=/^[ \t]*((abstract|final|sealed|implicit|lazy)[ \t]*)*(private[^ ]*|protected)?[ \t]*object[ \t]+([a-zA-Z0-9_]+)/\4/o,objects/
---regex-kotlin=/^[ \t]*((abstract|final|sealed|implicit|lazy)[ \t]*)*(private[^ ]*|protected)?[ \t]*((abstract|final|sealed|implicit|lazy)[ \t]*)*data class[ \t]+([a-zA-Z0-9_]+)/\6/c,data classes/
---regex-kotlin=/^[ \t]*((abstract|final|sealed|implicit|lazy)[ \t]*)*(private[^ ]*|protected)?[ \t]*interface[ \t]+([a-zA-Z0-9_]+)/\4/i,interfaces/
---regex-kotlin=/^[ \t]*type[ \t]+([a-zA-Z0-9_]+)/\1/T,types/
---regex-kotlin=/^[ \t]*((abstract|final|sealed|implicit|lazy|private[^ ]*(\[[a-z]*\])*|protected)[ \t]*)*fun[ \t]+([a-zA-Z0-9_]+)/\4/m,methods/
---regex-kotlin=/^[ \t]*((abstract|final|sealed|implicit|lazy|private[^ ]*|protected)[ \t]*)*val[ \t]+([a-zA-Z0-9_]+)/\3/co,constants/
---regex-kotlin=/^[ \t]*((abstract|final|sealed|implicit|lazy|private[^ ]*|protected)[ \t]*)*var[ \t]+([a-zA-Z0-9_]+)/\3/va,variables/
---regex-kotlin=/^[ \t]*package[ \t]+([a-zA-Z0-9_.]+)/\1/p,packages/
---regex-kotlin=/^[ \t]*import[ \t]+([a-zA-Z0-9_.]+)/\1/p,imports/
+-I-From-https://github.com/rstacruz/ctags-css
+--langdef=css
+--langmap=css:.css
+--langmap=css:+.scss
+--langmap=css:+.sass
+--langmap=css:+.styl
+--langmap=css:+.less
+--regex-css=/^[ \t]*\.([a-z][A-Za-z0-9_]+)( |$)/\1/c,class,classes/
+--regex-css=/^([\$@][A-Za-z0-9_-]+): /\1/v,variable,variables/
+--regex-css=/^([A-Za-z0-9_-]+) = /\1/v,variable,variables/
+--regex-css=/^[ \t]*(@mixin |= ?)([A-Za-z0-9_-]+)/\2/m,mixin,mixins/
 
 --regex-javascript=/\.controller *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
 --regex-javascript=/\.filter *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
@@ -23,6 +21,7 @@
 --regex-javascript=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
 --regex-javascript=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*([A-Za-z_$][A-Za-z0-9_$]*[ \t]*)?\(/\5/f,function/
 --regex-javascript=/^[ \t]*function[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)[ \t]*\(/\1/f,function/
+--regex-javascript=/^[ \t]+([A-Za-z_$][A-Za-z0-9_$.]+)\:[ \t]+function[ \t]*\(/\1/f,function/
 --regex-javascript=/^(let|var)[ \t]([A-Za-z0-9_$]+)[ \t]*=[^(]+$/\2/v,global/
 --regex-javascript=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 --regex-javascript=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
