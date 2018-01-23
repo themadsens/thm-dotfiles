@@ -490,6 +490,8 @@ function! SetFileTypeOpts()
      setlocal sw=2 ts=2 et
    elseif ft == "python"
      setlocal sw=2 ts=2 noet
+   elseif ft == "css" || ft == "html"
+     setlocal sw=2 ts=2 et
    end
    if filereadable(findfile("_vimrc", ".;"))
       exe "source ".fnameescape(findfile("_vimrc", ".;"))
