@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+import sys
+import email
+import zipfile
+import argparse
+
+def anon_():
+	i = 1
+	yield "MAIL"
+	while 1:
+		yield "PART_"+str(i)
+		i=i+1
+anon = anon_()
+
+def ext(o):
+	if o.is_multipart():
+		return ''
+	mt = o.get_content_type()
+	if mt == 'text/plain':
+		return '.txt'
+	elif 0 == mt.find("text/"):
+		return "."+mt[5:]
+	elif 0 == mt.find("image/"):
+		return "."+mt[6:]
+	return ""
+
+def addToZip(zip, mail, path, toc):
+	if path:
+		path += "/"
+
+	if mail.is_multipart():
+		for obj in mail.get_payload():
+			addToZip(zip, obj, path+obj.get_filename(anon.next()), toc)
+	else:
+		fn = path+mail.get_filename(anon.next()+ext(mail))
+		ff = mail.get_payload(None, True)
+		toc.append(fn+": ("+mail.get_content_type()+") "+str(len(ff))+" bytes")
+		zip.writestr(fn, ff, zipfile.ZIP_DEFLATED)
+
+def main(args):
+	parser = email.Parser.FeedParser()
+	parser.feed(args.infile.read())
+	mail = parser.close()
+	zip = zipfile.ZipFile(args.outfile, mode='w')
+	toc = []
+
+	if args.hdr:
+		zip.writestr("HEADER.txt", "\n".join(map(lambda hdr: ": ".join(hdr), mail.items())), zipfile.ZIP_DEFLATED)
+	for obj in mail.get_payload():
+		addToZip(zip, obj, "", toc)
+	if args.toc:
+		zip.writestr("TOC.txt", "\n".join(toc), zipfile.ZIP_DEFLATED)
+
+args = argparse.ArgumentParser(description='Convert mail/mime to zip')
+args.add_argument('infile', nargs='?', help="Mail file (default stdin)", type=argparse.FileType('r'), default=sys.stdin)
+args.add_argument('outfile', nargs='?', help="Zip file (default stdout)", type=argparse.FileType('w'), default=sys.stdout)
+args.add_argument('--toc', action='store_true', help="Write the TOC file")
+args.add_argument('--hdr', action='store_true', help="Write the HEADER file")
+main(args.parse_args())
