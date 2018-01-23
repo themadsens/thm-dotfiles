@@ -34,7 +34,7 @@ if has('nvim')
 
     exec g:tig_open_command
     if a:bang > 0
-      call s:tigopen("blame -- ".file)
+      call s:tigopen("blame -w -- ".file)
     elseif filereadable(file)
       call s:tigopen("-- ".file)
     elseif a:0 > 0
