@@ -1,7 +1,10 @@
 #!/bin/bash
-export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m"
-exec mvn -DskipTests=true -DperformRelease=false "$@"
+export MAVEN_OPTS="-Xmx1024m"
+[ -f .envrc ]    && . .envrc
+[ -f ../.envrc ] && . ../.envrc
 
+exec mvn -DskipTests=true -DperformRelease=false "$@"
+exit
 #!/usr/bin/env ttlua
 
 local posix = require "lposix"

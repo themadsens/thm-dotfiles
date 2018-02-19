@@ -3,21 +3,37 @@
 # Watch webapp dirs and syncronize
 #
 declare -a W
-W=(ampep/opencity-sso-6.8 greenwise/common-ui)
-D="$1"
+W=(ampep/opencity-sso-7.0.0 greenwise/common-ui)
+DIR="$1"
 if [ "$2" != "SYNCH" ] ;then
     declare -a A=""
     for d in "${W[@]}" ;do
-        A=("${A[@]}" --watch "$D/${d%-[0-9]*}/src/main/webapp")
+        A=("${A[@]}" --watch "$DIR/${d%-[0-9]*}/src/main/webapp")
     done
     echo "A: ${A[@]}"
-    exec nodemon "${A[@]}" --ext \* --ignore \*.swp -x $0 "$D" "SYNCH"
+    exec nodemon "${A[@]}" --ext \* --ignore \*.swp -x $0 "$DIR" "SYNCH"
 fi
- 
+
+alerter() {
+    # Test for alerter on OSX: https://github.com/vjeantet/alerter
+    if [[ `type -P alerter` == '' ]] ;then
+        cat
+    else
+        awk '{
+            print ; split($0, P, "/"); FN = P[length(P)]
+            if (length(FN)) {
+                LN++; F = F FN " "
+            }
+        }
+        END {
+            system("alerter -timeout 2 -title \"Watch Synch\" -subtitle \"Copying " LN " files\" -message \"" F "\"")
+        }'
+    fi
+}
+
 # eg: greenwise/common-ui/target/common-ui greenwise/common-ui/src/main/webapp/
 
-#OPT="--quiet " # For production
-#OPT="--verbose --dry-run " # For test
 for d in "${W[@]}" ;do
-    rsync --recursive --checksum $OPT "$D/${d%-[0-9]*}/src/main/webapp/" "$D/${d%-[0-9]*}/target/${d##*/}"
-done
+    rsync -a -O --out-format="%M %l %n%L" "$DIR/${d%-[0-9]*}/src/main/webapp/" "$DIR/${d%-[0-9]*}/target/${d##*/}"
+done \
+| alerter
