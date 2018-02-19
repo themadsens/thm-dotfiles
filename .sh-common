@@ -227,7 +227,8 @@ sshwrap() {
              cat /tmp/__H; rm -f /tmp/__H)
       itit "$Tty => $(tr a-z A-Z <<< $Host)"
       if [[ $Host != fm* ]] ;then
-         env TERM=${TERM%-italic} $Cmd "$@"
+         local Term=${TERM%-italic}
+         env TERM=${Term/tmux/xterm} $Cmd "$@"
          return 0
       fi
    fi
