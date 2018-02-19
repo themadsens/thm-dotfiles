@@ -13,6 +13,8 @@
 --regex-css=/^([A-Za-z0-9_-]+) = /\1/v,variable,variables/
 --regex-css=/^[ \t]*(@mixin |= ?)([A-Za-z0-9_-]+)/\2/m,mixin,mixins/
 
+--langmap=javascript:+.jsp
+--langmap=javascript:+.jspf
 --regex-javascript=/\.controller *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
 --regex-javascript=/\.filter *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
 --regex-javascript=/\.factory *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
@@ -53,16 +55,6 @@
 --regex-less=/^[ \t]*#([A-Za-z0-9_-]+)/\1/i,id,ids/
 --regex-less=/^[ \t]*(([A-Za-z0-9_-]+[ \t\n,]+)+)\{/\1/t,tag,tags/
 --regex-less=/^[ \t]*@media\s+([A-Za-z0-9_-]+)/\1/m,media,medias/
-
---langdef=scss
---langmap=scss:.scss.sass
---regex-scss=/^[ \t]*@mixin ([A-Za-z0-9_-]+)/\1/m,mixin,mixins/
---regex-scss=/^[ \t]*\$([A-Za-z0-9_-]+)/\1/m,variable,variables/
---regex-scss=/^[ \t]*\.([A-Za-z0-9_-]+)/.\1/c,class,classes/
---regex-scss=/^[ \t]*&\.([A-Za-z0-9_-]+)/.\1/c,class,classes/
---regex-scss=/^[ \t]*#([A-Za-z0-9_-]+)/#\1/i,id,ids/
---regex-scss=/^[ \t]*(([A-Za-z0-9_-]+[ \t\n,]+)+)\{/\1/t,tag,tags/
---regex-scss=/^[ \t]*@media\s+([A-Za-z0-9_-]+)/\1/m,media,medias/
 
 --langmap=ruby:+.rake
 --regex-ruby=/(^|[:;])[ \t]*([A-Z][[:alnum:]_]+) *=/\2/c,class,constant/
