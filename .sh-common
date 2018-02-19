@@ -11,12 +11,13 @@ if [[ $PATH != *$HOME/bin3:* ]] ;then
 fi
 
 export SVN_EDITOR=vi
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
 export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.4.1_1/
 export JBOSS_HOME=/opt/wildfly
 export AMPCOM_HOME=/opt/ampcom
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
-export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
+export MAVEN_OPTS="-Xmx1024m"
+export PGDATABASE=ampep
+#export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
 
 [[ "$(type -p dircolors)" ]] && eval `dircolors`
 # eval `dircolors ~/.dircolors`
