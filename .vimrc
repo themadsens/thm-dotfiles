@@ -610,7 +610,7 @@ function! MakePrg(mkArg)
    elseif makeArgs == 'lualint' || (&ft == 'lua' && !filereadable('Makefile'))
       setlocal makeprg=lualint
       let makeArgs = '%'
-   elseif findfile("gulpfile.js", ".;") != "" && &ft == 'javascript'
+   elseif findfile("pom.xml", ".;") == "" && findfile("gulpfile.js", ".;") != "" && &ft == 'javascript'
       setlocal makeprg="gulp"
       if makeArgs == ""
          let makeArgs = 'lint'
