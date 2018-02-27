@@ -25,6 +25,14 @@ if [ -n "$PS1" ] ;then
       [ -r $f ] && source $f
    done
 
+   gitps1() {
+      local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+      if [[ $?=0 && "$branch" && $branch != "master" ]] ;then
+         [[ $branch == "HEAD" ]] && branch='<detached>'
+         echo ":${branch^^*}"
+      fi
+   }
+
    ttprompt() {
       case "$1" in
          1) echo "${TOOLCHAIN_PS1_LABEL/#tt/ tt${TARGET_PLATFORM/#V26/26}}" ;;
@@ -34,7 +42,7 @@ if [ -n "$PS1" ] ;then
    __col() {
       [[ $TERM == xterm*  || $TERM == screen* || $TERM == tmux* || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
    }
-   PS1="[$(__col 1)\h $(__col 2)\W$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
+   PS1="[$(__col 1)\h $(__col 2)\W$(__col 6)\$(gitps1)$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
    NOTTPS1=$PS1
 
    run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
