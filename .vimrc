@@ -436,12 +436,6 @@ let g:used_javascript_libs = 'underscore,angularjs,jquery'
 function! SetFileTypeOpts()
    let ft = &filetype
    " echomsg 'FILETYPE: '.ft
-   if index(["tcl","poststr"], ft) >= 0
-      setlocal nocindent smartindent
-      inoremap # X<BS>#
-   else
-      inoremap # #
-   endif
    if index(["c","cpp","arduino","java","jsp"], ft) >= 0
       setlocal cindent
       " Match open brace above )
