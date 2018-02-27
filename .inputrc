@@ -28,6 +28,7 @@ set skip-completed-text on
 "\eO2P": menu-complete-backward
 "\e`": menu-complete-backward
 "\C-p": dynamic-complete-history
+"\e/":dynamic-complete-history
 
 # More line editing
 $if Bash
@@ -53,6 +54,9 @@ $endif
 "\e[1;2B": history-search-forward
 "\e\e[A": history-search-backward
 "\e\e[B": history-search-forward
+
+"\ep":history-search-backward
+"\en":history-search-forward
 
 "\e[1;9D": backward-word
 "\e[1;9C": forward-word
