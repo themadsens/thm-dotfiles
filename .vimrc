@@ -232,7 +232,7 @@ vnoremap gU U
 
 " For running edit-compile-edit (quickfix)
 nmap gn :cnext<CR>
-nmap gl :clist<CR>
+nmap gl :cwindow<CR>
 nmap gc :cc<CR>
 nmap gp :cprevious<CR>
 nmap gm :Make<CR>
@@ -749,6 +749,7 @@ function! SvnDiff(f)
 endfunc
 command! -nargs=? -complete=buffer SvnDiff call SvnDiff(<q-args>)
 nmap gkd :SvnDiff<CR>
+nmap  ld :SvnDiff<CR>
 
 function! SvnBlame(f)
    let f = a:f
@@ -781,6 +782,7 @@ function! SvnBlame(f)
 endfunc
 command! -nargs=? -complete=buffer SvnBlame call SvnBlame(<q-args>)
 nmap gkb :SvnBlame<CR>
+nmap  lb :SvnBlame<CR>
 
 function! SvnCommitInfo(id, ...)
    let f = a:1
@@ -809,6 +811,7 @@ function! SvnCommitInfo(id, ...)
 endfunc
 command! -nargs=? -complete=buffer SvnCommitInfo call SvnCommitInfo(<q-args>)
 nmap gkc :SvnCommitInfo <C-R><C-W><CR>
+nmap  lc :SvnCommitInfo <C-R><C-W><CR>
 
 
 "
@@ -890,10 +893,10 @@ func! AgSearch(pattern, wordwise)
    if exists("b:searchroot")
       exe "cd ".fnameescape(b:searchroot)
    endif
-   let ign = filereadable(".agignore") ? " -U -p .agignore" : ""
+   let ign = filereadable(".agignore") ? " -p .agignore" : ""
    let &grepprg = 'ag'.ign.' --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
    exe "silent grep! ".shellescape(a:pattern, 1)
-   cwindow 30
+   cwindow 20
    let &grepprg = sgSave
    call histadd("cmd", "Search".(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
    exe "cd ".fnameescape(pwd)
@@ -1174,6 +1177,13 @@ call xolox#easytags#filetypes#add_mapping('lua', 'MYLUA')
 let g:brep#use_bufdo = 1   " Force searching unloaded buffers
 nmap              gb      :call brep#Grep("<C-R><C-W>", 1)<CR>
 vmap              gb      :call brep#Grep(VisVal(), 0)<CR>
+
+let g:neomake_open_list = 2
+nmap ln :lnext<CR>
+nmap lp :lprev<CR>
+nmap lc :ll<CR>
+nmap ll :lwindow<CR>
+nmap lm :write\|Neomake<CR>
 
 " echo "DONE sourcing"
 

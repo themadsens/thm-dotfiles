@@ -27,6 +27,7 @@ cd bundle
     https://github.com/chrisbra/changesPlugin.git
     https://github.com/edkolev/promptline.vim
     https://github.com/voithos/vim-python-matchit
+    https://github.com/neomake/neomake
 #   https://github.com/codeindulgence/vim-tig
 EOF
 ) | grep -v '^ *#'| \
