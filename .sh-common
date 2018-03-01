@@ -83,7 +83,7 @@ gitdcommit() {
 _GRC=`which grc`
 if [ "$TERM" != dumb ] && [ -n "$_GRC" ] ;then
    colorize() { grc -es ${COLORARG:-"--colour=auto"} "$@"; }
-   for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df \
+   for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df di \
             svn hg git cat ifconfig
    do
       eval "$c() { colorize '$c' \"\$@\"; }"
