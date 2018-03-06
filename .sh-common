@@ -110,11 +110,11 @@ export SVN=svn+ssh://ampsvn/srv/ampep
 vman()      { nvim "+call fman#man_page(0, 1, '', '${1}')"; }
 svnlast()   { if [[ $# -ge 1 ]] ;then svnlog -p -l 25 "$@" ;else svnlog -p -a $USER -l 25 ;fi; }
 gitlast()   { if [[ $# -ge 1 ]] ;then gitlog -p -l 25 "$@" ;else gitlog -p -a $USER -l 25 ;fi; }
-svnminfo()  { svn mergeinfo $SVN/trunk/embedded \
+svnminfo()  { command svn mergeinfo $SVN/trunk/embedded \
                             --show-revs ${@:-eligible} | \
               xargs -i svnlog '-{}' svn+ssh://ampsvn/srv/ampemb/trunk/embedded; }
 
-svnst()     { svn st "$@" | command grep -v  '^[X?]'; }
+svnst()     { command svn st "$@" | command grep -v  '^[X?]'; }
 hgst()      { hg  st "$@" | command grep -v  '^[X?]'; }
 lth()       { ls -lat "$@" | head -20; }
 # alias open='kfmclient exec'
