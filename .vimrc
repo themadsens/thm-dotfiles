@@ -513,12 +513,17 @@ function! SetBufferOpts()
    while strlen(fpath) > 3
       if ! exists("tagset") && filereadable(fpath."/tags")
          exe "setlocal tags^=".fpath."/tags"
-         let tagset = 1
+         let tagset = fpath
          if filereadable(fpath."/amplex-trees")
             let b:ampdirs = join(readfile(fpath."/amplex-trees"), ",")
          endif
          if filereadable(fpath."/.gitignore")
             let b:searchroot = fpath
+         endif
+         if filereadable(fpath."/cscope.out")
+            if match(execute("cscope show"), fpath."/cscope.out") < 0
+               execute "cscope add ".fpath."/cscope.out"
+            endif
          endif
          exe "setlocal path+=".fpath
       endif
@@ -652,6 +657,10 @@ autocmd Private BufReadPost * 1
 
 function! PrevBuf(closeThis, ...)
    if a:closeThis
+      if exists("s:transientHls")
+         set nohlsearch
+         unlet s:transientHls
+      endif
       let didClose = 0
       if &buftype != ""
          exe "bdelete" . (a:0 > 0 ? a:1 : "")
@@ -887,6 +896,14 @@ vmap              gG      :call OpenSpec("GLM::".VisVal())<CR>
 command! -nargs=1 Glimpse  call OpenSpec("GLM::<args>")
 command! -nargs=1 GlimpseW call OpenSpec("GLW::<args>")
 
+func! TransientHls(pattern)
+   if !&hlsearch
+      let @/ = a:pattern
+      set hlsearch
+      let s:transientHls = 1
+   endif
+endfunc
+
 func! AgSearch(pattern, wordwise)
    let sgSave = &grepprg
    let pwd = getcwd()
@@ -899,6 +916,7 @@ func! AgSearch(pattern, wordwise)
    cwindow 20
    let &grepprg = sgSave
    call histadd("cmd", "Search".(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
+   call TransientHls(a:pattern)
    exe "cd ".fnameescape(pwd)
    redraw!
 endfunc
@@ -906,6 +924,17 @@ nmap              gs      :call AgSearch("<C-R><C-W>", 1)<CR>
 vmap              gs      :call AgSearch(VisVal(), 0)<CR>
 command! -nargs=1 Search   call AgSearch("<args>", 0)
 command! -nargs=1 SearchW  call AgSearch("<args>", 1)
+
+func! CsSearch(pattern)
+   execute "cscope find c ".a:pattern
+   call TransientHls(a:pattern)
+   cwindow 20
+   redraw!
+endfunc
+nmap              gr      :call CsSearch("<C-R><C-W>")<CR>
+vmap              gr      :call CsSearch(VisVal())<CR>
+command! -nargs=1 Cscope   call CsSearch("<args>")
+set cscopequickfix=c-
 
 func! OpenSpec(str)
    let Str = a:str
@@ -1179,6 +1208,8 @@ nmap              gb      :call brep#Grep("<C-R><C-W>", 1)<CR>
 vmap              gb      :call brep#Grep(VisVal(), 0)<CR>
 
 let g:neomake_open_list = 2
+let g:neomake_javascript_enabled_makers = [ 'jshint' ]
+let g:neomake_lua_enabled_makers        = [ 'luacheck' ]
 nmap ln :lnext<CR>
 nmap lp :lprev<CR>
 nmap lc :ll<CR>
