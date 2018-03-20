@@ -20,15 +20,23 @@ cd bundle
 #	https://github.com/scrooloose/syntastic
  	https://github.com/cespare/vim-toml
  	https://github.com/tmux-plugins/vim-tmux
-    https://github.com/tomtom/brep_vim
+#   https://github.com/tomtom/brep_vim
+    https://github.com/vim-scripts/GrepCommands.git
+    https://github.com/vim-scripts/GrepHere.git
  	https://github.com/vim-airline/vim-airline
  	https://github.com/vim-airline/vim-airline-themes
+    https://github.com/mildred/vim-bufmru.git
  	https://github.com/edkolev/tmuxline.vim
     https://github.com/chrisbra/changesPlugin.git
     https://github.com/edkolev/promptline.vim
     https://github.com/voithos/vim-python-matchit
     https://github.com/neomake/neomake
+    https://github.com/rustushki/JavaImp.vim.git
+    https://github.com/vim-scripts/CmdlineComplete.git
+    https://github.com/artur-shaik/vim-javacomplete2.git
 #   https://github.com/codeindulgence/vim-tig
+    https://github.com/rhysd/devdocs.vim.git
+    https://github.com/elzr/vim-json.git
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do

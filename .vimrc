@@ -1,10 +1,3 @@
-" vim: set ts=3 sw=3 et:
-"""
-""" %Z%%E% %U%, %I% %P%
-""" (C) Copyright 2000 CCI-Europe. Author : fma
-"""
-""" Revision History """
-""" End of Revisions """
 "
 " My .vimrc file
 "
@@ -207,7 +200,6 @@ setglobal number
 setlocal  number
 setglobal expandtab
 setglobal spelllang=en_us
-setglobal equalprg=csb
 setglobal visualbell
 setglobal printfont=:h7.5
 setglobal printoptions=number:y,duplex:off,left:5mm,top:5mm,bottom:5mm,right:5mm
@@ -232,9 +224,11 @@ vnoremap gU U
 
 " For running edit-compile-edit (quickfix)
 nmap gn :cnext<CR>
+nmap <M-n> :cnext<CR>
+nmap gp :cprevious<CR>
+nmap <M-p> :cprevious<CR>
 nmap gl :cwindow<CR>
 nmap gc :cc<CR>
-nmap gp :cprevious<CR>
 nmap gm :Make<CR>
 
 " Various utility keys
@@ -252,6 +246,7 @@ nmap zs    :call ToggleOpt("spell")<CR>
 nmap zn    :call ToggleOpt("number")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zc    :call ToggleOpt("ignorecase")<CR>
+nmap zp    :call ToggleOpt("paste")<CR>
 nmap [s    :exe "g/".@/."/p"<CR>
 
 " Bashify command line
@@ -461,6 +456,7 @@ function! SetFileTypeOpts()
       setlocal sw=4 ts=4 et
    elseif ft == "java"
       call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
+      setlocal omnifunc=javacomplete#Complete
    elseif ft == "lua"
       call TextEnableCodeSnip('c', 'cdef\[\[', '\]\]') |
       call TextEnableCodeSnip('xml', 'xml *= *\[\[', '\]\]') |
@@ -540,6 +536,9 @@ function! SetBufferOpts()
    endwhile
    if ! exists("tagset")
        setlocal tags^=tags,../tags
+   endif
+   if &omnifunc == ""
+      setlocal omnifunc=syntaxcomplete#Complete
    endif
 endfunc
 
@@ -637,6 +636,7 @@ function! MakePrg(mkArg)
    echomsg "make ".makeArgs." in: ".getcwd()." with: '".&makeprg."'"
    exe "silent make ".makeArgs
    redraw!
+   call qfutil#reformat('MAKE')
    if exists("oldwd")
       exe "cd ".fnameescape(oldwd)
    endif
@@ -896,7 +896,7 @@ vmap              gG      :call OpenSpec("GLM::".VisVal())<CR>
 command! -nargs=1 Glimpse  call OpenSpec("GLM::<args>")
 command! -nargs=1 GlimpseW call OpenSpec("GLW::<args>")
 
-func! TransientHls(pattern)
+func! s:TransientHls(pattern)
    if !&hlsearch
       let @/ = a:pattern
       set hlsearch
@@ -904,7 +904,7 @@ func! TransientHls(pattern)
    endif
 endfunc
 
-func! AgSearch(pattern, wordwise)
+func! s:AgSearch(pattern, wordwise)
    let sgSave = &grepprg
    let pwd = getcwd()
    if exists("b:searchroot")
@@ -913,26 +913,40 @@ func! AgSearch(pattern, wordwise)
    let ign = filereadable(".agignore") ? " -p .agignore" : ""
    let &grepprg = 'ag'.ign.' --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
    exe "silent grep! ".shellescape(a:pattern, 1)
-   cwindow 20
    let &grepprg = sgSave
    call histadd("cmd", "Search".(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
-   call TransientHls(a:pattern)
+   call s:TransientHls(a:pattern)
+   call qfutil#reformat('Global: '.a:pattern, 15)
    exe "cd ".fnameescape(pwd)
    redraw!
 endfunc
-nmap              gs      :call AgSearch("<C-R><C-W>", 1)<CR>
-vmap              gs      :call AgSearch(VisVal(), 0)<CR>
-command! -nargs=1 Search   call AgSearch("<args>", 0)
-command! -nargs=1 SearchW  call AgSearch("<args>", 1)
+
+func! s:GrepHereHL(term)
+   call GrepHere#List(a:term)
+   call s:TransientHls(len(a:term) ? a:term : @/)
+   call qfutil#reformat('Grep: '.(len(a:term) ? a:term : @/), 15)
+endfunc
+
+nmap              gs      :call <SID>AgSearch("<C-R><C-W>", 1)<CR>
+vmap              gs      :call <SID>AgSearch(VisVal(), 0)<CR>
+command! -nargs=1 Search   call <SID>AgSearch("<args>", 0)
+command! -nargs=1 SearchW  call <SID>AgSearch("<args>", 1)
+nmap              qr      :call qfutil#reformat()<CR>
+nnoremap <silent> qn      :<C-u>call <SID>GrepHereHL('')<CR>
+nnoremap <silent> qm      :<C-u>call <SID>GrepHereHL(GrepHere#SetCword(0))<CR>
+command! -count -nargs=?  Grep  call GrepHere#Grep(<count>, 'vimgrep', <q-args>)|call qfutil#reformat('Grep: '.<q-args>)
+command! -bang -count -nargs=? -complete=expression BGrep 
+               \ call GrepCommands#Grep(<count>, 'vimgrep<bang>', GrepCommands#Buffers(), <q-args>)|
+               \ call qfutil#reformat('BufGrep: '.<q-args>)
 
 func! CsSearch(pattern)
    execute "cscope find c ".a:pattern
-   call TransientHls(a:pattern)
+   call s:TransientHls(a:pattern)
    cwindow 20
    redraw!
 endfunc
-nmap              gr      :call CsSearch("<C-R><C-W>")<CR>
-vmap              gr      :call CsSearch(VisVal())<CR>
+nmap              lr      :call CsSearch("<C-R><C-W>")<CR>
+vmap              lr      :call CsSearch(VisVal())<CR>
 command! -nargs=1 Cscope   call CsSearch("<args>")
 set cscopequickfix=c-
 
@@ -1055,6 +1069,16 @@ function! TmuxReload()
    endfor
 endfunc
 command! TmuxReload call TmuxReload()
+
+function! MyJavaImpGenerate()
+   if !filereadable($HOME."/vim/JavaImp/amplex-trees")
+      echoerr "Error (no amplex-trees file)"
+      return
+   end
+   let g:JavaImpPaths = join(readfile($HOME."/vim/JavaImp/amplex-trees"), ",").",".$HOME."/vim/JavaImp/jmplst"
+   "let g:JavaImpDataDir = '/tmp/JavaImp'
+   call execute("JavaImpGenerate")
+endfunc
 
 function! Menu(i)
    source $VIMRUNTIME/menu.vim
@@ -1184,6 +1208,14 @@ endfunction
 autocmd User AirlineAfterInit call AirlineInit()
 nmap zl :AirlineToggle<CR>
 nmap z; :AirlineToggleWhitespace<CR>
+let g:airline_theme_patch_func = 'AirlineThemePatch'
+function! AirlineThemePatch(palette)
+ if g:airline_theme == 'dark'
+   for colors in values(a:palette.inactive)
+     let colors[2] = 245
+   endfor
+ endif
+endfunction
 
 let g:airline#extensions#tmuxline#enabled = 0
 let g:tmuxline_theme = 'powerline'
@@ -1211,7 +1243,9 @@ let g:neomake_open_list = 2
 let g:neomake_javascript_enabled_makers = [ 'jshint' ]
 let g:neomake_lua_enabled_makers        = [ 'luacheck' ]
 nmap ln :lnext<CR>
+nmap <M-N> :lnext<CR>
 nmap lp :lprev<CR>
+nmap <M-P> :lprev<CR>
 nmap lc :ll<CR>
 nmap ll :lwindow<CR>
 nmap lm :write\|Neomake<CR>
