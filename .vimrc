@@ -9,7 +9,6 @@ if has("win32")
    endif
 endif
 
-let g:loaded_quickfixsigns = 99 " Disable for now
 execute pathogen#infect()
 
 syntax on
@@ -245,7 +244,7 @@ nmap zx    :call ToggleOpt("hlsearch")<CR>
 nmap zs    :call ToggleOpt("spell")<CR>
 nmap zn    :call ToggleOpt("number")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
-nmap zc    :call ToggleOpt("ignorecase")<CR>
+nmap zz    :call ToggleOpt("ignorecase")<CR>
 nmap zp    :call ToggleOpt("paste")<CR>
 nmap [s    :exe "g/".@/."/p"<CR>
 
@@ -368,6 +367,7 @@ augroup Private
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd FileType    * call SetFileTypeOpts()
+   "autocmd CursorMoved * call qfutil#followLine(0)
 
    " Handle global (non bufferspecific) options
    autocmd BufEnter * call BufEnterGlobalOpts()
@@ -600,6 +600,14 @@ function! FindDir(f, d)
    return ""
 endfunc
 
+function! s:QfWinPost()
+   if len(getqflist()) > 0
+      cwindow | cnext | cprevious | redraw
+   else
+      cclose
+   endif
+endfunc
+
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
    if makeArgs == 'jshint' || makeArgs == 'jslint'
@@ -622,7 +630,7 @@ function! MakePrg(mkArg)
          let makeArgs = substitute(makeArgs, '\<here\>', '', 'g')
          let here = 1
       endif
-      if makeArgs =~ ' *'
+      if makeArgs =~ '^ *$'
          let makeArgs = "compile"
       endif
       if ! filereadable("pom.xml") || ! exists("here")
@@ -637,20 +645,13 @@ function! MakePrg(mkArg)
    exe "silent make ".makeArgs
    redraw!
    call qfutil#reformat('MAKE')
+   call s:QfWinPost()
    if exists("oldwd")
       exe "cd ".fnameescape(oldwd)
    endif
 endfunc
 command! -nargs=* Make call MakePrg("<args>")
 command! -nargs=* Mvn compiler mvn | call MakePrg("<args>")
-function! MakePrgPost()
-   if len(getqflist()) > 0
-      cwindow | cnext | cprevious | redraw
-   else
-      cclose
-   endif
-endfunc
-au! QuickfixCmdPost make call MakePrgPost()
 
 " Ensure --remote loads adds to the jumplist
 autocmd Private BufReadPost * 1
@@ -942,6 +943,7 @@ command! -bang -count -nargs=? -complete=expression BGrep
 func! CsSearch(pattern)
    execute "cscope find c ".a:pattern
    call s:TransientHls(a:pattern)
+   call qfutil#reformat('CScope: '.a:pattern, 15)
    cwindow 20
    redraw!
 endfunc
@@ -1180,7 +1182,7 @@ function! VimBuddy()
     return ":-)"
 endfunction
 
-au! CursorHold * redraw!
+" au! CursorHold * redraw!
 
 if exists("load_less")
    setglobal directory=
@@ -1191,10 +1193,16 @@ endif
 call SetBufferOpts() " Why is this needed ?? it is mapped to BufNewFile!!
 let loaded_explorer=1 " Don't want plugin/explorer.vim
 
-let g:changes_vcs_check = 1
-let g:changes_linehi_diff = 0 " Experimental!
-let g:changes_sign_text_utf8 = 0
-nmap zv :ToggleChangeView<CR>
+"let g:changes_vcs_check = 1
+"let g:changes_linehi_diff = 0 " Experimental!
+"let g:changes_sign_text_utf8 = 0
+"nmap zv :ToggleChangeView<CR>
+let g:quickfixsigns_classes = ['qfl', 'vcsdiff', 'vcsmerge']
+nmap zv :QuickfixsignsToggle<CR>
+nmap qd :Quickfixsignsecho<CR>
+highlight SignColumn cterm=NONE ctermbg=187
+let g:quickfixsigns#vcsdiff#extra_args_git = "-w"
+let g:quickfixsigns#vcsdiff#extra_args_svn = "-x -w"
 
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'dark' " 'flemming', 'distinguished'
@@ -1249,6 +1257,16 @@ nmap <M-P> :lprev<CR>
 nmap lc :ll<CR>
 nmap ll :lwindow<CR>
 nmap lm :write\|Neomake<CR>
+
+let s:SRC = $HOME."/amplex"
+let g:jcall_src_build_pairs = [
+\   [ s:SRC."/epgit/ampep", s:SRC."/epgit/ampep" ],
+\   [ s:SRC."/epgit/greenwise", s:SRC."/epgit/greenwise" ],
+\   [ s:SRC."/ep/ampep", s:SRC."/ep/ampep" ],
+\   [ s:SRC."/ep/greenwise", s:SRC."/ep/greenwise" ],
+\ ]
+nmap <leader>jh <Plug>JCallOpen
+nmap <leader>jc <Plug>JCallClear
 
 " echo "DONE sourcing"
 
