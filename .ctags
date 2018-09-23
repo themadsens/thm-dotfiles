@@ -1,6 +1,8 @@
 -I--exclude=@.agignore
 --extra=+fq
 
+--langmap=C++:+.ino
+
 -I-From-https://github.com/rstacruz/ctags-css
 --langdef=css
 --langmap=css:.css

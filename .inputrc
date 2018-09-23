@@ -27,7 +27,6 @@ set skip-completed-text on
 "\e[1;2P": menu-complete-backward
 "\eO2P": menu-complete-backward
 "\e`": menu-complete-backward
-"\C-p": dynamic-complete-history
 "\e/":dynamic-complete-history
 
 # More line editing

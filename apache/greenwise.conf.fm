@@ -8,6 +8,7 @@
               LogLevel trace2
 
 ProxyPreserveHost off
+ProxyTimeout 99000
 
 ErrorDocument 503 /error/en/503.html
 ProxyPass /error/ !
@@ -18,8 +19,11 @@ ProxyPass /greenwise http://localhost:8000/greenwise
 ProxyPassReverse /greenwise http://localhost:8000/greenwise
 ProxyPass /gridlight  http://localhost:8000/gridlight
 ProxyPassReverse /gridlight http://localhost:8000/gridlight
-ProxyPass /changes  http://localhost:8000/changes
-ProxyPassReverse /changes http://localhost:8000/changes
+
+#ProxyPass /changes  http://localhost:8000/changes
+#ProxyPassReverse /changes http://localhost:8000/changes
+ProxyPass /changes ws://localhost:8000/greenwise/subscribe
+ProxyPassReverse /changes ws://localhost:8000/greenwise/subscribe
 
 ProxyPass /birt  http://localhost:8000/birt
 ProxyPassReverse /birt http://localhost:8000/birt
