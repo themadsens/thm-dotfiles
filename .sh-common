@@ -55,6 +55,7 @@ alias gitappend="git commit -a --amend -C HEAD"
 alias gitst="    git status"
 alias tigst="    tig status"
 alias gitcommit="git add \* ; git commit"
+alias tt-esp32="export PATH=~/bin3/xtensa-esp32-elf/bin/:\$PATH ; export IDF_PATH=~/amplex/esp-idf"
 gitdiff() {
    REV=''
    [[ $# > 0 && "$1" != -* ]] && REV=${1}^..${1}; shift;
@@ -83,7 +84,7 @@ gitdcommit() {
 _GRC=`which grc`
 if [ "$TERM" != dumb ] && [ -n "$_GRC" ] ;then
    colorize() { grc -es ${COLORARG:-"--colour=auto"} "$@"; }
-   for c in configure make gcc as gas ld netstat ping traceroute head dig mount ps mtr df di \
+   for c in configure gcc as gas ld netstat ping traceroute head dig mount ps mtr df di \
             svn hg git cat ifconfig
    do
       eval "$c() { colorize '$c' \"\$@\"; }"
@@ -280,7 +281,7 @@ function ws2 () {
    shift ; shift
    #echo "P: $P"
    curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
-      $(wsLogin $U $H) -k -H 'content-type: application/json' \
+      $(wsLogin $U $H) -k -H 'Content-type: application/json' -H 'Accept: application/json' \
       -X$O https://$(wsHost $H)"$P" "$@" \
       | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
 }
@@ -324,16 +325,12 @@ function amptree()  {
    CDPATH=""
    if [[ -d $AMPROOT/arm9 ]] ;then
        local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/utils,arm9/drivers}"
-       local D=arm9
        export SVN=svn+ssh://ampsvn/srv/ampemb
    else
-       DL="$AMPROOT/{,ampep,greenwise,ampep/startgrid-ws/src/main/java/dk/amplex/aas/ws/"
-       DL="$DL,ampep/startgrid-ws/src/main/java/dk/amplex/aas/ws/"
-       DL="$DL,greenwise/greenwise-web/src/main/java/dk/amplex/greenwise/}"
-       local D=ampep
+       DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
        export SVN=svn+ssh://ampsvn/srv/ampep
    fi
-   for d in ~ $(eval echo $DL) ~/{amplex,releases,src,abs,abs2} ;do
+   for d in ~ $(eval echo $DL) ~/{amplex,releases,src,stuff} ;do
       CDPATH=$CDPATH:$d
    done
    export LUA_CPATH=";;$AMPROOT/arm9/agentframework/lua/?.so"
