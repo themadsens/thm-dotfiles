@@ -1,10 +1,11 @@
 "
 " My .vimrc file
+" vint: -ProhibitImplicitScopeVariable -ProhibitAbbreviationOption
 "
-set nocompatible " TODO: Why did the default change for 7.3 vs 7.2
-if has("win32")
+scriptencoding utf-8
+if has('win32')
    " Use CCI standard setup. This happens automatically on UNIX
-   if filereadable($VIM . "/vimrc")
+   if filereadable($VIM . '/vimrc')
       source $VIM/vimrc
    endif
 endif
@@ -17,6 +18,9 @@ augroup filetypedetect
 autocmd BufEnter *.r set ft=xdefaults
 autocmd BufEnter .gitignore set ft=config
 autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
+augroup END
+augroup Private
+  autocmd!
 augroup END
 
 let g:tagbar_autoclose = 1
@@ -38,7 +42,7 @@ nmap <F3> :TagbarToggle<CR>
 setglobal tags=/opt/toolchain/include/tags,/usr/include/tags
 setglobal path=.,,include,../include,/opt/toolchain/include,/usr/include
 
-if has("win32")
+if has('win32')
    behave xterm
    setglobal directory=C:/temp/preserve//   " Home of the swap files_
    if filereadable('C:\Programs\NT_SFU\Shell\grep.EXE')
@@ -46,27 +50,27 @@ if has("win32")
    endif
 
    " Let VIM know about VisualC++ include files
-   if exists("$include")
+   if exists('$include')
       let more = substitute($include, ';', ',', 'g')
       let more = substitute(more, ' ', '\\\\\\ ', 'g')
-      execute "setglobal path+=" . more
-      let g:incdirs = g:incdirs.",".more
+      execute 'setglobal path+=' . more
+      let g:incdirs = g:incdirs.','.more
 
       let more = substitute($include, ';', '\\\\\\tags,', 'g')
-      execute "setglobal tags+=" . substitute(more, ' ', '\\\\\\ ', 'g') . '\\tags'
+      execute 'setglobal tags+=' . substitute(more, ' ', '\\\\\\ ', 'g') . '\\tags'
       unlet more
    endif
 
-   if exists("$SCCSHOME")
+   if exists('$SCCSHOME')
       " Can not handle '/' to '\' conversion otherwise
-      let $SCCSHOME = $SCCSHOME . "/"
+      let $SCCSHOME = $SCCSHOME . '/'
    endif
 
-   if has("gui_running")
+   if has('gui_running')
       setglobal guifont=Courier_New:h9
       " System menu and quick minimize
       map <M-Space> :simalt ~<CR>
-      map <M-n> :simalt ~n<CR>
+      "map <M-n> :simalt ~n<CR>
       " Size the GUI window. Delay positioning until window is created
       setglobal lines=50
       setglobal columns=82
@@ -75,7 +79,7 @@ if has("win32")
       augroup END
    endif
 else
-   if (&term == "cygwin") " This seem to have some quirks, work around some
+   if (&term ==# 'cygwin') " This seem to have some quirks, work around some
       setglobal directory=/var/preserve/
       " Make <End> work
       exe "setglobal t_@7=\e[4~"
@@ -85,9 +89,9 @@ else
       setglobal directory=/var/preserve//
       setglobal grepprg=ag\ --vimgrep\ --follow\ $*
       set grepformat=%f:%l:%c:%m
-      if has("gui_running")
-         let &guifont="Monaco for Powerline:h10"
-         "let &guifont="Bitstream Vera Sans Mono 8"
+      if has('gui_running')
+         let &guifont='Monaco for Powerline:h10'
+         "let &guifont='Bitstream Vera Sans Mono 8'
       else
          " Uncomment line below to use :emenu. Adds ~1 second to startup time
          " source $VIMRUNTIME/menu.vim
@@ -97,13 +101,13 @@ else
 
          " Must be _very_ slow to handle triple clicks
          setglobal mousetime=1500
-         "if &ttymouse == "xterm2"
+         "if &ttymouse ==# 'xterm2'
          "   " The xterm2 mode will flood us with messages
          "   setglobal ttymouse=xterm
          "endif
-         if &term =~ '\v^(screen|tmux|xterm-)'
+         if &term =~# '\v^(screen|tmux|xterm-)'
            setglobal ttymouse=xterm2
-            if &term =~ '\v^(screen|tmux)'
+            if &term =~# '\v^(screen|tmux)'
                execute "set <xUp>=\e[1;*A"
                execute "set <xDown>=\e[1;*B"
                execute "set <xRight>=\e[1;*C"
@@ -114,7 +118,7 @@ else
          if has('nvim')
             set guicursor=n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20
          else
-            " Save and restore the "shell" screen on enter and exit
+            " Save and restore the 'shell' screen on enter and exit
             let &t_te = "\<Esc>[2J\<Esc>[?47l\<Esc>8"
             let &t_ti = "\<Esc>7\<Esc>[?47h"
 
@@ -133,7 +137,7 @@ else
          " exe 'setglobal t_kb=\x08'
          " exe 'setglobal t_kD=\x7f'
 
-         exe "setglobal t_Co=16"
+         exe 'setglobal t_Co=16'
          " highlight LineNr cterm=NONE ctermbg=187
          " highlight CursorLine cterm=NONE ctermbg=186
          setglobal cursorline
@@ -156,7 +160,7 @@ else
    endif
 endif
 
-if has("gui_running")
+if has('gui_running')
     setglobal title icon
     setglobal titlestring=%F%(\ --\ %a%)
     setglobal iconstring=%f
@@ -206,6 +210,7 @@ setglobal virtualedit=block
 setglobal noignorecase
 setglobal smartcase
 setglobal nofoldenable
+"setglobal undofile
 if has('nvim')
    setglobal list
    setlocal  list
@@ -237,7 +242,7 @@ nmap F     :files<CR>
 "nmap Q     :bdelete<CR>
 nmap !Q    :bwipeout!<CR>
 nmap Q     :call PrevBuf(1)<CR>
-nmap gQ    :call PrevBuf(0)<CR>
+"nmap gQ    :call PrevBuf(0)<CR>
 "nmap !Q    :call PrevBuf(1,"!")<CR>
 nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
@@ -260,13 +265,9 @@ map <MiddleMouse> <Nop>
 imap <MiddleMouse> <Nop>
 
 function! ToggleOpt(opt)
-    exe "set inv".a:opt
-    echo "Option '".a:opt."' : ".eval("&".a:opt)
+    exe 'set inv'.a:opt
+    echo "Option '".a:opt."' : ".eval('&'.a:opt)
 endfunction
-
-" These seem to be suitable for hitting all keys in mapping within timeout
-setglobal timeoutlen=500
-setglobal ttimeoutlen=50
 
 " Make cursor keys jump out of insert. Your preference may differ
 imap <Left>     <Esc>
@@ -332,18 +333,27 @@ let g:easy_align_delimiters = {
 " List multiple matches at CTRL-]
 nmap <C-]>      :T <C-R><C-W><CR>
 " Tag "preview" window
-nmap <C-X><C-]>   :ptag <C-R><C-W><CR>
-nmap <C-X><Right> :ptnext<CR>
-nmap <C-X><Left>  :ptprevious<CR>
-nmap <C-X><Down>  :ppop<CR>
-nmap <C-X><Up>    :ptag<CR>
-nmap <C-X>x       :pclose<CR>
+nmap <C-X><C-]>     :ptag <C-R><C-W><CR>
+nmap <C-X><Right>   :ptnext<CR>
+nmap <C-X><C-Right> :ptnext<CR>
+nmap <C-X><Left>    :ptprevious<CR>
+nmap <C-X><C-Left>  :ptprevious<CR>
+nmap <C-X><Down>    :ppop<CR>
+nmap <C-X><C-Down>  :ppop<CR>
+nmap <C-X><Up>      :ptag<CR>
+nmap <C-X><C-Up>    :ptag<CR>
+nmap <C-X>x         :pclose<CR>
+
+" ins-completion
+inoremap <C-]> <C-X><C-]>
+inoremap <C-O> <C-X><C-O>
+"inoremap <C-F> <C-X><C-F>
 
 " Some coloring. These are _my_ preferences
 hi NonText                                     ctermfg=lightgray
 hi Visual                           cterm=Inverse ctermfg=grey ctermbg=black
 
-if &term == "ansi" || &term == "console" || &term == "linux"
+if &term ==# 'ansi' || &term ==# 'console' || &term ==# 'linux'
    setglobal background=dark
    hi statusLine ctermfg=black
    hi statusLineNC ctermfg=black ctermbg=yellow
@@ -367,7 +377,7 @@ augroup Private
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd FileType    * call SetFileTypeOpts()
-   "autocmd CursorMoved * call qfutil#followLine(0)
+   autocmd CursorMoved * call qfutil#followLine(0)
 
    " Handle global (non bufferspecific) options
    autocmd BufEnter * call BufEnterGlobalOpts()
@@ -377,11 +387,11 @@ augroup Private
    if has('nvim')
       function! YankToClip(event)
          let text = a:event.regcontents[:]
-         if text[-1] == ''
+         if text[-1] ==# ''
             let text = text[:-2]
          end
-         if a:event.operator == 'y' && len(text) > 0
-            call system(has('mac') ? "pbcopy" : "lemonade copy", text)
+         if a:event.operator ==# 'y' && len(text) > 0
+            call system(has('mac') ? 'pbcopy' : 'lemonade copy', text)
          end
       endfunc
 
@@ -393,14 +403,14 @@ augroup end
 function! BufEnterGlobalOpts()
    " Avoid '#-in-1.-column' problem with cindent & smartindent
    let ft = &filetype
-   if ft=='c' || ft=='cpp' || ft=='arduino'
+   if ft==#'c' || ft==#'cpp' || ft==#'arduino'
       inoremap # #
       " Dont highligh this as an error
       hi link cCommentStartError Comment
    else
       inoremap # X<BS>#
    endif
-   if ft == 'java'
+   if ft ==# 'java'
       nmap [[ [m
       nmap ]] ]m
       nmap gd "zyiw[m/\<<C-R>z\><CR>
@@ -417,11 +427,11 @@ function! BufEnterGlobalOpts()
 endfunc
 
 function! SetFileTypeOnLoad()
-   if (!did_filetype() || tolower(&ft) == "conf") && expand("<amatch>") !~ g:ft_ignore_pat
+   if (!did_filetype() || tolower(&ft) ==# 'conf') && expand('<amatch>') !~ g:ft_ignore_pat
       let line1 = tolower(getline(1))
-      if line1 =~ "lua"
+      if line1 =~# 'lua'
          setlocal filetype=lua
-      elseif line1 =~ "node"
+      elseif line1 =~# 'node'
          setlocal filetype=javascript
       endif
   endif
@@ -431,33 +441,34 @@ let g:used_javascript_libs = 'underscore,angularjs,jquery'
 function! SetFileTypeOpts()
    let ft = &filetype
    " echomsg 'FILETYPE: '.ft
-   if index(["c","cpp","arduino","java","jsp"], ft) >= 0
+   if index(['c','cpp','arduino','java','jsp'], ft) >= 0
       setlocal cindent
       " Match open brace above )
       setlocal cinoptions=(0,w1,u0,:1,=2
    endif
-   if index(["tcl","postscr","c","cpp","arduino","java","jsp"], ft) >= 0
+   if index(['tcl','postscr','c','cpp','arduino','java','jsp'], ft) >= 0
       " NO autowrap while typing in source code files
       setlocal formatoptions-=t
       setlocal sw=4 ts=4
    endif
-   if index(["java","jsp"], ft) >= 0
+   if index(['java','jsp'], ft) >= 0
       " Ampep java settings
       setlocal sw=2 ts=2 et
       compiler mvn
       setlocal includeexpr=JspPath(v:fname)
       setlocal cinkeys-=:
    endif
-   if ft == "sh"
+   if ft ==# 'sh'
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--')
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
       call TextEnableCodeSnip('javascript', '/\*JS\*/', '/\*EOF\*/')
       call TextEnableCodeSnip('javascript', '#JS#', '#EOF#')
       setlocal sw=4 ts=4 et
-   elseif ft == "java"
-      call TextEnableCodeSnip('sql', '--UA--', '--EOF--') |
+   elseif ft ==# 'vim'
+      call TextEnableCodeSnip('lua', '--LUA--', '--EOF--')
+   elseif ft ==# 'java'
       setlocal omnifunc=javacomplete#Complete
-   elseif ft == "lua"
+   elseif ft ==# 'lua'
       call TextEnableCodeSnip('c', 'cdef\[\[', '\]\]') |
       call TextEnableCodeSnip('xml', 'xml *= *\[\[', '\]\]') |
       setlocal sw=3 ts=3 et
@@ -469,22 +480,22 @@ function! SetFileTypeOpts()
       syn match   luaFunc /\<seq\.tipairs\>/
       syn match   luaFunc /\<seq\.splice\>/
       syn match   luaFunc /\<seq\.reduce\>/
-   elseif ft == "jsp"
+   elseif ft ==# 'jsp'
       call TextEnableCodeSnip('javascript', '<script type=.text/javascript.>', '</script>') |
-   elseif ft == "xml"
+   elseif ft ==# 'xml'
       call TextEnableCodeSnip('sql', '<sql>', '</sql>') |
       setlocal sw=2 ts=2 et
-   elseif ft == "javascript"
+   elseif ft ==# 'javascript'
      compiler jshint
      setlocal formatoptions-=t
      setlocal sw=2 ts=2 et
-   elseif ft == "python"
+   elseif ft ==# 'python'
      setlocal sw=2 ts=2 noet
-   elseif ft == "css" || ft == "html"
+   elseif ft ==# 'css' || ft ==# 'html'
      setlocal sw=2 ts=2 et
    end
-   if filereadable(findfile("_vimrc", ".;"))
-      exe "source ".fnameescape(findfile("_vimrc", ".;"))
+   if filereadable(findfile('_vimrc', '.;'))
+      exe 'source '.fnameescape(findfile('_vimrc', '.;'))
    end
 endfunc
 
@@ -492,8 +503,8 @@ function! SetBufferOpts()
 
    call SetStl()
 
-   let fpath = expand("<afile>:p")
-   if fpath =~ '\f\/src-repo/\f'
+   let fpath = expand('<afile>:p')
+   if fpath =~# '\f\/src-repo/\f'
       setlocal patchmode=.orig            " Always save original file
    else
       setlocal patchmode&
@@ -501,43 +512,43 @@ function! SetBufferOpts()
 
    setlocal path<
    setlocal tags<
-   let fpath = expand("<afile>:p:h")
+   let fpath = expand('<afile>:p:h')
    let b:fpath = fpath
-   if fpath == ""
+   if fpath ==# ''
       let fpath = getcwd()
    endif
    while strlen(fpath) > 3
-      if ! exists("tagset") && filereadable(fpath."/tags")
-         exe "setlocal tags^=".fpath."/tags"
+      if ! exists('tagset') && filereadable(fpath.'/tags')
+         exe 'setlocal tags^='.fpath.'/tags'
          let tagset = fpath
-         if filereadable(fpath."/amplex-trees")
-            let b:ampdirs = join(readfile(fpath."/amplex-trees"), ",")
+         if filereadable(fpath.'/amplex-trees')
+            let b:ampdirs = join(readfile(fpath.'/amplex-trees'), ',')
          endif
-         if filereadable(fpath."/.gitignore")
+         if filereadable(fpath.'/.gitignore')
             let b:searchroot = fpath
          endif
-         if filereadable(fpath."/cscope.out")
-            if match(execute("cscope show"), fpath."/cscope.out") < 0
-               execute "cscope add ".fpath."/cscope.out"
+         if filereadable(fpath.'/cscope.out')
+            if match(execute('cscope show'), fpath.'/cscope.out') < 0
+               execute 'cscope add '.fpath.'/cscope.out'
             endif
          endif
-         exe "setlocal path+=".fpath
+         exe 'setlocal path+='.fpath
       endif
-      if strlen(glob(fpath."/include"))
-         exe "setlocal path+=".fpath."/include"
+      if strlen(glob(fpath.'/include'))
+         exe 'setlocal path+='.fpath.'/include'
       endif
-      if strlen(glob(fpath."/*.h"))
-         exe "setlocal path+=".fpath
+      if strlen(glob(fpath.'/*.h'))
+         exe 'setlocal path+='.fpath
       endif
-      if !exists("b:GlimpsePath") && filereadable(fpath."/.glimpse_index")
+      if !exists('b:GlimpsePath') && filereadable(fpath.'/.glimpse_index')
          let b:GlimpsePath = fpath
       endif
-      let fpath = fnamemodify(fpath, ":h")
+      let fpath = fnamemodify(fpath, ':h')
    endwhile
-   if ! exists("tagset")
+   if ! exists('tagset')
        setlocal tags^=tags,../tags
    endif
-   if &omnifunc == ""
+   if &omnifunc ==# ''
       setlocal omnifunc=syntaxcomplete#Complete
    endif
 endfunc
@@ -550,41 +561,41 @@ function! VarExists(s,v)
    if exists(a:v)
       return a:s
    else
-      return ""
+      return ''
    endif
 endfunction
 
 function! Show_g_CTRLG()
-   let col   = col(".")
-   let vcol  = virtcol(".")
-   let line  = line(".")
-   let lline = line("$")
-   exe "normal $"
-   let cole  = col(".")
-   let vcole = virtcol(".")
-   exe "normal " vcol . "|"
+   let col   = col('.')
+   let vcol  = virtcol('.')
+   let line  = line('.')
+   let lline = line('$')
+   exe 'normal $'
+   let cole  = col('.')
+   let vcole = virtcol('.')
+   exe 'normal ' vcol . '|'
 
-   let out_str = "Col " . col
-   if col != vcol
-      let out_str = out_str . "-" . vcol
+   let out_str = 'Col ' . col
+   if col !=# vcol
+      let out_str = out_str . '-' . vcol
    endif
-   let out_str = out_str . " of " . cole
-   if cole != vcole
-      let out_str = out_str . "-" . vcole
+   let out_str = out_str . ' of ' . cole
+   if cole !=# vcole
+      let out_str = out_str . '-' . vcole
    endif
-   let out_str = out_str . "; Line " . line . " of " . lline
-   let out_str = out_str . " (" . (line * 100 / lline) . "%)"
+   let out_str = out_str . '; Line ' . line . ' of ' . lline
+   let out_str = out_str . ' (' . (line * 100 / lline) . '%)'
    let byte = line2byte(line) + col - 1
-   let out_str = out_str . "; Char " . byte
+   let out_str = out_str . '; Char ' . byte
    let lbyte = line2byte(lline) + strlen(getline(lline))
-   let out_str = out_str . " of " . lbyte . " (" . (byte * 100 / lbyte) . "%)"
+   let out_str = out_str . ' of ' . lbyte . ' (' . (byte * 100 / lbyte) . '%)'
    echo out_str
 endfunction
 " This is _much_ faster than g<C-G> on large files. And it is more verbose
 map gK :call Show_g_CTRLG()<CR>
 
 function! Incr()
-   if ! exists("g:Incr")
+   if ! exists('g:Incr')
       let g:Incr = 0
    else
       let g:Incr = g:Incr + 1
@@ -594,10 +605,10 @@ endfunc
 
 function! FindDir(f, d)
    let d = findfile(a:f, a:d)
-   if d != ""
+   if d !=# ''
       return strpart(d, 0, len(d)-len(a:f)-1)
    endif
-   return ""
+   return ''
 endfunc
 
 function! s:QfWinPost()
@@ -610,44 +621,44 @@ endfunc
 
 function! MakePrg(mkArg)
    let makeArgs=a:mkArg
-   if makeArgs == 'jshint' || makeArgs == 'jslint'
+   if makeArgs ==# 'jshint' || makeArgs ==# 'jslint'
       setlocal makeprg=makeArgs
       let makeArgs = '%'
-   elseif makeArgs == 'lualint' || (&ft == 'lua' && !filereadable('Makefile'))
+   elseif makeArgs ==# 'lualint' || (&ft ==# 'lua' && !filereadable('Makefile'))
       setlocal makeprg=lualint
       let makeArgs = '%'
-   elseif findfile("pom.xml", ".;") == "" && findfile("gulpfile.js", ".;") != "" && &ft == 'javascript'
-      setlocal makeprg="gulp"
-      if makeArgs == ""
+   elseif findfile('pom.xml', '.;') ==# '' && findfile('gulpfile.js', '.;') !=# '' && &ft ==# 'javascript'
+      setlocal makeprg='gulp'
+      if makeArgs ==# ''
          let makeArgs = 'lint'
       endif
-   elseif &ft == 'javascript'
+   elseif &ft ==# 'javascript'
       setlocal makeprg=jslint
       let makeArgs = '%'
-   elseif &makeprg == "mmvn" || &makeprg == "mvn" || (exists("current_compiler") && current_compiler == "mvn")
+   elseif &makeprg ==# 'mmvn' || &makeprg ==# 'mvn' || (exists('current_compiler') && g:current_compiler ==# 'mvn')
       setlocal makeprg=mmvn
-      if makeArgs =~ '\<here\>'
+      if makeArgs =~# '\<here\>'
          let makeArgs = substitute(makeArgs, '\<here\>', '', 'g')
          let here = 1
       endif
-      if makeArgs =~ '^ *$'
-         let makeArgs = "compile"
+      if makeArgs =~# '^ *$'
+         let makeArgs = 'compile'
       endif
-      if ! filereadable("pom.xml") || ! exists("here")
-         let pom = FindDir("pom.xml", "./;")
-         if pom != ""
+      if ! filereadable('pom.xml') || ! exists('here')
+         let pom = FindDir('pom.xml', './;')
+         if pom !=# ''
             let oldwd = getcwd()
-            exe "cd ".fnameescape(pom)
+            exe 'cd '.fnameescape(pom)
          endif
       endif
    endif
-   echomsg "make ".makeArgs." in: ".getcwd()." with: '".&makeprg."'"
-   exe "silent make ".makeArgs
+   echomsg 'make '.makeArgs.' in: '.getcwd()." with: '".&makeprg."'"
+   exe 'silent make '.makeArgs
    redraw!
    call qfutil#reformat('MAKE')
    call s:QfWinPost()
-   if exists("oldwd")
-      exe "cd ".fnameescape(oldwd)
+   if exists('oldwd')
+      exe 'cd '.fnameescape(oldwd)
    endif
 endfunc
 command! -nargs=* Make call MakePrg("<args>")
@@ -658,104 +669,112 @@ autocmd Private BufReadPost * 1
 
 function! PrevBuf(closeThis, ...)
    if a:closeThis
-      if exists("s:transientHls")
+      if exists('s:transientHls')
          set nohlsearch
          unlet s:transientHls
       endif
-      let didClose = 0
-      if &buftype != ""
-         exe "bdelete" . (a:0 > 0 ? a:1 : "")
-         let didClose = 1
+      if &buftype !=# ''
+         exe 'bdelete' . (a:0 > 0 ? a:1 : '')
+         return
       endif
       for win in getwininfo()
-         if win.quickfix
-            exe "bdelete ".win.bufnr
-            let didClose = 1
+         if getwinvar(win.winnr, '&previewwindow')
+            pclose
+            return
          endif
       endfor
-      if didClose
-         return
-      end
+      for win in getwininfo()
+         if win.quickfix
+            exe 'bdelete '.win.bufnr
+            return
+        endif
+      endfor
+      for win in getwininfo()
+         if win.loclist
+            exe 'bdelete '.win.bufnr
+            return
+         endif
+      endfor
    endif
 
-   let l:curBuf = bufnr("%")
-   let l:curPos = getpos("%")
+   let l:curBuf = bufnr('%')
+   let l:curPos = getpos('%')
    let l:ok = 0
    while curBuf > 0
-      let l:lastPos = getpos(".")
-      let l:lastBuf = bufnr("%")
+      let l:lastPos = getpos('.')
+      let l:lastBuf = bufnr('%')
       exe "normal \<c-o>"
-      if bufnr("%") != l:curBuf && bufname("%") !~ "^__" && &buftype == ""
+      if bufnr('%') !=# l:curBuf && bufname('%') !~# '^__' && &buftype ==# ''
          let l:ok = 1
          break
       endif
-      let l:pos = getpos(".")
-      if l:pos[1] == l:lastPos[1] && l:pos[2] == l:lastPos[2] &&
-       \ l:lastBuf == bufnr("%")
+      let l:pos = getpos('.')
+      if l:pos[1] ==# l:lastPos[1] && l:pos[2] ==# l:lastPos[2] &&
+       \ l:lastBuf ==# bufnr('%')
          " We did not move, stop looping
          break
       endif
    endw
    if a:closeThis && l:ok
-      exe "bdelete" . (a:0 > 0 ? a:1 : "") l:curBuf
+      exe 'bdelete' . (a:0 > 0 ? a:1 : '') l:curBuf
    endif
-   if l:ok == 0
+   if l:ok ==# 0
       " Failed, Restore old pos
-      call setpos("", l:curPos)
+      call setpos('', l:curPos)
    endif
 endf
 
 function! s:PrivBuf(name, ft)
-   exe "edit ".a:name
+   exe 'edit '.a:name
    setlocal buftype=nofile
    setlocal bufhidden=hide
    setlocal noswapfile
-   exe "set filetype=".a:ft
+   exe 'set filetype='.a:ft
 endfunc
 
 function! SvnDiff(f)
    let f = a:f
-   if f == ""
-      let f = bufname("%")
+   if f ==# ''
+      let f = bufname('%')
    endif
-   let f = resolve(fnamemodify(f, ":p"))
-   let cd = "cd ".shellescape(fnamemodify(f, ":h")).";"
-   let fn = fnamemodify(f, ":t")
+   let f = resolve(fnamemodify(f, ':p'))
+   let cd = 'cd '.shellescape(fnamemodify(f, ':h')).';'
+   let fn = fnamemodify(f, ':t')
 
-   let curbuf = bufnr("%")
-   call s:PrivBuf("DIFF::".f, "diff")
-   let tmpbuf = bufnr("%")
+   let curbuf = bufnr('%')
+   call s:PrivBuf('DIFF::'.f, 'diff')
+   let tmpbuf = bufnr('%')
 
-   let diff="svn diff -x -w "
+   let diff='svn diff -x -w '
    let git=0
-   call system(cd."git log -1")
-   if v:shell_error == 0
-      let diff="git diff -w HEAD "
+   call system(cd.'git log -1')
+   if v:shell_error ==# 0
+      let diff='git diff -w HEAD '
       let git=1
    endif
 
    if bufexists(f)
-      exe "buffer ".bufnr(f)
+      exe 'buffer '.bufnr(f)
       if &modified
          let tmp = tempname()
-         exe "write ".fnameescape(tmp)
+         exe 'write '.fnameescape(tmp)
          if git
-            call system(cd."git show HEAD:".fn." > ".shellescape(tmp.".orig"))
+            call system(cd.'git show HEAD:'.fn.' > '.shellescape(tmp.'.orig'))
          else
-            call system(cd."svn cat ".shellescape(fn)." > ".shellescape(tmp.".orig"))
+            call system(cd.'svn cat '.shellescape(fn).' > '.shellescape(tmp.'.orig'))
          endif
-         let cmd = "diff -u -w ".shellescape(tmp.".orig")." ".shellescape(tmp)." ; echo ".shellescape(tmp)."{,.orig}"
+         let cmd = 'diff -u -w '.shellescape(tmp.'.orig').' '.shellescape(tmp).' ; echo '.shellescape(tmp).'{,.orig}'
       endif
-      exe "buffer ".curbuf
+      exe 'buffer '.curbuf
    endif
-   if !exists("cmd")
+   if !exists('cmd')
       let cmd = cd.diff.shellescape(fn)
    endif
    echom "F: '".f."' CMD: '".cmd."'"
-   exe "buffer ".tmpbuf
-   exe "normal S-- DIFF: ".f
-   exe "read !".cmd
-   exe "1"
+   exe 'buffer '.tmpbuf
+   exe 'normal S-- DIFF: '.f
+   exe 'read !'.cmd
+   exe '1'
 endfunc
 command! -nargs=? -complete=buffer SvnDiff call SvnDiff(<q-args>)
 nmap gkd :SvnDiff<CR>
@@ -763,32 +782,32 @@ nmap  ld :SvnDiff<CR>
 
 function! SvnBlame(f)
    let f = a:f
-   if f == ""
-      let f = bufname("%")
+   if f ==# ''
+      let f = bufname('%')
    endif
-   let f = resolve(fnamemodify(f, ":p"))
-   let cd = "cd ".shellescape(fnamemodify(f, ":h")).";"
-   let fn = fnamemodify(f, ":t")
-   call s:PrivBuf("BLAME::".f, "".&ft)
+   let f = resolve(fnamemodify(f, ':p'))
+   let cd = 'cd '.shellescape(fnamemodify(f, ':h')).';'
+   let fn = fnamemodify(f, ':t')
+   call s:PrivBuf('BLAME::'.f, ''.&ft)
 
-   let cmd=cd."sh -c ".shellescape("git blame -w '".fn."'|cut -c1-9,11-14,28,31-38,60-")
-   let svninf = system(cd."git svn info")
-   if v:shell_error == 0
+   let cmd=cd.'sh -c '.shellescape('git blame -w ''.fn.''|cut -c1-9,11-14,28,31-38,60-')
+   let svninf = system(cd.'git svn info')
+   if v:shell_error ==# 0
       " FIXME: Actually we should seach upward for '.git' and subtract *that* dir's URL:
       let m = matchlist(svninf, '[^\p]URL:\s*\(\p\+\).*[^\p]Repository Root:\s*\(\p\+\)')
-      let fp = (len(m[2]) > 5 && 0 == stridx(m[1], m[2].'/trunk/')) ? strpart(m[1], len(m[2])+7).'/'.fn : fn
-      let cmd=cd."git svn blame -w ".shellescape(fp)
+      let fp = (len(m[2]) > 5 && 0 ==# stridx(m[1], m[2].'/trunk/')) ? strpart(m[1], len(m[2])+7).'/'.fn : fn
+      let cmd=cd.'git svn blame -w '.shellescape(fp)
    else
-      call system(cd."svn info")
-      if v:shell_error == 0
-         let cmd=cd."svn blame -x -w ".shellescape(fn)
+      call system(cd.'svn info')
+      if v:shell_error ==# 0
+         let cmd=cd.'svn blame -x -w '.shellescape(fn)
       endif
    endif
 
    echom "F: '".f."' CMD: '".cmd."'"
-   exe "normal S-- BLAME: ".f
-   exe "read !".cmd
-   exe "1"
+   exe 'normal S-- BLAME: '.f
+   exe 'read !'.cmd
+   exe '1'
 endfunc
 command! -nargs=? -complete=buffer SvnBlame call SvnBlame(<q-args>)
 nmap gkb :SvnBlame<CR>
@@ -796,27 +815,27 @@ nmap  lb :SvnBlame<CR>
 
 function! SvnCommitInfo(id, ...)
    let f = a:1
-   if f == ""
-      let f = bufname("%")
+   if f ==# ''
+      let f = bufname('%')
    endif
-   call s:PrivBuf("COMMIT::".f, "diff")
+   call s:PrivBuf('COMMIT::'.f, 'diff')
 
-   let cmd="sh -c ".shellescape('git blame $0 | cut -c1-9,10-14,28-43,53-')." "
-   call system("git svn info")
-   if v:shell_error == 0
-      let cmd="git svn blame "
+   let cmd='sh -c '.shellescape('git blame $0 | cut -c1-9,10-14,28-43,53-').' '
+   call system('git svn info')
+   if v:shell_error ==# 0
+      let cmd='git svn blame '
    else
-      call system("svn info")
-      if v:shell_error == 0
-         let cmd="svn blame "
+      call system('svn info')
+      if v:shell_error ==# 0
+         let cmd='svn blame '
       endif
    endif
 
-   let cmd .= shellescape(fnamemodify(f, ":p"))
+   let cmd .= shellescape(fnamemodify(f, ':p'))
    echom "F: '".f."' CMD: '".cmd."'"
-   exe "normal S-- AUTH: ".f
-   exe "read !".cmd
-   exe "1"
+   exe 'normal S-- AUTH: '.f
+   exe 'read !'.cmd
+   exe '1'
 
 endfunc
 command! -nargs=? -complete=buffer SvnCommitInfo call SvnCommitInfo(<q-args>)
@@ -833,19 +852,17 @@ map gjc <Plug>jdocConvertCompact
 nmap <F2> :call SetCHdr()<CR>
 
 function! SetCHdr()
-   call append(0, ["/**",
-         \ " * @file ".strpart(bufname("%"), strridx(bufname("%"), "/")+1),
-         \ " * ABSTRACT HERE << ",
-         \ " *",
-         \ " * $Id$",
-         \ " *",
-         \ " * (C) Copyright ".strftime("%Y")." Amplex, ".$USER."@amplex.dk",
-         \ " */"])
-   call append(line('$'), ["", "// vim: set sw=3 sts=3 et:"])
-   normal 5G$
-   if &filetype == "c"
-       set sw=3 sts=3 et
-   endif
+   call append(0, ['/**',
+         \ ' * @file '.strpart(bufname('%'), strridx(bufname('%'), '/')+1),
+         \ ' * ABSTRACT HERE << ',
+         \ ' *',
+         \ ' * $Id$',
+         \ ' *',
+         \ ' * (C) Copyright '.strftime('%Y').' Amplex, '.$USER.'@amplex.dk',
+         \ ' */'])
+   call append(line('$'), ['', '// vim: set sw=2 sts=2 et:'])
+   normal! 5G$
+   set sw=2 sts=2 et
 endfunction
 
 " From http://vim.wikia.com/wiki/VimTip857
@@ -877,20 +894,20 @@ endfunction
 
 nmap gmd :Glimpse NodeType.<C-R><C-W><CR>
 
-let vimrcdir = expand("<sfile>:h")."/.vim/macros"
+let vimrcdir = expand('<sfile>:h').'/.vim/macros'
 func! CciPostLoad(Pattern, File)
    augroup CciAutoLoad
-   exe "autocmd BufNewFile ".a:Pattern "source ".g:vimrcdir."/".a:File
-       \ ." |let b:isNew = 1 |  autocmd! CciAutoLoad BufNewFile ".a:Pattern
+   exe 'autocmd BufNewFile '.a:Pattern 'source '.g:vimrcdir.'/'.a:File
+       \ .' |let b:isNew = 1 |  autocmd! CciAutoLoad BufNewFile '.a:Pattern
    augroup CCIstart
-   exe "autocmd BufNewFile ".a:Pattern "let b:autohdr = 1"
+   exe 'autocmd BufNewFile '.a:Pattern 'let b:autohdr = 1'
    augroup END
 endfunc
-call CciPostLoad("GLM::*", "srcmgr.vim")
-call CciPostLoad("GLW::*", "srcmgr.vim")
+call CciPostLoad('GLM::*', 'srcmgr.vim')
+call CciPostLoad('GLW::*', 'srcmgr.vim')
 delfunction CciPostLoad
-"exe "source  ".expand("<sfile>:h")."/dot/usr/vim/"."utils.vim"
-"exe "source  ".expand("<sfile>:h")."/dot/usr/vim/"."newfmgr.vim"
+"exe "source  '.expand('<sfile>:h').'/dot/usr/vim/'.'utils.vim'
+"exe 'source  '.expand('<sfile>:h').'/dot/usr/vim/'.'newfmgr.vim'
 
 nmap              gG      :call OpenSpec("GLW::<C-R><C-W>")<CR>
 vmap              gG      :call OpenSpec("GLM::".VisVal())<CR>
@@ -908,17 +925,17 @@ endfunc
 func! s:AgSearch(pattern, wordwise)
    let sgSave = &grepprg
    let pwd = getcwd()
-   if exists("b:searchroot")
-      exe "cd ".fnameescape(b:searchroot)
+   if exists('b:searchroot')
+      exe 'cd '.fnameescape(b:searchroot)
    endif
-   let ign = filereadable(".agignore") ? " -p .agignore" : ""
+   let ign = filereadable('.agignore') ? ' -p .agignore' : ''
    let &grepprg = 'ag'.ign.' --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
-   exe "silent grep! ".shellescape(a:pattern, 1)
+   exe 'silent grep! '.shellescape(a:pattern, 1)
    let &grepprg = sgSave
-   call histadd("cmd", "Search".(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
+   call histadd('cmd', 'Search'.(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
    call s:TransientHls(a:pattern)
    call qfutil#reformat('Global: '.a:pattern, 15)
-   exe "cd ".fnameescape(pwd)
+   exe 'cd '.fnameescape(pwd)
    redraw!
 endfunc
 
@@ -941,7 +958,7 @@ command! -bang -count -nargs=? -complete=expression BGrep
                \ call qfutil#reformat('BufGrep: '.<q-args>)
 
 func! CsSearch(pattern)
-   execute "cscope find c ".a:pattern
+   execute 'cscope find c '.a:pattern
    call s:TransientHls(a:pattern)
    call qfutil#reformat('CScope: '.a:pattern, 15)
    cwindow 20
@@ -954,16 +971,16 @@ set cscopequickfix=c-
 
 func! OpenSpec(str)
    let Str = a:str
-   exe "edit ".Str
-   call histadd("cmd", "edit ".Str)
+   exe 'edit '.Str
+   call histadd('cmd', 'edit '.Str)
 endfunction
 
 func! VisVal()
   let Col1 = col("'<")
   let Col2 = col("'>")
-  if line("'<") != line("'>") | return | endif
+  if line("'<") !=# line("'>") | return | endif
   let Str = strpart(getline(line("'<")), Col1 - 1, Col2 - Col1 + 1)
-  return substitute(Str, " ", ".", "g")
+  return substitute(Str, ' ', '.', 'g')
 endfunc
 
 func! Search(pat, wordwise)
@@ -972,7 +989,7 @@ func! Search(pat, wordwise)
    else
       let @/ = a:pat
    endif
-   call feedkeys("n")
+   call feedkeys('n')
 endfunc
 vmap gv <Esc>:call Search(VisVal(), 0)<CR>
 vmap gw <Esc>:call Search(VisVal(), 1)<CR>
@@ -986,41 +1003,41 @@ nmap gF :call GoFile("gF")<CR>
 function! GoFile(cmd)
     let saveSfx = &suffixesadd
     setlocal suffixesadd=.java,.js,.jsp
-    if !exists("b:ampdirs")
-        exe "normal! ".a:cmd
+    if !exists('b:ampdirs')
+        exe 'normal! '.a:cmd
         let &l:suffixesadd = saveSfx
         return
     endif
     let savePath = &path
-    let &l:path = &path.",".b:ampdirs
-    exe "normal! ".a:cmd
+    let &l:path = &path.','.b:ampdirs
+    exe 'normal! '.a:cmd
     let &l:path = savePath
     let &l:suffixesadd = saveSfx
 endfunc
 
 " For use as includeexpr in ftplugin/*.vim
 function! JspPath(s)
-    echomsg "JspPath:".a:s
-    if a:s =~ '^/.*\.jsp$'
+    echomsg 'JspPath:'.a:s
+    if a:s =~# '^/.*\.jsp$'
         return substitute(a:s,'^/*', '', '')
     endif
     return substitute(a:s,'\.','/','g')
 endfunc
 
 function! CaseStat()
-    return &ignorecase > 0 ? "I" : "C"
+    return &ignorecase > 0 ? 'I' : 'C'
 endfunc
 
 function! Modified()
-    return &modified > 0 ? "✚ " : ""
+    return &modified > 0 ? '✚ ' : ''
 endfunc
 
 function! ShowSyn()
-   return 0 == &spell ? "" : synIDattr(synID(line("."), col("."), 1), "name")." "
+   return 0 ==# &spell ? '' : synIDattr(synID(line('.'), col('.'), 1), 'name').' '
 endfunc
 
 function! JumpBuffers()
-   let jumptxt = ""
+   let jumptxt = ''
    redir! => jumptxt
    silent jumps
    redir END
@@ -1036,20 +1053,20 @@ function! JumpBuffers()
    endfor
    if v:count > 0
       if len(byIndex) >= v:count
-         echomsg "Count ".v:count." Jumps to ".byIndex[v:count-1].bufno
-         execute "buffer ".byIndex[v:count-1].bufno
+         echomsg 'Count '.v:count.' Jumps to '.byIndex[v:count-1].bufno
+         execute 'buffer '.byIndex[v:count-1].bufno
       endif
       return
    endif
    echohl Special
-   echo "No Buffer Name"
+   echo 'No Buffer Name'
    echohl None
    for ent in byIndex
-      echo printf("%2d %6d %s", ent.ix, ent.bufno, ent.name)
+      echo printf('%2d %6d %s', ent.ix, ent.bufno, ent.name)
    endfor
-   let ix = input("Type number and <Enter> (empty cancels): ") + 0
+   let ix = input('Type number and <Enter> (empty cancels): ') + 0
    if ix > 0 && ix <= len(byIndex)
-      execute "keepjumps buffer ".byIndex[ix-1].bufno
+      execute 'keepjumps buffer '.byIndex[ix-1].bufno
    endif
 endfunc
 " Note this overrides :goto
@@ -1059,9 +1076,9 @@ nmap <C-G><C-O> 2go
 nnoremap g<C-O> go
 
 function! TmuxReload()
-   for line in systemlist("tmux show-environment")
-      if line[0] == "-"
-         execute "let $".strpart(line, 1)."=''"
+   for line in systemlist('tmux show-environment')
+      if line[0] ==# '-'
+         execute 'let $'.strpart(line, 1)."=''"
       else
          let prt = matchlist(line, '\([^=]\+\)=\(.*\)')
          if len(prt) > 2 && len(prt[1]) > 0
@@ -1073,13 +1090,13 @@ endfunc
 command! TmuxReload call TmuxReload()
 
 function! MyJavaImpGenerate()
-   if !filereadable($HOME."/vim/JavaImp/amplex-trees")
-      echoerr "Error (no amplex-trees file)"
+   if !filereadable($HOME.'/vim/JavaImp/amplex-trees')
+      echoerr 'Error (no amplex-trees file)'
       return
    end
-   let g:JavaImpPaths = join(readfile($HOME."/vim/JavaImp/amplex-trees"), ",").",".$HOME."/vim/JavaImp/jmplst"
+   let g:JavaImpPaths = join(readfile($HOME.'/vim/JavaImp/amplex-trees'), ',').','.$HOME.'/vim/JavaImp/jmplst'
    "let g:JavaImpDataDir = '/tmp/JavaImp'
-   call execute("JavaImpGenerate")
+   call execute('JavaImpGenerate')
 endfunc
 
 function! Menu(i)
@@ -1089,7 +1106,7 @@ function! Menu(i)
    set wcm=<C-Z>
    map <F4> :emenu <C-Z>
    if a:i
-      echom "You can now use <F4> to bring up the menu"
+      echom 'You can now use <F4> to bring up the menu'
       "call feedkeys("\<F4>")
    end
 endfunc
@@ -1115,76 +1132,76 @@ Stl
 " referenced from your 'statusline'
 function! VimBuddy()
     " Take a copy for others to see the messages
-    if ! exists("g:actual_curbuf")
-       return ":-)"
+    if ! exists('g:actual_curbuf')
+       return ':-)'
     endif
-    if ! exists("s:vimbuddy_msg")
+    if ! exists('s:vimbuddy_msg')
         let s:vimbuddy_msg = v:statusmsg
     endif
-    if ! exists("s:vimbuddy_warn")
+    if ! exists('s:vimbuddy_warn')
         let s:vimbuddy_warn = v:warningmsg
     endif
-    if ! exists("s:vimbuddy_err")
+    if ! exists('s:vimbuddy_err')
         let s:vimbuddy_err = v:errmsg
     endif
-    if ! exists("s:vimbuddy_onemore")
-        let s:vimbuddy_onemore = ""
+    if ! exists('s:vimbuddy_onemore')
+        let s:vimbuddy_onemore = ''
     endif
 
-    if g:actual_curbuf != bufnr("%")
+    if g:actual_curbuf !=# bufnr('%')
         " Not my buffer, sleeping
-        return "|-o"
-    elseif s:vimbuddy_err != v:errmsg
-        let v:errmsg = v:errmsg . " "
+        return '|-o'
+    elseif s:vimbuddy_err !=# v:errmsg
+        let v:errmsg = v:errmsg . ' '
         let s:vimbuddy_err = v:errmsg
-        return ":-("
-    elseif s:vimbuddy_warn != v:warningmsg
-        let v:warningmsg = v:warningmsg . " "
+        return ':-('
+    elseif s:vimbuddy_warn !=# v:warningmsg
+        let v:warningmsg = v:warningmsg . ' '
         let s:vimbuddy_warn = v:warningmsg
-        return "(-:"
-    elseif s:vimbuddy_msg != v:statusmsg
-        let v:statusmsg = v:statusmsg . " "
+        return '(-:'
+    elseif s:vimbuddy_msg !=# v:statusmsg
+        let v:statusmsg = v:statusmsg . ' '
         let s:vimbuddy_msg = v:statusmsg
         let test = matchstr(v:statusmsg, 'lines *$')
         let num = substitute(v:statusmsg, '^\([0-9]*\).*', '\1', '') + 0
         " How impressed should we be
-        if test != "" && num > 20
-            let str = ":-O"
-        elseif test != "" && num
-            let str = ":-o"
+        if test !=# '' && num > 20
+            let str = ':-O'
+        elseif test !=# '' && num
+            let str = ':-o'
         else
-            let str = ":-/"
+            let str = ':-/'
         endif
         let s:vimbuddy_onemore = str
         return str
-    elseif s:vimbuddy_onemore != ""
+    elseif s:vimbuddy_onemore !=# ''
       let str = s:vimbuddy_onemore
-      let s:vimbuddy_onemore = ""
+      let s:vimbuddy_onemore = ''
       return str
     endif
 
-    if ! exists("b:lastcol")
-        let b:lastcol = col(".")
+    if ! exists('b:lastcol')
+        let b:lastcol = col('.')
         let b:linechange = 0
-        let b:lastlineno = line(".")
+        let b:lastlineno = line('.')
     endif
-    let num = b:lastcol - col(".")
-    let b:lastcol = col(".")
-    if num != 0 && b:lastlineno == line(".")
+    let num = b:lastcol - col('.')
+    let b:lastcol = col('.')
+    if num !=# 0 && b:lastlineno ==# line('.')
         " Let VimBuddy rotate his nose
         let b:linechange += 1
         return ':' . ['/', '-', '\', '|'][b:linechange % 4] . ')'
     endif
-    let b:lastlineno = line(".")
+    let b:lastlineno = line('.')
     let b:linechange = 0
 
     " Happiness is my favourite mood
-    return ":-)"
+    return ':-)'
 endfunction
 
 " au! CursorHold * redraw!
 
-if exists("load_less")
+if exists('load_less')
    setglobal directory=
    setglobal statusline=%3l/%LL\ %P\ %o/%{line2byte(line(\"$\")+1)-1}\ %=%<%f%a
    setglobal cmdheight=1
@@ -1192,6 +1209,8 @@ endif
 
 call SetBufferOpts() " Why is this needed ?? it is mapped to BufNewFile!!
 let loaded_explorer=1 " Don't want plugin/explorer.vim
+
+let g:jsx_ext_required = 1
 
 "let g:changes_vcs_check = 1
 "let g:changes_linehi_diff = 0 " Experimental!
@@ -1201,8 +1220,8 @@ let g:quickfixsigns_classes = ['qfl', 'vcsdiff', 'vcsmerge']
 nmap zv :QuickfixsignsToggle<CR>
 nmap qd :Quickfixsignsecho<CR>
 highlight SignColumn cterm=NONE ctermbg=187
-let g:quickfixsigns#vcsdiff#extra_args_git = "-w"
-let g:quickfixsigns#vcsdiff#extra_args_svn = "-x -w"
+let g:quickfixsigns#vcsdiff#extra_args_git = '-w'
+let g:quickfixsigns#vcsdiff#extra_args_svn = '-x -w'
 
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'dark' " 'flemming', 'distinguished'
@@ -1213,17 +1232,51 @@ let g:airline#extensions#whitespace#enabled = 0
 function! AirlineInit()
   let g:airline_section_c = substitute(g:airline_section_c, '%m','','')
 endfunction
-autocmd User AirlineAfterInit call AirlineInit()
+augroup Private
+    autocmd User AirlineAfterInit call AirlineInit()
+augroup END
 nmap zl :AirlineToggle<CR>
 nmap z; :AirlineToggleWhitespace<CR>
 let g:airline_theme_patch_func = 'AirlineThemePatch'
 function! AirlineThemePatch(palette)
- if g:airline_theme == 'dark'
+ if g:airline_theme ==# 'dark'
    for colors in values(a:palette.inactive)
      let colors[2] = 245
    endfor
  endif
 endfunction
+
+function! s:get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
+function! s:formatForSQL()
+    let text = s:get_visual_selection()
+    let text = substitute(text, '\v(^|\n)[^"]*\"', '\n', 'g')    " Start
+    let text = substitute(text, '\v\"[^"]*(\n|$)', '\n', 'g')    " End
+    let text = substitute(text, '\v\"\+(\i+)\+\"', ' :\1 ', 'g') " :Param
+    let @* = text
+endfunc
+command! -bar -range SqlCopy call <SID>formatForSQL()
+vmap lsq :call <SID>formatForSQL()<CR>
+
+function! s:ShowHTML() range
+    execute "'<,'> TOhtml"
+    silent !open %:p
+    sleep 2
+    silent !del %:p
+    q!
+endfunction
+command! -bar -range ShowHTML call <SID>ShowHTML()
 
 let g:airline#extensions#tmuxline#enabled = 0
 let g:tmuxline_theme = 'powerline'
@@ -1248,25 +1301,27 @@ nmap              gb      :call brep#Grep("<C-R><C-W>", 1)<CR>
 vmap              gb      :call brep#Grep(VisVal(), 0)<CR>
 
 let g:neomake_open_list = 2
-let g:neomake_javascript_enabled_makers = [ 'jshint' ]
+let g:neomake_javascript_enabled_makers = [ 'jslint' ]
 let g:neomake_lua_enabled_makers        = [ 'luacheck' ]
 nmap ln :lnext<CR>
-nmap <M-N> :lnext<CR>
+nmap <M-C-N> :lnext<CR>
 nmap lp :lprev<CR>
-nmap <M-P> :lprev<CR>
+nmap <M-C-P> :lprev<CR>
 nmap lc :ll<CR>
 nmap ll :lwindow<CR>
 nmap lm :write\|Neomake<CR>
+augroup Private
+    autocmd User NeomakeJobFinished silent! lrewind
+augroup END
 
-let s:SRC = $HOME."/amplex"
-let g:jcall_src_build_pairs = [
-\   [ s:SRC."/epgit/ampep", s:SRC."/epgit/ampep" ],
-\   [ s:SRC."/epgit/greenwise", s:SRC."/epgit/greenwise" ],
-\   [ s:SRC."/ep/ampep", s:SRC."/ep/ampep" ],
-\   [ s:SRC."/ep/greenwise", s:SRC."/ep/greenwise" ],
-\ ]
-nmap <leader>jh <Plug>JCallOpen
-nmap <leader>jc <Plug>JCallClear
+let s:SRC = $HOME.'/amplex'
+let g:javacall_locations = [ ['/ampcom/', {'prefix':'dk.amplex'}],
+                           \ ['pom.xml',  {'prefix':'dk.amplex', 'ignore':'/ampcom/'}] ]
+nmap <leader>j] <Plug>JCallerJump
+nmap <leader>jh <Plug>JCallerOpen
+nmap <leader>jc <Plug>JCallerClear
+let g:JavaComplete_ImportSortType = 'packageName'
+nmap <Leader>jS <Plug>(JavaComplete-Imports-RemoveUnused)<Plug>(JavaComplete-Imports-SortImports)
 
 " echo "DONE sourcing"
 

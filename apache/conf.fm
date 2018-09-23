@@ -1,0 +1,7 @@
+
+<Location "/server-info">
+    SetHandler server-info
+    Require host localhost
+</Location>
+
+Include /Users/fm/thm-dotfiles/apache/conf.d/*.conf

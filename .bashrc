@@ -192,11 +192,27 @@ if [ -n "$PS1" ] ;then
       esac
    }
 
+   __vi() {
+      COMPREPLY=()
+      if [[ $3 = "-t"  || $1 = "vit" ]] ;then
+         local D=.
+         while [[ ! -f $D"/tags" && $(cd $D ; pwd) != "/" ]] ;do
+            D=$D"/.."
+         done
+         if  [[ -f $D"/tags" ]] ;then
+            mapfile -t COMPREPLY < <(grep ^$2 $D"/tags" | cut -f 1 2>/dev/null)
+         fi
+      fi
+   }
+   vit() { vi "+T $1"; }
+
    alias amp=amptree
    complete -C 'amptree --completions' amp
    complete -F _command -o filenames p pv pg
    complete -F _man vman
    complete -c vis env where 
+   complete -F __vi vit
+   complete -o default -F __vi vi vim nvim
 
    [ -z "$AMPROOT" ] && amptree --nocd epgit
 fi

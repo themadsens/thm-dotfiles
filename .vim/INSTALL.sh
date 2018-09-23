@@ -9,6 +9,7 @@ cd bundle
 #   https://github.com/othree/yajs.vim
     https://github.com/jelera/vim-javascript-syntax.git
     https://github.com/othree/javascript-libraries-syntax.vim
+    https://github.com/mxw/vim-jsx.git
 #	https://github.com/udalov/kotlin-vim
 #	https://github.com/vim-scripts/dbext.vim
 #	https://github.com/cosminadrianpopescu/vim-sql-workbench
