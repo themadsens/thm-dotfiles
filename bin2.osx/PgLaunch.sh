@@ -1,17 +1,21 @@
 #!/bin/bash
 
 PG=/Applications/Postgres.app/Contents/Versions/9.4
-PGNEW=/Applications/Postgres-10/Postgres.app/Contents/Versions/10
-DATA="/Users/fm/Library/Application Support/Postgres/var-9.4"
-DATANEW="/Users/fm/Library/Application Support/Postgres/var-10"
+PGNEW=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
+#DATA="/Users/fm/Library/Application Support/Postgres/var-9.4"
+#DATANEW="/Users/fm/Library/Application Support/Postgres/var-10"
+DATA="/Volumes/JetFlash/Postgres/var-9.4"
+DATANEW="/Volumes/JetFlash/Postgres/var-10"
 PATH=$PG/bin:$PATH
 
-if [[ "$2" = old ]] ;then
+if [[ "$1" = old ]] ;then
     DATA="$DATAOLD"
     PG=$PGOLD
-elif [[ "$2" = new ]] ;then
+    shift
+elif [[ "$1" = new ]] ;then
     DATA="$DATANEW"
     PG=$PGNEW
+    shift
 fi
 
 case $1 in
@@ -42,7 +46,11 @@ case $1 in
     cleanup)
         rm -i "$DATA"/postmaster.pid
         ;;
+    pgcmd)
+        CMD=$2 ; shift 2
+        exec $PG/bin/$CMD "$@"
+        ;;
     *)
-        echo "Usage: $0 startfg|status|reload|stop"
+        echo "Usage: $0 startfg|status|reload|stop|pgcmd"
         ;;
 esac
