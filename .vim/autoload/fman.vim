@@ -8,32 +8,12 @@
 " complete -F _man fman
 
 function! s:toggleLwin()
-   if s:visibleLoc()
+   if qfutil#visibleList(1)
       lclose
    else
       lwindow
       ll
    end
-endfunc
-
-function! s:visibleLoc()
-   return len(filter(getwininfo(), {i,v -> v.loclist}))
-endfunc
-
-function! s:followLine()
-   let curLine = line(".")
-   if (exists("b:lastLine") && b:lastLine == curLine) || 0 == s:visibleLoc()
-      return
-   endif
-   let b:lastLine = line(".")
-   let ent = len(filter(getloclist("."), {i,v -> v.lnum <= curLine}))
-   if ent < 1 || (exists("b:lastEntry") && b:lastEntry == ent)
-      return
-   endif
-   let b:lastEntry = ent
-   let pos = [ 0, curLine, col("."), 0 ]
-   exe "ll ".ent
-   call setpos(".", pos)
 endfunc
 
 function! fman#fmanize(setQ)
@@ -54,7 +34,7 @@ function! fman#fmanize(setQ)
    if a:setQ
       nmap <buffer> Q :qall<CR>
    endif
-   au CursorMoved <buffer> call <SID>followLine()
+   au! CursorMoved <buffer> call qfutil#followLine(1)
    call man#show_toc()
    ll
 endfunc

@@ -40,9 +40,9 @@ if has('nvim')
 
     exec g:tig_open_command
     if a:bang > 0
-      call s:diropen("blame -w -- ".file, dir)
+      call s:diropen("blame -w --follow -- ".file, dir)
     elseif filereadable(file)
-      call s:diropen("-- ".file, dir)
+      call s:diropen("-w --follow -- ".file, dir)
     elseif a:0 > 0
       call s:diropen(file, dir)
     else

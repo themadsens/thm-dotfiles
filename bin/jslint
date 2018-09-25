@@ -1,6 +1,5 @@
 #!/bin/bash
 
 jshint "$@" \
-    | fgrep -v -e "'let' is available in ES6" \
-               -e "line 0, col 0, Bad option: '__'." \
+    | fgrep -v -e "line 0, col 0, Bad option: '_" \
     | awk '/: line [0-9]+,/ {print; X=1} END {exit X?1:0}'
