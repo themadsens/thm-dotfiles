@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 NODE=1209
 CMD=''
 SERVER=demo.gridlight.dk
@@ -7,6 +9,8 @@ SERVER=demo.gridlight.dk
 case $1 in 
 	on|1) CMD=on; shift;;
 	off|0) CMD=off; shift;;
+	dim1|2) CMD=dim1; shift;;
+	dim2|3) CMD=dim2; shift;;
 esac
 
 case $1 in 
@@ -14,9 +18,12 @@ case $1 in
 	k*ld*) NODE=1209 ;;
 	loc21)   NODE=10;   SERVER=localhost;;
 	loc21-1) NODE=7;    SERVER=localhost;;
+	prloc21-1) NODE=3617; SERVER=localhost;;
+	prloc21-2) NODE=3618; SERVER=localhost;;
 	dev21)   NODE=0;    SERVER=devel.gridlight.dk;;
 	dev21-1) NODE=1330; SERVER=devel.gridlight.dk;;
-	dev133)  NODE=1315; SERVER=devel.gridlight.dk;;
+	dev133)  NODE=1415; SERVER=demo.gridlight.dk;;
+	#dev133)  NODE=3688; SERVER=feature.gridlight.dk;;
 	test133) NODE=2659; SERVER=test.gridlight.dk;;
 esac
 
