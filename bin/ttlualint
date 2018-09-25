@@ -1,0 +1,2 @@
+#!/bin/bash
+LUA_EXTRA='../../lua/?;../../lua/lua-extra/?' /opt/toolchain/utils/scripts/bin/lualint "$@"
