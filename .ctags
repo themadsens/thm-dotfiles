@@ -1,6 +1,8 @@
 -I--exclude=@.agignore
 --extra=+fq
 
+--langmap=C++:+.ino
+
 -I-From-https://github.com/rstacruz/ctags-css
 --langdef=css
 --langmap=css:.css
@@ -8,7 +10,7 @@
 --langmap=css:+.sass
 --langmap=css:+.styl
 --langmap=css:+.less
---regex-css=/^[ \t]*\.([a-z][A-Za-z0-9_]+)( |$)/\1/c,class,classes/
+--regex-css=/^([a-z.].*\.|\.)([a-z][A-Za-z0-9_-]+)([ {]|$)/\2/c,class,classes/
 --regex-css=/^([\$@][A-Za-z0-9_-]+): /\1/v,variable,variables/
 --regex-css=/^([A-Za-z0-9_-]+) = /\1/v,variable,variables/
 --regex-css=/^[ \t]*(@mixin |= ?)([A-Za-z0-9_-]+)/\2/m,mixin,mixins/
@@ -42,19 +44,20 @@
 --languages=-Lua
 --langdef=MYLUA
 --langmap=MYLUA:.lua
---regex-MYLUA=/^\s*function\s*(\w+)[:.](\w+)\(.*$/\2/f,function/
---regex-MYLUA=/^\s*function\s*(\w+)\(.*$/\1/f,function/
---regex-MYLUA=/^\s*local\s+function\s*(\w+):(\w+)\(.*$/\2/f,function/
---regex-MYLUA=/^\s*local\s+function\s*(\w+)\(.*$/\1/f,function/
---regex-MYLUA=/^local\s+(\w+)\s*=.*$/\1/c,constant/
---regex-MYLUA=/^(\w+)\s*=.*$/\1/c,constant/
+--regex-MYLUA=/^[ \t]*function[ \t]*([A-Za-z0-9_]+)[:.]([A-Za-z0-9_]+)\(.*$/\2/f,function/
+--regex-MYLUA=/^[ \t]*function[ \t]*([A-Za-z0-9_]+)\(.*$/\1/f,function/
+--regex-MYLUA=/^[ \t]*local[ \t]+function[ \t]*([A-Za-z0-9_]+):([A-Za-z0-9_]+)\(.*$/\2/f,function/
+--regex-MYLUA=/^[ \t]*local[ \t]+function[ \t]*([A-Za-z0-9_]+)\(.*$/\1/f,function/
+--regex-MYLUA=/^local[ \t]+([A-Za-z0-9_]+)[ \t]*=.*$/\1/c,constant/
+--regex-MYLUA=/^([A-Za-z0-9_]+)[ \t]*=.*$/\1/c,constant/
+--MYLUA-kinds=+fc
 
 --langdef=less
 --langmap=less:.less
 --regex-less=/^[ \t]*\.([A-Za-z0-9_-]+)/\1/c,class,classes/
 --regex-less=/^[ \t]*#([A-Za-z0-9_-]+)/\1/i,id,ids/
 --regex-less=/^[ \t]*(([A-Za-z0-9_-]+[ \t\n,]+)+)\{/\1/t,tag,tags/
---regex-less=/^[ \t]*@media\s+([A-Za-z0-9_-]+)/\1/m,media,medias/
+--regex-less=/^[ \t]*@media[ \t]+([A-Za-z0-9_-]+)/\1/m,media,medias/
 
 --langmap=ruby:+.rake
 --regex-ruby=/(^|[:;])[ \t]*([A-Z][[:alnum:]_]+) *=/\2/c,class,constant/
