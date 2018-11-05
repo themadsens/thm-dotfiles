@@ -316,7 +316,7 @@ fi
 function amptree()  {
    if [ $# -eq 0 ] ;then echo $AMPROOT ; return ;fi
    if [ $1 == --completions ] ;then
-      ( cd ~/amplex ; command ls -1d */arm9 */ampep) | cut -d/ -f1 | command grep "^$3"
+      ( cd ~/amplex ; command ls -1d */arm9 */ampep */.git */.svn ) | cut -d/ -f1 | sort -u | command grep "^$3"
       return 
    fi
    local noCD=""
@@ -326,9 +326,11 @@ function amptree()  {
    if [[ -d $AMPROOT/arm9 ]] ;then
        local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/utils,arm9/drivers}"
        export SVN=svn+ssh://ampsvn/srv/ampemb
-   else
+    elif [[ -d $AMPROOT/ampep ]] ;then
        DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
        export SVN=svn+ssh://ampsvn/srv/ampep
+    else
+       DL=$AMPROOT
    fi
    for d in ~ $(eval echo $DL) ~/{amplex,releases,src,stuff} ;do
       CDPATH=$CDPATH:$d

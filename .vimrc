@@ -106,7 +106,7 @@ else
          "   setglobal ttymouse=xterm
          "endif
          if &term =~# '\v^(screen|tmux|xterm-)'
-           setglobal ttymouse=xterm2
+           "setglobal ttymouse=xterm2
             if &term =~# '\v^(screen|tmux)'
                execute "set <xUp>=\e[1;*A"
                execute "set <xDown>=\e[1;*B"
@@ -527,7 +527,7 @@ function! SetBufferOpts()
          if filereadable(fpath.'/.gitignore')
             let b:searchroot = fpath
          endif
-         if filereadable(fpath.'/cscope.out')
+         if 0 && filereadable(fpath.'/cscope.out')
             if match(execute('cscope show'), fpath.'/cscope.out') < 0
                execute 'cscope add '.fpath.'/cscope.out'
             endif
@@ -928,7 +928,7 @@ func! s:AgSearch(pattern, wordwise)
    if exists('b:searchroot')
       exe 'cd '.fnameescape(b:searchroot)
    endif
-   let ign = filereadable('.agignore') ? ' -p .agignore' : ''
+   let ign = filereadable('.agignore') ? ' -p .agignore --skip-vcs-ignores' : ''
    let &grepprg = 'ag'.ign.' --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
    exe 'silent grep! '.shellescape(a:pattern, 1)
    let &grepprg = sgSave
@@ -1322,6 +1322,9 @@ nmap <leader>jh <Plug>JCallerOpen
 nmap <leader>jc <Plug>JCallerClear
 let g:JavaComplete_ImportSortType = 'packageName'
 nmap <Leader>jS <Plug>(JavaComplete-Imports-RemoveUnused)<Plug>(JavaComplete-Imports-SortImports)
+
+" Ctrl-P
+
 
 " echo "DONE sourcing"
 
