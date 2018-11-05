@@ -7,7 +7,7 @@ if [[ $TERM = screen || $TERM = xterm || $TERM = tmux ]] ;then
 fi
 
 if [[ $PATH != *$HOME/bin3:* ]] ;then
-    PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:$PATH
+    PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:/sbin:/usr/sbin:$PATH
 fi
 
 export SVN_EDITOR=vi
