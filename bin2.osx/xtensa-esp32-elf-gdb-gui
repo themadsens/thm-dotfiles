@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+echo "ARGS: $@"
+
+ARGS=${*@Q}
+
+exec gdbgui --no-browser --gdb=xtensa-esp32-elf-gdb-cli --gdb-args="$ARGS" $GDBGUI_ARGS

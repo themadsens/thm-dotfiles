@@ -1,0 +1,6 @@
+#!/bin/bash
+printf '\e]1337;RemoteHost=wantsdark@wantsdark\a' # Iterm2 profile switching
+docker run --name=dry-$$ -v /var/run/docker.sock:/run/docker.sock -ti moncho/dry
+
+docker ps -a --filter status=exited --filter ancestor=moncho/dry -q | xargs -r  docker rm -v
+printf '\e]1337;RemoteHost=wantsdefault@wantsdefault\a'

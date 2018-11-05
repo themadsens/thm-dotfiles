@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+OCD=~/bin3/xtensa-esp32-elf/openocd-esp32
+
+case $1 in
+    -*)
+        exec bin/openocd "$@"
+        ;;
+    jlink|*)
+        exec $OCD/bin/openocd -s $OCD/share/openocd/scripts -f interface/jlink.cfg -f board/esp-wroom-32.cfg \
+            -c 'tcl_port 3305 ; telnet_port 3304 ; gdb_port 3303'
+        ;;
+esac

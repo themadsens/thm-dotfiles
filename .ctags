@@ -1,6 +1,18 @@
 -I--exclude=@.agignore
 --extra=+fq
 
+-I ROMFN_ATTR
+-I IRAM_ATTR
+-I DRAM_ATTR
+-I WORD_ALIGNED_ATTR
+-I DMA_ATTR WORD_ALIGNED_ATTR
+-I DRAM_STR+
+-I RTC_IRAM_ATTR
+-I RTC_DATA_ATTR
+-I RTC_RODATA_ATTR
+-I __NOINIT_ATTR
+-I RTC_NOINIT_ATTR
+
 --langmap=C++:+.ino
 
 -I-From-https://github.com/rstacruz/ctags-css

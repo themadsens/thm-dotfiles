@@ -1,0 +1,5 @@
+#!/bin/bash
+printf '\e]1337;RemoteHost=wantsdark@wantsdark\a' # Iterm2 profile switching
+docker run --name=sen-$$ -v /var/run/docker.sock:/run/docker.sock -ti -e TERM tomastomecek/sen
+docker ps -a --filter exited=0 --filter ancestor=tomastomecek/sen -q | xargs -r  docker rm -v
+printf '\e]1337;RemoteHost=wantsdefault@wantsdefault\a'
