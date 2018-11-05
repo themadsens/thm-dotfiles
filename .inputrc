@@ -71,9 +71,12 @@ $endif
 
 # Misc
 "\C-xsk": dump-functions
+"\C-x\C-k": dump-functions
+"\C-x\C-z": dump-functions
 # At least Rdlf has it
 "\C-xsh": dump-history
 "\C-xsr": re-read-init-file
+"\C-x\C-r": re-read-init-file
 
 "\C-xkr": kill-region
 "\C-xcr": copy-region-as-kill
