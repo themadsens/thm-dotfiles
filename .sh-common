@@ -273,17 +273,23 @@ wsLogin() {
   echo $LOGIN
 }
 function ws2 () {
-   local O=$1
-   local U=$2
-   local H=$3
-   local P=$4
-   shift ; shift
-   shift ; shift
+   local OPER=$1
+   local USER=$2
+   local HOST=$3
+   local PURL=$4
+   shift 4
+   local SCHM="https"
+   if [[ $HOST = *://* ]] ;then
+      SCHM=${HOST%://*}
+      HOST=${HOST#*://}
+   fi
+
    #echo "P: $P"
    curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
-      $(wsLogin $U $H) -k -H 'Content-type: application/json' -H 'Accept: application/json' \
-      -X$O https://$(wsHost $H)"$P" "$@" \
-      | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
+      $(wsLogin $USER $HOST) --anyauth --silent -k \
+      -H 'Content-type: application/json' -H 'Accept: application/json' \
+      -X$OPER $SCHM://$(wsHost $HOST)"$PURL" "$@" \
+   | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
 }
 function ws () {
    local O=$1
