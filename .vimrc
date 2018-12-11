@@ -248,6 +248,7 @@ nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
 nmap zs    :call ToggleOpt("spell")<CR>
 nmap zn    :call ToggleOpt("number")<CR>
+nmap zm    :call ToggleOpt("cursorcolumn")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zz    :call ToggleOpt("ignorecase")<CR>
 nmap zp    :call ToggleOpt("paste")<CR>
@@ -464,6 +465,7 @@ function! SetFileTypeOpts()
       call TextEnableCodeSnip('javascript', '/\*JS\*/', '/\*EOF\*/')
       call TextEnableCodeSnip('javascript', '#JS#', '#EOF#')
       setlocal sw=4 ts=4 et
+      set iskeyword-=$
    elseif ft ==# 'vim'
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--')
    elseif ft ==# 'java'

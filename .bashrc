@@ -9,7 +9,7 @@ if [ -n "$PS1" ] ;then
    PATH=/bin/:/usr/bin
    source /etc/profile 
    HISTCONTROL=ignoredups
-   IGNOREEOF=3
+   IGNOREEOF=1
    HISTSIZE=999000
    HISTFILESIZE=999000
 
