@@ -2,7 +2,7 @@
 ./go_${1:-app}.sh $2
 while true ;do
     rlwrap --command ionic-serve --file . --remember --histsize 9999 \
-           ionic serve --nobrowser --lab --all --serverlogs "$@" #--consolelogs 
+           ionic-v1 serve --no-open --lab --all --serverlogs "$@" #--consolelogs 
     if [ $? -ge 128 ] ;then
         exit # signal'ed
     fi

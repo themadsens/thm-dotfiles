@@ -1,3 +1,10 @@
 #!/bin/sh
 # See https://github.com/albertlatacz/java-repl
-exec java -jar ~/bin/javarepl.jar
+#exec java -jar ~/bin/javarepl.jar "$@"
+: ${CLASSPATH:=.}
+if [ "$1" = -cp ] ;then
+    CLASSPATH=$2
+    shift 2
+fi
+exec java  -classpath "$CLASSPATH":$HOME/bin/javarepl.jar javarepl.Main "$@"
+
