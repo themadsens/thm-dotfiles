@@ -24,10 +24,9 @@ export PGDATABASE=ampep
 
 sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else lemonade paste ;fi; }
 findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
-alias mark='echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
+alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
 alias l='      less -R'
 alias v='      vimless'
-alias m='      mark'
 alias ll='     ls -la'
 alias tree='   tree -uph'
 if [[ $(uname -s) = Darwin ]] ;then
@@ -182,7 +181,7 @@ tmux-attach() {
 tmux-ssh() {
    tput smcup
    ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'
-   tput init; tput rmcup; printf '\e[?1000l'
+   eof; printf '\e[?1000l'
 }
 alias tsel='tmux show-buffer'
 
@@ -221,6 +220,12 @@ stdir() {
    fi
 }
 
+eof() {
+   tput reset
+   tput rmcup
+   tput cup $(tput lines) 0
+}
+
 sshwrap() {
    local Cmd Host
    Cmd=$1 ; shift
@@ -235,6 +240,7 @@ sshwrap() {
       fi
    fi
    command $Cmd "$@"
+   eof
 }
 function ssh()      { sshwrap ssh "$@"; }
 function aussh()    { sshwrap aussh "$@"; }
