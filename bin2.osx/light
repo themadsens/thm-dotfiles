@@ -18,6 +18,7 @@ case $1 in
 	k*ld*) NODE=1209 ;;
 	loc21)   NODE=10;   SERVER=localhost;;
 	loc21-1) NODE=7;    SERVER=localhost;;
+	loc21-all) NODE=279;    SERVER=localhost;;
 	prloc21-1) NODE=3617; SERVER=localhost;;
 	prloc21-2) NODE=3618; SERVER=localhost;;
 	dev21)   NODE=0;    SERVER=devel.gridlight.dk;;
@@ -29,7 +30,7 @@ esac
 
 if [ "$CMD" ] ;then
 	curl -k -s -w 'RES: %{http_code}\n' -u amplexfm:ccswe124 -XPUT -H 'content-type: application/json' \
-					"https://$SERVER/gridlight/rs/segment/action/${NODE}?action=${CMD}&password=ccswe124"
+					"https://$SERVER/gridlight/rs/segment/action/${NODE}?action=${CMD}" -d '{"password":"ccswe124"}'
 else
 	curl -k -s -w 'GET: %{http_code}\n' -u amplexfm:ccswe124 -XGET -H 'content-type: application/json' \
 			"https://$SERVER/gridlight/rs/segment/below/${NODE}" \
