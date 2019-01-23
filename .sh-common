@@ -267,11 +267,16 @@ wsHost() { # Resolve host from ~/.ssh/config
   '
 }
 wsLogin() {
-  local SERVER=$(wsHost $2)
-  local LOGIN="--cookie /tmp/curl-cookie-jar.$1-$2 --cookie-jar /tmp/curl-cookie-jar.$1-$2"
-  local CODE=$(umask 077; curl -s -k -w '%{http_code}\n' $LOGIN https://$SERVER/aasws/nodes -o /dev/null)
+  local HOST=$(wsHost $2)
+  local SCHM="https"
+  if [[ $HOST = *://* ]] ;then
+    SCHM=${HOST%://*}
+    HOST=${HOST#*://}
+  fi
+  local LOGIN="--cookie /tmp/curl-cookie-jar.$1-$HOST --cookie-jar /tmp/curl-cookie-jar.$1-$HOST"
+  local CODE=$(umask 077; curl -s -k -w '%{http_code}\n' $LOGIN $SCHM://$HOST/aasws/nodes -o /dev/null)
   if [[ $CODE = 403 ]] ;then
-    CODE=$(umask 077; curl -s -k --user $1 -w '%{http_code}\n' $LOGIN https://$SERVER/aasws/nodes -o /dev/null)
+    CODE=$(umask 077; curl -s -k --user $1 -w '%{http_code}\n' $LOGIN $SCHM://$HOST/aasws/nodes -o /dev/null)
   fi
   if [[ $CODE != 200 ]] ;then
     LOGIN="--user $1"
@@ -279,23 +284,25 @@ wsLogin() {
   echo $LOGIN
 }
 function ws2 () {
-   local OPER=$1
-   local USER=$2
-   local HOST=$3
-   local PURL=$4
-   shift 4
-   local SCHM="https"
-   if [[ $HOST = *://* ]] ;then
-      SCHM=${HOST%://*}
-      HOST=${HOST#*://}
-   fi
+  local OPER=$1
+  local USER=$2
+  local HOST=$3
+  local PURL=$4
+  shift 4
+  local LOGIN=$(wsLogin $USER $HOST)
+  local HOST=$(wsHost $HOST)
+  local SCHM="https"
+  if [[ $HOST = *://* ]] ;then
+    SCHM=${HOST%://*}
+    HOST=${HOST#*://}
+  fi
 
-   #echo "P: $P"
-   curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
-      $(wsLogin $USER $HOST) --anyauth --silent -k \
-      -H 'Content-type: application/json' -H 'Accept: application/json' \
-      -X$OPER $SCHM://$(wsHost $HOST)"$PURL" "$@" \
-   | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
+  #echo "P: $P"
+  curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
+     $LOGIN --anyauth --silent -k \
+     -H 'Content-type: application/json' -H 'Accept: application/json' \
+     -X$OPER $SCHM://$(wsHost $HOST)"$PURL" "$@" \
+  | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
 }
 function ws () {
    local O=$1

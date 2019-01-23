@@ -6,7 +6,6 @@ PGNEW=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
 #DATANEW="/Users/fm/Library/Application Support/Postgres/var-10"
 DATA="/Volumes/JetFlash/Postgres/var-9.4"
 DATANEW="/Volumes/JetFlash/Postgres/var-10"
-PATH=$PG/bin:$PATH
 
 if [[ "$1" = old ]] ;then
     DATA="$DATAOLD"
@@ -17,6 +16,7 @@ elif [[ "$1" = new ]] ;then
     PG=$PGNEW
     shift
 fi
+PATH=$PG/bin:$PATH
 
 case $1 in
     startfg)
@@ -41,7 +41,7 @@ case $1 in
         $PG/bin/initdb -D "$DATA" --locale=en_US.UTF-8
         ;;
     migrate)
-        $PG/bin/pg_upgrade -b $PGOLD/bin -B $PG/bin -d "$DATAOLD" -D "$DATA"
+        $PGNEW/bin/pg_upgrade -b $PG/bin -B $PGNEW/bin -d "$DATA" -D "$DATANEW"
         ;;
     cleanup)
         rm -i "$DATA"/postmaster.pid
@@ -49,6 +49,9 @@ case $1 in
     pgcmd)
         CMD=$2 ; shift 2
         exec $PG/bin/$CMD "$@"
+        ;;
+    run)
+        shift ; exec "$@"
         ;;
     *)
         echo "Usage: $0 startfg|status|reload|stop|pgcmd"
