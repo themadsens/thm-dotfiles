@@ -40,6 +40,7 @@ cd bundle
     https://github.com/themadsens/jcall.vim.git
     https://github.com/tomtom/quickfixsigns_vim.git
     https://github.com/ctrlpvim/ctrlp.vim.git
+    https://github.com/ternjs/tern_for_vim
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
