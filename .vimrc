@@ -18,6 +18,7 @@ augroup filetypedetect
 autocmd BufEnter *.r set ft=xdefaults
 autocmd BufEnter .gitignore set ft=config
 autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
+autocmd BufReadPre *.nfo,*.NFO :setlocal fileencodings=cp437,utf-8
 augroup END
 augroup Private
   autocmd!
@@ -454,7 +455,7 @@ function! SetFileTypeOpts()
    endif
    if index(['java','jsp'], ft) >= 0
       " Ampep java settings
-      setlocal sw=2 ts=2 et
+      setlocal sw=2 sts=2 et
       compiler mvn
       setlocal includeexpr=JspPath(v:fname)
       setlocal cinkeys-=:
@@ -464,7 +465,7 @@ function! SetFileTypeOpts()
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
       call TextEnableCodeSnip('javascript', '/\*JS\*/', '/\*EOF\*/')
       call TextEnableCodeSnip('javascript', '#JS#', '#EOF#')
-      setlocal sw=4 ts=4 et
+      setlocal sw=4 sts=4 et
       set iskeyword-=$
    elseif ft ==# 'vim'
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--')
@@ -473,7 +474,7 @@ function! SetFileTypeOpts()
    elseif ft ==# 'lua'
       call TextEnableCodeSnip('c', 'cdef\[\[', '\]\]') |
       call TextEnableCodeSnip('xml', 'xml *= *\[\[', '\]\]') |
-      setlocal sw=3 ts=3 et
+      setlocal sw=3 sts=3 et
       syn match   luaFunc /\<seq\.map\>/
       syn match   luaFunc /\<seq\.filter\>/
       syn match   luaFunc /\<seq\.sort\>/

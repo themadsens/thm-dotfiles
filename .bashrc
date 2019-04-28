@@ -13,11 +13,370 @@ if [ -n "$PS1" ] ;then
    HISTSIZE=999000
    HISTFILESIZE=999000
 
-   source ~/thm-dotfiles/.sh-common
+   unalias -a
 
-  # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
+   if [[ $TERM = screen || $TERM = xterm || $TERM = tmux ]] ;then
+      export TERM=${TERM}-256color
+   fi
+
+   if [[ $PATH != *$HOME/bin3:* ]] ;then
+       PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:/sbin:/usr/sbin:$PATH
+   fi
+
+   export SVN_EDITOR=vi
+   export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
+   export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.4.1_1/
+   export JBOSS_HOME=/opt/wildfly
+   export AMPCOM_HOME=/opt/ampcom
+   export MAVEN_OPTS="-Xmx1024m"
+   export PGDATABASE=ampep
+   #export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
+
+   [[ "$(type -p dircolors)" ]] && eval `dircolors`
+   # eval `dircolors ~/.dircolors`
+
+   sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else lemonade paste ;fi; }
+   findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
+   alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
+   alias l='      less -R'
+   alias v='      vimless'
+   alias ll='     ls -la'
+   alias tree='   tree -uph'
+   if [[ $(uname -s) = Darwin ]] ;then
+      alias ls='  ls -G'
+   else
+      alias ls='  ls --color=auto'
+   fi
+   alias where='  type -a'
+   alias watch='  watch -d -p'
+   alias grep='   grep --color=auto'
+   alias svnhead="svnlog --limit=20"
+   alias rehash=" hash -r"
+   alias sort='   LC_ALL=C sort'
+   alias reload=' PATH=/bin:/usr/bin exec -l bash'
+   alias tsel='   tmux show-buffer'
+   alias luai='   with-readline luajit'
+   alias se='     vim -g --remote'
+   alias unquot=' sel | cut -d\" -f2'
+   alias jslint=' jshint --reporter=/usr/local/lib/node_modules/jshint-stylish'
+   alias gitll=" git log --graph --pretty=format:'%C(bold)%h%Creset%C(magenta)%d%Creset %s %C(yellow)<%an> %C(cyan)(%cr)%Creset' --abbrev-commit --date=relative"
+   # From http://blogs.atlassian.com/2014/10/advanced-git-aliases/ # Show commits since last pull
+   alias gitnew=" git log HEAD@{1}..HEAD@{0}"
+   # Add uncommitted and unstaged changes to the last commit
+   alias gitappend="git commit -a --amend -C HEAD"
+   alias gitst="    git status"
+   alias tigst="    tig status"
+   alias gitcommit="git add \* ; git commit"
+   alias tt-esp32="export PATH=~/bin3/xtensa-esp32-elf/bin/:\$PATH ; export IDF_PATH=~/amplex/esp-idf"
+   gitdiff() {
+      REV=''
+      [[ $# > 0 && "$1" != -* ]] && REV=${1}^..${1}; shift;
+      git diff -b $REV "$@";
+   }
+   gitup() {
+      echo -e "Stashing .. \c"
+      git stash save --include-untracked __GITGET__
+      git svn mkdirs > /dev/null
+      git svn rebase
+      if git stash list | grep -q __GITGET__ ;then
+         echo -e "Unstash .. \c"
+         git stash pop
+      fi
+   }
+   gitdcommit() {
+      echo -e "Stashing .. \c"
+      git stash save --include-untracked __GITSDC__
+      git svn dcommit
+      if git stash list | grep -q __GITSDC__ ;then
+         echo -e "Unstash .. \c"
+         git stash pop
+      fi
+   }
+
+   _GRC=`which grc`
+   if [ "$TERM" != dumb ] && [ -n "$_GRC" ] ;then
+      colorize() { grc -es ${COLORARG:-"--colour=auto"} "$@"; }
+      for c in configure gcc as gas ld netstat ping traceroute head dig mount ps mtr df di \
+               svn hg git cat ifconfig
+      do
+         eval "$c() { colorize '$c' \"\$@\"; }"
+      done
+   else
+      colorize() { CMD=$1 ; shift; $CMD "$@"; }
+   fi
+   unset _GRC
+
+   diff() { colorize diff -u "$@"; }
+   df()   { colorize df -k "$@"; }
+
+   # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
+   fixkbd() { 
+      #setxkbmap -option caps:none;
+      xmodmap -e 'Caps_Lock=Control_L|G';
+      xmodmap -e 'keysym Control_R = Mode_switch';
+   }
+   tpfan() {
+      sudo ~/bin2/tp-fancontrol -s 5 -S 2 -l -d
+   }
+
+   export SVN=svn+ssh://ampsvn/srv/ampep
+   vman()      { nvim "+call fman#man_page(0, 1, '', '${1}')"; }
+   svnlast()   { if [[ $# -ge 1 ]] ;then svnlog -p -l 25 "$@" ;else svnlog -p -a $USER -l 25 ;fi; }
+   gitlast()   { if [[ $# -ge 1 ]] ;then gitlog -p -l 25 "$@" ;else gitlog -p -a $USER -l 25 ;fi; }
+   svnminfo()  { command svn mergeinfo $SVN/trunk/embedded \
+                               --show-revs ${@:-eligible} | \
+                 xargs -i svnlog '-{}' svn+ssh://ampsvn/srv/ampemb/trunk/embedded; }
+
+   svnst()     { command svn st "$@" | command grep -v  '^[X?]'; }
+   hgst()      { hg  st "$@" | command grep -v  '^[X?]'; }
+   lth()       { ls -lat "$@" | head -20; }
+   # alias open='kfmclient exec'
+   url()       { kfmclient openURL "$*"; }
+   vimless()   { nvim --cmd 'let no_plugin_maps = 1 | let load_less = 1' \
+                     --cmd 'set readonly noswapfile' \
+                      -c 'set mouse=a' \
+                      -c 'runtime macros/less.vim' "${@:--}"; }
+   jatt()      { curl -u fm:ccswe124 $1 | grcat conf.log | less -R; } # View jira attachment
+   p()         { COLORARG=" " "$@" | less -R;}
+   pg()        { $GRC -es "$@" | less -R;}
+   pv()        { if [[ $# -eq 1 && -e $1 ]] ;then vimless $1 ;else "$@" | vimless ;fi }
+   vis()       { vi +set\ hlsearch $(which "$@"); }
+   _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
+   vif()       { vi -c set\ hlsearch "+/$*/" $(egrep -l "$*" $(_txt \*)); }
+   vdiff()     { vi -g -f -d --cmd 'set columns=164' -c 'normal <C-W>=' "$@"; }
+   mt()        { xterm +tb -e sh -c "while multitail $@; do : ;done"; }
+   ToAURoot()  { tar zcf - $2 | command ssh $1 tar zxvf - -C /flash/root/; }
+   Trace()     { amp-backtrace.lua "$@" | less +/'ERROR=>' --jump-target=.5; }
+   psman()     { man -aW "$@" | xargs zcat | groff -man -Tps -P-pa4 \
+                | psnup -pa4 -2 -d1 | less -R;}
+   f()         { awk -v N="$*" 'BEGIN {split(N, Nr, / |,/)}
+                 {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
+   e()         { lua -e "print($*)"; }
+   utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
+   utf8sel()   { sel | utf8kill; }
+
+   del()       {
+      [[ $# == 1 ]] && set ${1/:/ }
+      echo -e "$2 d\nw\nq" | ed -s $1;
+   }
+
+   exit() {
+      [[ "$SSH_CONNECTION" ]] && builtin exit "$@"
+      [[ "$_" = */XMenu/* ]] && sleep 1 && builtin exit
+      read -n 1 -t 10 -p "Really exit. Exits in 10 sec? [y/N] " ans
+      [[ "$ans" = [yY]* || $? -gt 128 ]] && builtin exit "$@"
+      echo "Phew!"
+   }
+
+   rmline() { sed -i '' "$1 d" "$2"; }
+
+   tmux-x-attach() {
+      ps -f -u fm | grep -v grep | grep -q 'xpra start' || xpra start :9
+      xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2>&1 &
+      DISPLAY=:9 tmux-attach "$@"
+      xpra detach :9
+   }
+
+   tmux-attach() {
+      # env | grep SSH
+      case $(tmux list-sessions 2>/dev/null | wc -l) in
+         0) tmux ;;
+         1) tmux attach ;;
+         *)
+            tmux list-sessions | awk '{print NR-1 ": " $0}'
+            read -n 1 -p "Select session: " N < /dev/tty > /dev/tty;
+            SES=`tmux list-sessions | awk -F: -v N=$N 'NR==N+1 {print $1}'`
+            echo "Session: $SES"
+            tmux attach -t "$SES"
+            ;;
+      esac
+   }
+   tmux-ssh() {
+      tput smcup
+      ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'
+      eof; printf '\e[?1000l'
+   }
+   alias tsel='tmux show-buffer'
+
+   alias hi="history|tail"
+   alias hist="history"
+   alias hgrep="history|grep"
+
+   case $TERM in
+       sun-cmd) stln() { printf "\033]l %s \033" "$*"; } ; itit() { :; }
+                ;;
+       xterm*|linux*|screen*|tmux*)
+                stln() { printf "\033]2;%s\007" "$*" ; }
+                itit() { printf "\033]1;%s\007" "$*" ; }
+                ;;
+       *)       stln() { :; } ; itit() { :; }
+       ;;
+   esac
+   if [[ "$TMUX" && -z "$NVIM_LISTEN_ADDRESS" ]] ;then
+      itit() { printf "\ek%s\e\\" "$*" ; }
+   fi
+   if [[ "$NVIM_LISTEN_ADDRESS" ]] ;then
+      itit() { :; }
+   fi
+   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10-`
+   Tty=`tty | cut -c10-`
+   stdir() {
+      local p=${PWD/$AMPROOT/@}
+      if [[ $p = @/* ]] ;then Path=${p:2}; else Path=""; fi
+      local p=${p/$HOME/\~}
+      local V=''
+      stln "-- $HostnTty $(ttprompt 2)- ${AMPROOT##*/} - $p --"
+      if [[ "$TMUX" ]] ;then
+         itit "$Tty-$(cut -c1-3 <<< ${AMPROOT##*/})-${p##*/}"
+      else
+         itit "$Tty - $(cut -c1-3 <<< ${AMPROOT##*/}) - ${p##*/}"
+      fi
+   }
+
+   eof() {
+      tput reset
+      tput rmcup
+      tput cup $(tput lines) 0
+   }
+
+   sshwrap() {
+      local Cmd Host
+      Cmd=$1 ; shift
+      if test -t 1 ;then
+         Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@" 2>/dev/null;
+                cat /tmp/__H; rm -f /tmp/__H)
+         itit "$Tty => $(tr a-z A-Z <<< $Host)"
+         if [[ $Host != fm* ]] ;then
+            local Term=${TERM%-italic}
+            env TERM=${Term/tmux/xterm} $Cmd "$@"
+            return 0
+         fi
+      fi
+      command $Cmd "$@"
+      eof
+   }
+   function ssh()      { sshwrap ssh "$@"; }
+   function aussh()    { sshwrap aussh "$@"; }
+   function au-sshgw() { sshwrap au-sshgw "$@"; }
+   function tail()     { itit "$Tty - TAIL $@" ; colorize tail "$@"; }
+   function cu()       { itit "$Tty - CU $@"   ; command cu "$@"; }
+   function locate()
+   {
+      if [[ $# == 1 ]] ;then
+         command locate -b "$@"
+      else
+         command locate "$@"
+      fi
+   }
+   wsHost() { # Resolve host from ~/.ssh/config
+     cat ~/.ssh/config 2>/dev/null \
+     | awk -v H="$1" '
+        tolower($1) == "host" {
+           found = 0;
+           for (i = 1; i <= NF; i++) { if ($i == H) found = 1; }
+        }
+        tolower($1) == "hostname" && found { print $2; found = 2; exit; }
+        END { if (found != 2) print H; }
+     '
+   }
+   wsLogin() {
+     local HOST=$(wsHost $2)
+     local SCHM="https"
+     if [[ $HOST = *://* ]] ;then
+       SCHM=${HOST%://*}
+       HOST=${HOST#*://}
+     fi
+     local LOGIN="--cookie /tmp/curl-cookie-jar.$1-$HOST --cookie-jar /tmp/curl-cookie-jar.$1-$HOST"
+     local CODE=$(umask 077; curl -s -k -w '%{http_code}\n' $LOGIN $SCHM://$HOST/aasws/nodes -o /dev/null)
+     if [[ $CODE = 403 ]] ;then
+       CODE=$(umask 077; curl -s -k --user $1 -w '%{http_code}\n' $LOGIN $SCHM://$HOST/aasws/nodes -o /dev/null)
+     fi
+     if [[ $CODE != 200 ]] ;then
+       LOGIN="--user $1"
+     fi
+     echo $LOGIN
+   }
+   function ws2 () {
+     local OPER=$1
+     local USER=$2
+     local HOST=$3
+     local PURL=$4
+     shift 4
+     local LOGIN=$(wsLogin $USER $HOST)
+     local HOST=$(wsHost $HOST)
+     local SCHM="https"
+     if [[ $HOST = *://* ]] ;then
+       SCHM=${HOST%://*}
+       HOST=${HOST#*://}
+     fi
+
+     #echo "P: $P"
+     curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
+        $LOGIN --anyauth --silent -k \
+        -H 'Content-type: application/json' -H 'Accept: application/json' \
+        -X$OPER $SCHM://$(wsHost $HOST)"$PURL" "$@" \
+     | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
+   }
+   function ws () {
+      local O=$1
+      local P=$2
+      local R=${P%%/*}
+      shift ; shift
+      case $R in
+         (ws|lightWs|glams|aasweb|startgrid|aasws|gis) ;; 
+         #(*)  P=aasws/$P ;;
+      esac
+      #echo "P: $P"
+      curl -w '\n-----------\n%{http_code}: %{size_header} + %{size_download} B\n' \
+         -uampfm3:ccswe124 -k -H 'content-type: application/json' \
+         -X$O http://localhost:8000/$P "$@"
+   }
+   function findTests() { find . -name surefire-reports | xargs -I % open %/index.html; }
+
+   if [[ -d ~/.keychain && "$UID" -ne 0 && -z "$SSH_AUTH_SOCK" ]] ;then
+      #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
+      HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
+      #keychain --quiet ~/.ssh/id_dsa
+      eval `keychain --quiet --eval`
+      #alias kcload='eval `keychain --quiet --eval`'
+   fi
+
+   if [[ -d /opt/toolchain/. ]] ;then
+      . /opt/toolchain/utils/toolchain-utils-load
+   fi
+
+   function amptree()  {
+      if [ $# -eq 0 ] ;then echo $AMPROOT ; return ;fi
+      if [ $1 == --completions ] ;then
+         ( cd ~/amplex ; command ls -1d */arm9 */ampep */.git */.svn ) | cut -d/ -f1 | sort -u | command grep "^$3"
+         return 
+      fi
+      local noCD=""
+      if [[ $1 == --nocd ]] ;then noCD=1; shift; fi
+      export AMPROOT=~/amplex/$1
+      CDPATH=""
+      if [[ -d $AMPROOT/arm9 ]] ;then
+          local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/utils,arm9/drivers}"
+          export SVN=svn+ssh://ampsvn/srv/ampemb
+       elif [[ -d $AMPROOT/ampep ]] ;then
+          DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
+          export SVN=svn+ssh://ampsvn/srv/ampep
+       else
+          DL=$AMPROOT
+      fi
+      for d in ~ $(eval echo $DL) ~/{amplex,releases,src,stuff} ;do
+         CDPATH=$CDPATH:$d
+      done
+      export LUA_CPATH=";;$AMPROOT/arm9/agentframework/lua/?.so"
+      if [[ ! -n $noCD ]] ;then
+         echo $AMPROOT/$D
+         cd $AMPROOT/$D
+      fi
+   }
+
+   # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
    for f in bash_completion ;do
-      for d in /etc/ /usr/local/etc ;do
+      for d in /etc/ /usr/local/etc /usr/local/share/bash-completion ;do
          [ -f $d/$f ] && source $d/$f
       done
    done
@@ -108,8 +467,6 @@ if [ -n "$PS1" ] ;then
 
    function profile_check() {
       local curtime=$(file_modtime $HOME/.bashrc)
-      local shtime=$(file_modtime ~/thm-dotfiles/.sh-common)
-      [[ $shtime > $curtime ]] && curtime=$shtime
       if [[ $_profile_time && $_profile_time != $curtime ]] ;then
          source $HOME/.bashrc
       fi

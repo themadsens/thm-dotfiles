@@ -45,7 +45,7 @@ while true do
     elseif findandset(line, "^ *process ID: (%d*)(.*)", t) then
         pid = t[1]
 	tty = { s = "" }
-        if string.find(t[2], "(still running)", 1, true) ~= nil then
+        if string.find(t[2]:lower(), "(still running)", 1, true) ~= nil then
 	  if pids["pid-"..pid] then
 	    tty.s = pids["pid-"..pid]
 	  else

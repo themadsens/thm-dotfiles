@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -x
 OCD=~/bin3/xtensa-esp32-elf/openocd-esp32
 
 case $1 in
