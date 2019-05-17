@@ -255,7 +255,7 @@ if [ -n "$PS1" ] ;then
       command $Cmd "$@"
       eof
    }
-   function ssh()      { sshwrap ssh "$@"; }
+   function ssh()      { if [[ $# -eq 1 ]] ;then sshwrap ssh "$@" ;else command ssh "$@" ;fi; }
    function aussh()    { sshwrap aussh "$@"; }
    function au-sshgw() { sshwrap au-sshgw "$@"; }
    function tail()     { itit "$Tty - TAIL $@" ; colorize tail "$@"; }
