@@ -233,6 +233,12 @@ if [ -n "$PS1" ] ;then
       fi
    }
 
+   espmon ()
+   {
+      itit MON-${1##*/};
+      python -m serial.tools.miniterm --rts 0 --dtr 0 --raw $1 115200
+   }
+
    eof() {
       tput reset
       tput rmcup
