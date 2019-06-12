@@ -1,3 +1,16 @@
+# vim: set ft=apache:
+DocumentRoot "/Users/fm/thm-dotfiles/apache/www"
+<Directory   "/Users/fm/thm-dotfiles/apache/www">
+    # The Options directive is both complicated and important.  Please see
+    # http://httpd.apache.org/docs/2.4/mod/core.html#options for more information.
+    Options FollowSymLinks Multiviews
+    MultiviewsMatch Any
+
+    # AllowOverride controls what directives may be placed in .htaccess files.
+    # It can be "All", "None", or any combination of the keywords: AllowOverride FileInfo AuthConfig Limit
+    AllowOverride None
+    Require all granted
+</Directory>
 
 <Location "/server-info">
     SetHandler server-info
