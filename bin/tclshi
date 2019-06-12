@@ -1,4 +1,4 @@
 #!/bin/sh
 
-
+export PATH=/usr/local/opt/tcl-tk/bin:$PATH
 exec rlwrap --command tclshi --file . --remember --histsize 9999 tclsh

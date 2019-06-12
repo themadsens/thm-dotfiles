@@ -143,7 +143,7 @@ if [ -n "$PS1" ] ;then
    vis()       { vi +set\ hlsearch $(which "$@"); }
    _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
    vif()       { vi -c set\ hlsearch "+/$*/" $(egrep -l "$*" $(_txt \*)); }
-   vdiff()     { vi -g -f -d --cmd 'set columns=164' -c 'normal <C-W>=' "$@"; }
+   vdiff()     { vim -g -f -d --cmd 'set columns=220' -c 'normal <C-W>=' "$@"; }
    mt()        { xterm +tb -e sh -c "while multitail $@; do : ;done"; }
    ToAURoot()  { tar zcf - $2 | command ssh $1 tar zxvf - -C /flash/root/; }
    Trace()     { amp-backtrace.lua "$@" | less +/'ERROR=>' --jump-target=.5; }
@@ -315,11 +315,12 @@ if [ -n "$PS1" ] ;then
        SCHM=${HOST%://*}
        HOST=${HOST#*://}
      fi
+     HEADERS=(-H "Content-type: application/json" -H "Accept: application/json")
+     [[ $1 = '-H' ]] && HEADERS=()
 
      #echo "P: $P"
      curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
-        $LOGIN --anyauth --silent -k \
-        -H 'Content-type: application/json' -H 'Accept: application/json' \
+        $LOGIN --anyauth --silent -k "${HEADERS[@]}" \
         -X$OPER $SCHM://$(wsHost $HOST)"$PURL" "$@" \
      | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
    }

@@ -1,11 +1,9 @@
 #!/bin/bash
 
-PG=/Applications/Postgres.app/Contents/Versions/9.4
-PGNEW=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
-#DATA="/Users/fm/Library/Application Support/Postgres/var-9.4"
-#DATANEW="/Users/fm/Library/Application Support/Postgres/var-10"
-DATA="/Volumes/JetFlash/Postgres/var-9.4"
-DATANEW="/Volumes/JetFlash/Postgres/var-10"
+PGOLD=/Applications/Postgres.app/Contents/Versions/9.4
+PG=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
+DATAOLD="/Volumes/JetFlash/Postgres/var-9.4"
+DATA="/Volumes/JetFlash/Postgres/var-10"
 
 if [[ "$1" = old ]] ;then
     DATA="$DATAOLD"
