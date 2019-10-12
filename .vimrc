@@ -15,8 +15,6 @@ execute pathogen#infect()
 syntax on
 filetype plugin indent on
 augroup filetypedetect
-autocmd BufEnter *.r set ft=xdefaults
-autocmd BufEnter .gitignore set ft=config
 autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
 autocmd BufReadPre *.nfo,*.NFO :setlocal fileencodings=cp437,utf-8
 augroup END
@@ -282,6 +280,8 @@ imap <S-Up>     <Esc>
 imap <S-Down>   <Esc>
 let g:ftplugin_sql_omni_key_right = '<C-C><Right>'
 let g:ftplugin_sql_omni_key_left  = '<C-C><Left>'
+map <F12> <Cmd>set nopaste<CR>
+lnoremap <F12> <C-O><Cmd>set nopaste<CR>
 
 " Movement with "2x3" block navigation keys. Customize to your liking
 nnoremap <PageUp>   <C-U>
@@ -386,20 +386,19 @@ augroup Private
 
    autocmd InsertEnter * call system("tmux set mouse off")
    autocmd InsertLeave * call system("tmux set mouse on")
-   if has('nvim')
-      function! YankToClip(event)
-         let text = a:event.regcontents[:]
-         if text[-1] ==# ''
-            let text = text[:-2]
-         end
-         if a:event.operator ==# 'y' && len(text) > 0
-            call system(has('mac') ? 'pbcopy' : 'lemonade copy', text)
-         end
-      endfunc
 
-      autocmd FocusGained  * let @" = system(has('mac') ? "pbpaste" : "lemonade paste")
-      autocmd TextYankPost * call YankToClip(v:event)
-   end
+   function! YankToClip(event)
+      let text = a:event.regcontents[:]
+      if text[-1] ==# ''
+	 let text = text[:-2]
+      end
+      if a:event.operator ==# 'y' && len(text) > 0
+	 call system(has('mac') ? 'pbcopy' : 'lemonade copy', text)
+      end
+   endfunc
+
+   autocmd FocusGained  * let @" = system(has('mac') ? "pbpaste" : "lemonade paste")
+   autocmd TextYankPost * call YankToClip(v:event)
 augroup end
 
 function! BufEnterGlobalOpts()
@@ -425,7 +424,7 @@ function! BufEnterGlobalOpts()
       nmap <Insert>   [[zz
       nmap <Del>      ]]zz
    endif
-
+   syntax sync minlines=1000
 endfunc
 
 function! SetFileTypeOnLoad()
@@ -435,6 +434,10 @@ function! SetFileTypeOnLoad()
          setlocal filetype=lua
       elseif line1 =~# 'node'
          setlocal filetype=javascript
+      elseif expand('<amatch>') =~ '\.r$'
+         setlocal filetype=xdefaults
+      elseif expand('<amatch>') =~ '\.gitignore$'
+         setlocal filetype=config
       endif
   endif
 endfunc
@@ -500,6 +503,7 @@ function! SetFileTypeOpts()
    if filereadable(findfile('_vimrc', '.;'))
       exe 'source '.fnameescape(findfile('_vimrc', '.;'))
    end
+   syntax sync minlines=1000
 endfunc
 
 function! SetBufferOpts()
@@ -637,6 +641,7 @@ function! MakePrg(mkArg)
       endif
    elseif &ft ==# 'javascript'
       setlocal makeprg=jslint
+      compiler jshint
       let makeArgs = '%'
    elseif &makeprg ==# 'mmvn' || &makeprg ==# 'mvn' || (exists('current_compiler') && g:current_compiler ==# 'mvn')
       setlocal makeprg=mmvn
@@ -1295,7 +1300,7 @@ let g:easytags_async = 1
 let g:easytags_auto_highlight = 0
 let g:easytags_on_cursorhold = 0
 let g:easytags_resolve_links = 0
-let g:easytags_dynamic_files = 1
+let g:easytags_dynamic_files = 0
 let g:easytags_events = ['BufWritePost']
 call xolox#easytags#filetypes#add_mapping('lua', 'MYLUA')
 
