@@ -22,6 +22,10 @@ if [ -n "$PS1" ] ;then
    if [[ $PATH != *$HOME/bin3:* ]] ;then
        PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:/sbin:/usr/sbin:$PATH
    fi
+   if [[ $PATH != *$HOME/tmp/go/bin:* ]] ;then
+       export GOPATH=~/tmp/go
+       PATH=$GOPATH/bin:$PATH
+   fi
 
    export SVN_EDITOR=vi
    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
@@ -39,7 +43,7 @@ if [ -n "$PS1" ] ;then
    findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
-   alias v='      vimless'
+   alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias ll='     ls -la'
    alias tree='   tree -uph'
    if [[ $(uname -s) = Darwin ]] ;then
@@ -95,7 +99,7 @@ if [ -n "$PS1" ] ;then
 
    _GRC=`which grc`
    if [ "$TERM" != dumb ] && [ -n "$_GRC" ] ;then
-      colorize() { grc -es ${COLORARG:-"--colour=auto"} "$@"; }
+      colorize() { grc -es --colour=${COLORARG:-auto} "$@"; }
       for c in configure gcc as gas ld netstat ping traceroute head dig mount ps mtr df di \
                svn hg git cat ifconfig
       do
@@ -137,9 +141,8 @@ if [ -n "$PS1" ] ;then
                       -c 'set mouse=a' \
                       -c 'runtime macros/less.vim' "${@:--}"; }
    jatt()      { curl -u fm:ccswe124 $1 | grcat conf.log | less -R; } # View jira attachment
-   p()         { COLORARG=" " "$@" | less -R;}
+   p()         { COLORARG="on" "$@" | less -R;}
    pg()        { $GRC -es "$@" | less -R;}
-   pv()        { if [[ $# -eq 1 && -e $1 ]] ;then vimless $1 ;else "$@" | vimless ;fi }
    vis()       { vi +set\ hlsearch $(which "$@"); }
    _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
    vif()       { vi -c set\ hlsearch "+/$*/" $(egrep -l "$*" $(_txt \*)); }
@@ -154,6 +157,14 @@ if [ -n "$PS1" ] ;then
    e()         { lua -e "print($*)"; }
    utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
    utf8sel()   { sel | utf8kill; }
+
+   pv()        {
+      if [[ $# -eq 1 && -e $1 ]] ;then
+         BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat $1 
+      else
+         COLORARG=on "$@" 2>&1  | less -R
+      fi
+   }
 
    del()       {
       [[ $# == 1 ]] && set ${1/:/ }
@@ -382,12 +393,12 @@ if [ -n "$PS1" ] ;then
    }
 
    # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
-   for f in bash_completion ;do
+   for f in bash_completion profile.d/bash_completion.sh ;do
       for d in /etc/ /usr/local/etc /usr/local/share/bash-completion ;do
          [ -f $d/$f ] && source $d/$f
       done
    done
-   for f in ~/.bash_completion.d/* ;do
+   for f in ~/.bash_completion.d/* /usr/local/etc/bash_completion.d/* ;do
       [ -r $f ] && source $f
    done
 
@@ -409,7 +420,6 @@ if [ -n "$PS1" ] ;then
       [[ $TERM == xterm*  || $TERM == screen* || $TERM == tmux* || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
    }
    PS1="[$(__col 1)\h $(__col 2)\W$(__col 6)\$(gitps1)$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
-   NOTTPS1=$PS1
 
    run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
    __run() {
@@ -582,3 +592,5 @@ if [ -n "$PS1" ] ;then
 fi
 
 # vim: set sw=3 sts=3 et:
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
