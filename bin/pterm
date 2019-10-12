@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ $# = 0 ]] ;then
+    echo "Usage: pterm <line> <baud>"
+    exit 1
+fi
+
+exec python -m serial.tools.miniterm --rts 0 --dtr 0 --raw "$@"

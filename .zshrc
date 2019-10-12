@@ -51,3 +51,5 @@ precmd() {
 ### End of Zplugin's installer chunk
 #zplugin load psprint zsh-navigation-tools
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
