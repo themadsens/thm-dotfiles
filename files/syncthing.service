@@ -4,7 +4,7 @@
 Description=Syncthing
 
 [Service]
-ExecStart=/usr/bin/syncthing
+ExecStart=/usr/bin/syncthing --no-browser --no-restart
 
 [Install]
 WantedBy=default.target
