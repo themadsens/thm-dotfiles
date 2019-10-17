@@ -42,6 +42,7 @@ cd bundle
     https://github.com/ctrlpvim/ctrlp.vim.git
     https://github.com/ternjs/tern_for_vim
     https://github.com/sjl/vitality.vim
+#   https://github.com/themadsens/VimPyServer
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
