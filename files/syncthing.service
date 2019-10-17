@@ -1,0 +1,10 @@
+# Lives in ~/.config/systemd/user/syncthing.service
+
+[Unit]
+Description=Syncthing
+
+[Service]
+ExecStart=/usr/bin/syncthing
+
+[Install]
+WantedBy=default.target

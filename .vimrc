@@ -369,6 +369,15 @@ function! Tjump(tag)
    end
 endfunction
 
+function! Tag(tag)
+   let tagnm = split(a:tag, ':')
+   exe 'tag '.tagnm[0]
+   if len(tagnm) > 1
+      exe tagnm[1]
+   end
+   let _=foreground()
+endfunction
+
 " Use :T instead of :ta to see file names in ^D complete-lists
 command! -complete=tag_listfiles -nargs=1 T call Tjump("<args>")|
                                            \call histadd("cmd", "T <args>")
@@ -631,8 +640,8 @@ function! MakePrg(mkArg)
    if makeArgs ==# 'jshint' || makeArgs ==# 'jslint'
       setlocal makeprg=makeArgs
       let makeArgs = '%'
-   elseif makeArgs ==# 'lualint' || (&ft ==# 'lua' && !filereadable('Makefile'))
-      setlocal makeprg=lualint
+   elseif makeArgs ==# 'luacheck' || (&ft ==# 'lua' && !filereadable('Makefile'))
+      setlocal makeprg=luacheck\ --no-color
       let makeArgs = '%'
    elseif findfile('pom.xml', '.;') ==# '' && findfile('gulpfile.js', '.;') !=# '' && &ft ==# 'javascript'
       setlocal makeprg='gulp'
