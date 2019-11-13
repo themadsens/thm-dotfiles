@@ -44,12 +44,17 @@ if [ -n "$PS1" ] ;then
    alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
    alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
-   alias ll='     ls -la'
    alias tree='   tree -uph'
-   if [[ $(uname -s) = Darwin ]] ;then
-      alias ls='  ls -G'
+   if type -p exa > /dev/null ;then
+      alias ll='  exa -laa --group-directories-first'
+      alias ls='  exa --group-directories-first'
    else
-      alias ls='  ls --color=auto'
+      alias ll='  ls -la'
+      if [[ $(uname -s) = Darwin ]] ;then
+         alias ls='  ls -G'
+      else
+         alias ls='  ls --color=auto'
+      fi
    fi
    alias where='  type -a'
    alias watch='  watch -d -p'
