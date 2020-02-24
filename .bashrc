@@ -76,7 +76,6 @@ if [ -n "$PS1" ] ;then
    alias gitst="    git status"
    alias tigst="    tig status"
    alias gitcommit="git add \* ; git commit"
-   alias tt-esp32="export PATH=~/bin3/xtensa-esp32-elf/bin/:\$PATH ; export IDF_PATH=~/amplex/esp-idf"
    gitdiff() {
       REV=''
       [[ $# > 0 && "$1" != -* ]] && REV=${1}^..${1}; shift;
