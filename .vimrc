@@ -177,7 +177,7 @@ setglobal textwidth=100
 setglobal whichwrap=h,l,<,>,[,]      " Do not backspace/space across line boundaries
 setglobal autoindent
 setglobal winheight=10               " Make new windows this high
-setglobal cmdheight=2                " status line area height - higher for quickfix
+setglobal cmdheight=3                " status line area height - higher for quickfix
 setglobal laststatus=2               " always with statusline
 setglobal showmatch
 setglobal autowrite                  " write files back at ^Z, :make etc.
@@ -225,13 +225,29 @@ vmap U <Esc>
 vnoremap gu u
 vnoremap gU U
 
+function! WithQfInfo(cmd)
+    let exception = ""
+    try
+        exe a:cmd
+    catch
+        echohl WarningMsg | echo v:exception[3:] | echohl None
+        let exception = v:exception
+    endtry
+    let info = getqflist({'nr': 0, 'size': 1, 'idx':1, 'winid':1})
+    if exception == '' && info.winid > 0
+        let err = getqflist()[info.idx-1]
+        echo "("..info.idx.." of "..info.size.."): "..err.text
+    endif
+endfunction
+
 " For running edit-compile-edit (quickfix)
-nmap gn :cnext<CR>
-nmap <M-n> :cnext<CR>
-nmap gp :cprevious<CR>
-nmap <M-p> :cprevious<CR>
-nmap gl :cwindow<CR>
-nmap gc :cc<CR>
+nmap <silent> gn    :call WithQfInfo("cnext")<CR>
+nmap <silent> <M-n> :call WithQfInfo("cnext")<CR>
+nmap <silent> gp    :call WithQfInfo("cprevious")<CR>
+nmap <silent> <M-p> :call WithQfInfo("cprevious")<CR>
+nmap <silent> gl    :call WithQfInfo("cwindow")<CR>
+nmap <silent> gc    :call WithQfInfo("cc")<CR>
+nmap <silent> gz    :call qfutil#followLine(0)<CR>
 nmap gm :Make<CR>
 
 " Various utility keys
@@ -352,7 +368,7 @@ inoremap <C-O> <C-X><C-O>
 "inoremap <C-F> <C-X><C-F>
 
 " Some coloring. These are _my_ preferences
-hi NonText                                     ctermfg=lightgray
+hi NonText                                    ctermfg=lightgray
 hi Visual                           cterm=Inverse ctermfg=grey ctermbg=black
 
 if &term ==# 'ansi' || &term ==# 'console' || &term ==# 'linux'
@@ -388,7 +404,7 @@ augroup Private
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd FileType    * call SetFileTypeOpts()
-   autocmd CursorMoved * call qfutil#followLine(0)
+   " autocmd CursorMoved * call qfutil#followLine(0)
 
    " Handle global (non bufferspecific) options
    autocmd BufEnter * call BufEnterGlobalOpts()
@@ -504,6 +520,8 @@ function! SetFileTypeOpts()
      compiler jshint
      setlocal formatoptions-=t
      setlocal sw=2 ts=2 et
+     setlocal cindent
+     setlocal indentexpr& " The provided indent file is hopeless
    elseif ft ==# 'python'
      setlocal sw=2 ts=2 noet
    elseif ft ==# 'css' || ft ==# 'html'
@@ -647,6 +665,7 @@ function! MakePrg(mkArg)
       setlocal makeprg='gulp'
       if makeArgs ==# ''
          let makeArgs = 'lint'
+         compiler jshint
       endif
    elseif &ft ==# 'javascript'
       setlocal makeprg=jslint
@@ -1331,6 +1350,8 @@ augroup Private
     autocmd User NeomakeJobFinished silent! lrewind
 augroup END
 
+let g:html_number_lines = 0
+
 let s:SRC = $HOME.'/amplex'
 let g:javacall_locations = [ ['/ampcom/', {'prefix':'dk.amplex'}],
                            \ ['pom.xml',  {'prefix':'dk.amplex', 'ignore':'/ampcom/'}] ]
@@ -1342,6 +1363,14 @@ nmap <Leader>jS <Plug>(JavaComplete-Imports-RemoveUnused)<Plug>(JavaComplete-Imp
 
 " Ctrl-P
 
+" vim-lsc
+" let g:lsc_server_commands = {'java': $HOME.'/stuff/java-language-server/dist/lang_server_mac.sh'}
+
+" Workaround for https://github.com/neovim/neovim/issues/12023
+inoremap <C-C> <C-V>
+inoremap <C-V> <C-R>*
+inoremap <M-v> <C-R>*
+inoremap <M-c> <C-R>*
 
 " echo "DONE sourcing"
 

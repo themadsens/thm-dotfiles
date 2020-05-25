@@ -22,13 +22,16 @@ function! qfutil#reformat(...) abort
   let lnum_width = 0
   let col_width = 0
   let fname_width = 0
+  let fpath_width = 0
 
   let loclist = getqflist()
   for item in loclist
     let lnum_width = max([len(item.lnum), lnum_width])
     let col_width = max([len(item.col), col_width])
     let fname_width = max([len(fnamemodify(bufname(item.bufnr), ":t")), fname_width])
+    let fpath_width = max([len(bufname(item.bufnr)), fpath_width])
   endfor
+  let fname_width = min([40, max([fname_width, fpath_width])])
 
   let lines = []
   for item in loclist
@@ -36,7 +39,8 @@ function! qfutil#reformat(...) abort
     if empty(type)
       let type = ' '
     endif
-    call add(lines, printf('%*s | %*s:%*s %s| %s', fname_width, fnamemodify(bufname(item.bufnr), ":t"),
+    let fname = bufname(item.bufnr)
+    call add(lines, printf('%*s | %*s:%*s %s| %s', fname_width, strpart(fname, len(fname) - fname_width),
                           \                        lnum_width, item.lnum, col_width, item.col, type, item.text))
   endfor
 
