@@ -39,7 +39,19 @@ if [ -n "$PS1" ] ;then
    [[ "$(type -p dircolors)" ]] && eval `dircolors`
    # eval `dircolors ~/.dircolors`
 
-   sel() { if [[ $(uname -s) = Darwin ]] ;then pbpaste "$@" ;else lemonade paste ;fi; }
+   sel() {
+      local mode=paste
+      if [[ $1 = copy ]] ;then
+         mode=copy
+         shift
+      fi
+      case $(uname -s)-$mode in
+         Darwin-paste) pbpaste "$@" ;;
+         Darwin-copy)  pbcopy "$@" ;;
+         *-paste)      lemonade paste;;
+         *-copy)       lemonade copy;;
+      esac
+   }
    findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
@@ -84,11 +96,14 @@ if [ -n "$PS1" ] ;then
    gitup() {
       echo -e "Stashing .. \c"
       git stash save --include-untracked __GITGET__
-      git svn mkdirs > /dev/null
-      git svn rebase
-      if git stash list | grep -q __GITGET__ ;then
+      if git svn mkdirs 2>/dev/null ;then
+         git svn rebase "$@"
+      else
+         git pull "$@"
+      fi
+      if git stash list | command grep -q __GITGET__ ;then
          echo -e "Unstash .. \c"
-         git stash pop
+         git stash pop $(git stash list | awk  -F : '/__GITGET__/ {print $1; exit}')
       fi
    }
    gitdcommit() {
@@ -260,6 +275,8 @@ if [ -n "$PS1" ] ;then
       tput cup $(tput lines) 0
    }
 
+   jsonui() { [[ $# -gt 0 ]] && command jsonui < $1 || command jsonui; }
+
    sshwrap() {
       local Cmd Host
       Cmd=$1 ; shift
@@ -365,6 +382,7 @@ if [ -n "$PS1" ] ;then
 
    if [[ -d /opt/toolchain/. ]] ;then
       . /opt/toolchain/utils/toolchain-utils-load
+      . ~/.toolchainrc
    fi
 
    function amptree()  {

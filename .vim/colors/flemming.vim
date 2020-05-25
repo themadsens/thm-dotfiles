@@ -20,7 +20,8 @@ let colors_name = "flemming"
 hi Normal guibg=CornSilk guifg=Black
 
 hi SpecialKey term=bold ctermfg=4 guifg=Blue
-hi NonText term=bold cterm=bold ctermfg=7 gui=bold guifg=Blue
+"hi NonText term=bold cterm=bold ctermfg=7 gui=bold guifg=Blue
+hi NonText term=bold cterm=bold ctermfg=252 gui=bold guifg=Blue
 hi Directory term=bold ctermfg=4 guifg=Blue
 hi ErrorMsg term=standout cterm=bold ctermfg=8 ctermbg=9 gui=bold guifg=White guibg=Red
 hi IncSearch term=reverse cterm=reverse gui=reverse
