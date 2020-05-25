@@ -1,5 +1,12 @@
 #!/bin/bash
 ./go_${1:-app}.sh $2
+shift 2
+gulp serve:before &
+sleep 3
+ionic serve --no-open --local "$@"
+fg %1
+exit
+
 while true ;do
     rlwrap --command ionic-serve --file . --remember --histsize 9999 \
            ionic-v1 serve --no-open --lab --all --serverlogs "$@" #--consolelogs 

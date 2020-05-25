@@ -1,3 +1,4 @@
 #!/bin/sh
 export MAKEGLIMPSEINDEX=${GLIMPSE:=0}
+: > ~/.vimtags
 exec amp-glindex "$@"
