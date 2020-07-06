@@ -19,7 +19,8 @@ PATH=$PG/bin:$PATH
 case $1 in
     startfg)
         $PG/bin/pg_ctl start -D "$DATA"
-        sleep $(( 1000*1000*1000 ))
+        trap '' SIGTERM
+        ( trap SIGTERM ; sleep $(( 1000*1000*1000 )) )
         $PG/bin/pg_ctl stop -D "$DATA" -m fast
         ;;
     start)

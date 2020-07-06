@@ -965,7 +965,7 @@ func! s:AgSearch(pattern, wordwise)
       exe 'cd '.fnameescape(b:searchroot)
    endif
    let ign = filereadable('.agignore') ? ' -p .agignore --skip-vcs-ignores' : ''
-   let &grepprg = 'ag'.ign.' --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
+   let &grepprg = 'ag'.ign.' --ignore tags --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
    exe 'silent grep! '.shellescape(a:pattern, 1)
    let &grepprg = sgSave
    call histadd('cmd', 'Search'.(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
