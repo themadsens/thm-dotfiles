@@ -10,7 +10,7 @@ un-xtensa() {
 
 tt-esp32() {
     un-xtensa
-    export PATH=~/bin3/xtensa-esp32-elf/bin/:$PATH
+    export PATH=~/bin3/xtensa-esp32-elf/ccache/:~/bin3/xtensa-esp32-elf/bin/:$PATH
     export IDF_PATH=~/amplex/esp-idf
 }
 
