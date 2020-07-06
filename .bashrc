@@ -57,9 +57,11 @@ if [ -n "$PS1" ] ;then
    alias l='      less -R'
    alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
+   alias fdu='    fd -uu -t f'
    if type -p exa > /dev/null ;then
       alias ll='  exa -laa --group-directories-first'
       alias ls='  exa --group-directories-first'
+      lth()       { exa -la -s changed -r --color=always "$@" | head -20; }
    else
       alias ll='  ls -la'
       if [[ $(uname -s) = Darwin ]] ;then
@@ -67,6 +69,7 @@ if [ -n "$PS1" ] ;then
       else
          alias ls='  ls --color=auto'
       fi
+      lth()       { ls -lat "$@" | head -20; }
    fi
    alias where='  type -a'
    alias watch='  watch -d -p'
@@ -96,7 +99,7 @@ if [ -n "$PS1" ] ;then
    gitup() {
       echo -e "Stashing .. \c"
       git stash save --include-untracked __GITGET__
-      if git svn mkdirs 2>/dev/null ;then
+      if git svn mkdirs >/dev/null ;then
          git svn rebase "$@"
       else
          git pull "$@"
@@ -118,9 +121,15 @@ if [ -n "$PS1" ] ;then
 
    _GRC=`which grc`
    if [ "$TERM" != dumb ] && [ -n "$_GRC" ] ;then
-      colorize() { grc -es --colour=${COLORARG:-auto} "$@"; }
+      colorize() {
+         if { test -t 1; } || [ "$COLORARG" = on ] ;then
+            grc -es --colour=${COLORARG:-auto} "$@"
+         else
+            command "$@"
+         fi
+      }
       for c in configure gcc as gas ld netstat ping traceroute head dig mount ps mtr df di \
-               svn hg git cat ifconfig
+               svn hg git ifconfig
       do
          eval "$c() { colorize '$c' \"\$@\"; }"
       done
@@ -152,7 +161,6 @@ if [ -n "$PS1" ] ;then
 
    svnst()     { command svn st "$@" | command grep -v  '^[X?]'; }
    hgst()      { hg  st "$@" | command grep -v  '^[X?]'; }
-   lth()       { ls -lat "$@" | head -20; }
    # alias open='kfmclient exec'
    url()       { kfmclient openURL "$*"; }
    vimless()   { nvim --cmd 'let no_plugin_maps = 1 | let load_less = 1' \
@@ -248,8 +256,8 @@ if [ -n "$PS1" ] ;then
    if [[ "$NVIM_LISTEN_ADDRESS" ]] ;then
       itit() { :; }
    fi
-   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10-`
-   Tty=`tty | cut -c10-`
+   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10- | sed 's/^0*//'`
+   Tty=`tty | cut -c10- | sed 's/^0*//'`
    stdir() {
       local p=${PWD/$AMPROOT/@}
       if [[ $p = @/* ]] ;then Path=${p:2}; else Path=""; fi
@@ -445,7 +453,7 @@ if [ -n "$PS1" ] ;then
 
    run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
    __run() {
-      mapfile -t COMPREPLY < <(ls -1d /Applications/{,*/}*.app | \
+      mapfile -t COMPREPLY < <(command ls -1d /Applications/{,*/}*.app | \
                                grep -i "/$2" | \
                                sed -e 's,^/Applications/,,' -e 's/.app$//' -e 's/ /\\ /g');
    }
