@@ -13,3 +13,5 @@
 	trustExitCode = true
 [commit]
 	template = /Users/fm/.stCommitMsg
+[pull]
+	rebase = false
