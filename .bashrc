@@ -57,7 +57,8 @@ if [ -n "$PS1" ] ;then
    alias l='      less -R'
    alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
-   alias fdu='    fd -uu -t f'
+   alias fd='     fd -uu'
+   alias fdf='    fd -uu -t f'
    if type -p exa > /dev/null ;then
       alias ll='  exa -laa --group-directories-first'
       alias ls='  exa --group-directories-first'
@@ -77,7 +78,7 @@ if [ -n "$PS1" ] ;then
    alias svnhead="svnlog --limit=20"
    alias rehash=" hash -r"
    alias sort='   LC_ALL=C sort'
-   alias reload=' PATH=/bin:/usr/bin exec -l bash'
+   alias reload=' PATH=/usr/local/bin:/bin:/usr/bin exec -l bash'
    alias tsel='   tmux show-buffer'
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
@@ -256,8 +257,8 @@ if [ -n "$PS1" ] ;then
    if [[ "$NVIM_LISTEN_ADDRESS" ]] ;then
       itit() { :; }
    fi
-   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10- | sed 's/^0*//'`
-   Tty=`tty | cut -c10- | sed 's/^0*//'`
+   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10- | sed 's/^\(0*\)\(..*\)/\2/'`
+   Tty=`tty | cut -c10- | sed 's/^\(0*\)\(..*\)/\2/'`
    stdir() {
       local p=${PWD/$AMPROOT/@}
       if [[ $p = @/* ]] ;then Path=${p:2}; else Path=""; fi
