@@ -5,7 +5,7 @@ atTags() {
     while true ;do
        if [ -r tags ] ;then
           echo "Searching from `pwd`:"
-          ag --skip-vcs-ignores -p .agignore --ignore rootdisk --ignore tags --follow "$@"
+          ag --skip-vcs-ignores -p .agignore --ignore target --ignore rootdisk --ignore tags --follow "$@"
           return 0
        fi
        [ `pwd` = '/' ] && return 1
