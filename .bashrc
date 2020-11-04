@@ -412,7 +412,7 @@ if [ -n "$PS1" ] ;then
       export AMPROOT=~/amplex/$1
       CDPATH=""
       if [[ -d $AMPROOT/arm9 ]] ;then
-          local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/utils,arm9/drivers}"
+          local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/{utils,drivers,radiomodule}}"
           export SVN=svn+ssh://ampsvn/srv/ampemb
        elif [[ -d $AMPROOT/ampep ]] ;then
           DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
