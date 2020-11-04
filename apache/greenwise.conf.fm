@@ -25,11 +25,7 @@ ProxyPassReverse /gridlight http://localhost:8000/gridlight
 ProxyPass /changes ws://localhost:8000/greenwise/subscribe
 ProxyPassReverse /changes ws://localhost:8000/greenwise/subscribe
 
-<Location "/hschanges">
-    ProxyPass ws://localhost:8000/greenwise/subscribe
-    ProxyPassReverse ws://localhost:8000/greenwise/subscribe
-    RequestHeader setifempty Authorization: "Basic aW1wb3J0ZXI6SnVtcGluZ0Zpc2hTdGlja0F0MTg="
-</Location>
+ProxyPass /hschanges ws://localhost:8009/hschanges
 
 ProxyPass /birt  http://localhost:8000/birt
 ProxyPassReverse /birt http://localhost:8000/birt
