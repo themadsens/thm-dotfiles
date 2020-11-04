@@ -22,6 +22,7 @@ augroup Private
   autocmd CursorHold  * :exe "normal \<c-g>\<c-g>"
 augroup END
 
+let g:tagbar_ctags_bin = "ctags"
 let g:tagbar_autoclose = 1
 let g:tagbar_autofocus = 1
 let g:tagbar_sort = 0
@@ -1372,6 +1373,10 @@ inoremap <C-C> <C-V>
 inoremap <C-V> <C-R>*
 inoremap <M-v> <C-R>*
 inoremap <M-c> <C-R>*
+
+" Fugitive
+nmap gy :Git log --pretty=oneline %<CR>
+nmap gG :Git<CR>
 
 " echo "DONE sourcing"
 

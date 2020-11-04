@@ -45,6 +45,7 @@ cd bundle
     https://github.com/zerowidth/vim-copy-as-rtf
 #   https://github.com/natebosch/vim-lsc
 #   https://github.com/themadsens/VimPyServer
+    https://github.com/rust-lang/rust.vim
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
