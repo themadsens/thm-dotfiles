@@ -15,6 +15,10 @@ if [ -n "$PS1" ] ;then
 
    unalias -a
 
+   shopt -s direxpand
+   WF=/opt/wildfly/standalone/
+   WFL=/opt/wildfly/standalone/log/
+
    if [[ $TERM = screen || $TERM = xterm || $TERM = tmux ]] ;then
       export TERM=${TERM}-256color
    fi
@@ -22,9 +26,12 @@ if [ -n "$PS1" ] ;then
    if [[ $PATH != *$HOME/bin3:* ]] ;then
        PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:/sbin:/usr/sbin:$PATH
    fi
-   if [[ $PATH != *$HOME/tmp/go/bin:* ]] ;then
+   if [[ $PATH != *$HOME/tmp/go/bin:* && -d $HOME/tmp/go/bin ]] ;then
        export GOPATH=~/tmp/go
        PATH=$GOPATH/bin:$PATH
+   fi
+   if [[ $PATH != *$HOME/.cargo/bin:*  && -d $HOME/.cargo/bin ]] ;then
+       PATH=$HOME/.cargo/bin:$PATH
    fi
 
    export SVN_EDITOR=vi
@@ -62,7 +69,7 @@ if [ -n "$PS1" ] ;then
    if type -p exa > /dev/null ;then
       alias ll='  exa -laa --group-directories-first'
       alias ls='  exa --group-directories-first'
-      lth()       { exa -la -s changed -r --color=always "$@" | head -20; }
+      lth()       { exa -la -s modified -r --color=always "$@" | head -20; }
    else
       alias ll='  ls -la'
       if [[ $(uname -s) = Darwin ]] ;then
@@ -413,7 +420,7 @@ if [ -n "$PS1" ] ;then
        else
           DL=$AMPROOT
       fi
-      for d in ~ $(eval echo $DL) ~/{amplex,releases,src,stuff} ;do
+      for d in ~ $(eval echo $DL) ~/{repos,repos/modules,releases,src,stuff} ;do
          CDPATH=$CDPATH:$d
       done
       export LUA_CPATH=";;$AMPROOT/arm9/agentframework/lua/?.so"
