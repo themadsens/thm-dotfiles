@@ -14,12 +14,12 @@ execute pathogen#infect()
 
 syntax on
 filetype plugin indent on
-augroup filetypedetect
-autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
-autocmd BufReadPre *.nfo,*.NFO :setlocal fileencodings=cp437,utf-8
-augroup END
+
 augroup Private
   autocmd!
+  autocmd BufReadPost,StdinReadPost * call SetFileTypeOnLoad()
+  autocmd BufReadPre *.nfo,*.NFO :setlocal fileencodings=cp437,utf-8
+  autocmd CursorHold  * :exe "normal \<c-g>\<c-g>"
 augroup END
 
 let g:tagbar_autoclose = 1
@@ -403,6 +403,7 @@ augroup Private
    autocmd BufReadPost * call SetBufferOpts()
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd BufNewFile  * call SetBufferOpts()
+   autocmd DirChanged  * call SetBufferOpts()
    autocmd FileType    * call SetFileTypeOpts()
    " autocmd CursorMoved * call qfutil#followLine(0)
 
@@ -471,7 +472,7 @@ let g:used_javascript_libs = 'underscore,angularjs,jquery'
 function! SetFileTypeOpts()
    let ft = &filetype
    " echomsg 'FILETYPE: '.ft
-   if index(['c','cpp','arduino','java','jsp'], ft) >= 0
+   if index(['c','cpp','arduino','java','jsp','javascript'], ft) >= 0
       setlocal cindent
       " Match open brace above )
       setlocal cinoptions=(0,w1,u0,:1,=2
@@ -520,8 +521,8 @@ function! SetFileTypeOpts()
      compiler jshint
      setlocal formatoptions-=t
      setlocal sw=2 ts=2 et
-     setlocal cindent
-     setlocal indentexpr& " The provided indent file is hopeless
+     "setlocal cindent
+     "setlocal indentexpr& " The provided indent file is hopeless
    elseif ft ==# 'python'
      setlocal sw=2 ts=2 noet
    elseif ft ==# 'css' || ft ==# 'html'
@@ -965,7 +966,7 @@ func! s:AgSearch(pattern, wordwise)
       exe 'cd '.fnameescape(b:searchroot)
    endif
    let ign = filereadable('.agignore') ? ' -p .agignore --skip-vcs-ignores' : ''
-   let &grepprg = 'ag'.ign.' --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
+   let &grepprg = 'ag'.ign.' --ignore tags --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
    exe 'silent grep! '.shellescape(a:pattern, 1)
    let &grepprg = sgSave
    call histadd('cmd', 'Search'.(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
