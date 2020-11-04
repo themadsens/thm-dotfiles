@@ -3,9 +3,10 @@
 unset NOTTPS1
 
 un-xtensa() {
-    for path in $(echo $PATH | tr : '\n' | grep xtensa-esp32) ;do
+    for path in $(echo $PATH | tr : '\n' | grep -e xtensa-esp32 -e esp-idf -e espressif.python_env) ;do
         remove_from PATH $path
     done
+    unset IDF_PYTHON_ENV_PATH
 }
 
 tt-esp32() {
@@ -16,7 +17,9 @@ tt-esp32() {
 
 tt-esp32V4() {
     un-xtensa
-    for path in /Users/fm/bin3/xtensa-esp32-V4/*/*/*/bin ;do
+    export IDF_PATH=~/amplex/esp-idfV4
+    export IDF_PYTHON_ENV_PATH=/Users/fm/.espressif/python_env/idf4.2_py3.8_env
+    for path in /Users/fm/bin3/xtensa-esp32-V4/*/*/*/bin $IDF_PATH/tools $IDF_PYTHON_ENV_PATH/bin ;do
         export PATH=$path:$PATH
     done
     export IDF_PATH=~/amplex/esp-idfV4

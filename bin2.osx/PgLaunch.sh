@@ -2,8 +2,8 @@
 
 PGOLD=/Applications/Postgres.app/Contents/Versions/9.4
 PG=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
-DATAOLD="/Volumes/JetFlash/Postgres/var-9.4"
-DATA="/Volumes/JetFlash/Postgres/var-10"
+DATAOLD="/Volumes/Option/Postgres/var-9.4"
+DATA="/Volumes/Option/Postgres/var-10"
 
 if [[ "$1" = old ]] ;then
     DATA="$DATAOLD"

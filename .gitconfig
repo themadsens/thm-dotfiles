@@ -2,16 +2,21 @@
 	default = matching
 [user]
 	name = Flemming Madsen
-	email = flemming@themadsens.dk
+	email = fm@amplex.dk
 [core]
 	excludesfile = /Users/fm/.gitignore_global
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	cmd = /Users/fm/bin3/editgitversion __DIFF__ $LOCAL $REMOTE $BASE $MERGED
 	path = 
 [mergetool "sourcetree"]
-	cmd = /Applications/Git SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [commit]
 	template = /Users/fm/.stCommitMsg
 [pull]
 	rebase = false
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
