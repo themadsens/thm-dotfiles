@@ -379,10 +379,12 @@ if &term ==# 'ansi' || &term ==# 'console' || &term ==# 'linux'
 endif
 
 function! Tjump(tag)
-   let tagnm = split(a:tag, ':')
-   exe 'tjump '.tagnm[0]
+   let tagnm = split(a:tag, '[^:]:[^:]')
    if len(tagnm) > 1
-      exe tagnm[1]
+      exe 'tjump '.split(a:tag, ':')[0]
+      exe split(a:tag, ':')[1]
+   else
+      exe 'tjump '.a:tag
    end
 endfunction
 
