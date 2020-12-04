@@ -20,3 +20,9 @@
 	required = true
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
+[alias]
+	st = status -s
+	co = checkout
+	cdiff = diff --word-diff=color --word-diff-regex=.
+	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+	aliases = alias
