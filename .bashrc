@@ -64,8 +64,13 @@ if [ -n "$PS1" ] ;then
    alias l='      less -R'
    alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
-   alias fd='     fd -uu'
-   alias fdf='    fd -uu -t f'
+   if type -p fdfind > /dev/null ;then
+      alias fd='     fdfind -uu'
+      alias fdf='    fdfind -uu -t f'
+   else
+      alias fd='     fd -uu'
+      alias fdf='    fd -uu -t f'
+   fi
    if type -p exa > /dev/null ;then
       alias ll='  exa -laa --group-directories-first --colour=always'
       alias ls='  exa --group-directories-first'
@@ -418,15 +423,15 @@ if [ -n "$PS1" ] ;then
       CDPATH=""
       local D=""
       if [[ -d $AMPROOT/arm9 ]] ;then
-          local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/{utils,drivers,radiomodule}}"
-          export SVN=svn+ssh://ampsvn/srv/ampemb
-          D=arm9
-       elif [[ -d $AMPROOT/ampep ]] ;then
-          DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
-          export SVN=svn+ssh://ampsvn/srv/ampep
-          D=ampep
-       else
-          DL=$AMPROOT
+         local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/{utils,drivers,radiomodule}}"
+         export SVN=svn+ssh://ampsvn/srv/ampemb
+         D=arm9
+      elif [[ -d $AMPROOT/ampep ]] ;then
+         DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
+         export SVN=svn+ssh://ampsvn/srv/ampep
+         D=ampep
+      else
+         DL=$AMPROOT
       fi
       for d in ~ $(eval echo $DL) ~/{repos,repos/modules,releases,src,stuff} ;do
          CDPATH=$CDPATH:$d
@@ -634,7 +639,7 @@ if [ -n "$PS1" ] ;then
    complete -F __vi vit
    complete -o default -F __vi vi vim nvim
 
-   [ -z "$AMPROOT" ] && amptree --nocd epgit
+   [ -z "$CDPATH" ] && amptree --nocd epgit
 fi
 
 # vim: set sw=3 sts=3 et:
