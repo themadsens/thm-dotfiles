@@ -24,6 +24,11 @@ set -wg  window-status-style "none"
 set -wga window-status-style fg="colour250"
 set -wga window-status-style bg="colour234"
 set -g status-left "#[fg=colour16,bg=colour254,bold][#(uname -n | cut -d. -f1 | tr a-z A-Z)]#[fg=colour254,bg=colour234,nobold,nounderscore,noitalics]"
-set -g status-right "#[fg=colour232,bg=colour234,nobold,nounderscore,noitalics]#[fg=colour250,bg=colour232] #[fg=colour236,bg=colour232]#[fg=colour247,bg=colour236] #[bold,fg=colour202]#S#[nobold,fg=colour252]  #{?mouse,MSE ,}#[fg=colour252,bg=colour236,nobold]#[fg=colour235,bg=colour252]#{cpu_percentage}"
+set -g @cpu_temp_format '%.0f'
+set -g @cpu_temp_unit '°C'
+set -g @cpu_temp_medium_thresh "68"
+set -g @cpu_temp_high_thresh "75"
+set -g @cpu_temp_medium_fg_color "#[fg=colour208]"
+set -g status-right "#[fg=colour232,bg=colour234,nobold,nounderscore,noitalics]#[fg=colour250,bg=colour232] #[fg=colour236,bg=colour232]#[fg=colour247,bg=colour236] #[bold,fg=colour202]#S#[nobold,fg=colour252]  #{?mouse,MSE ,}#[fg=colour252,bg=colour236,nobold]#[bg=colour252]#{cpu_temp_fg_color}#{cpu_temp}#[fg=colour235] #{cpu_percentage}"
 setw -g window-status-format "#[fg=colour234,bg=colour238]#[bg=colour238,fg=colour254]#F #W#[fg=colour238,bg=colour234]#[default]"
 setw -g window-status-current-format "#[fg=colour234,bg=colour31,nobold,nounderscore,noitalics]#[fg=colour231,bg=colour31,bold] #W #[fg=colour31,bg=colour234,nobold,nounderscore,noitalics]"
