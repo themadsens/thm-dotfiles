@@ -666,7 +666,7 @@ function! MakePrg(mkArg)
       setlocal makeprg=luacheck\ --no-color
       let makeArgs = '%'
    elseif findfile('pom.xml', '.;') ==# '' && findfile('gulpfile.js', '.;') !=# '' && &ft ==# 'javascript'
-      setlocal makeprg='gulp'
+      setlocal makeprg=gulp\ --no-color
       if makeArgs ==# ''
          let makeArgs = 'lint'
          compiler jshint
