@@ -1,0 +1,14 @@
+  {
+  "title": "At-sign (from option-backslash) on option-quote",
+  "rules": [{
+      "description": "At-sign (from option-backslash) on option-quote",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": { "key_code": "quote", "modifiers": { "mandatory": [ "option" ] } },
+          "to": [ { "key_code": "backslash", "modifiers": [ "left_option" ] } ]
+	}
+      ]
+    }
+  ]
+}

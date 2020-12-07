@@ -126,7 +126,11 @@ hs.hotkey.bind(hyper, "W", function() WHFunc("W") end)
 hs.hotkey.bind(hyper, "H", function() WHFunc("H") end)
 hs.hotkey.bind(hyper, "F", function() WHFunc("F") end)
 
-hs.loadSpoon('LightAndScroll'):start()
+local mspoon = hs.loadSpoon('LightAndScroll'):start()
+hs.hotkey.bind(hyper, "S", function()
+  local pos = mspoon.menuBar:frame()
+  mspoon.menuBar:popupMenu(pos)
+end)
 
 Install:andUse('ReloadConfiguration', {start=true})
 Install:andUse('RoundedCorners',      {start=true})
