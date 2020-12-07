@@ -64,10 +64,15 @@ if [ -n "$PS1" ] ;then
    alias l='      less -R'
    alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
-   alias fd='     fd -uu'
-   alias fdf='    fd -uu -t f'
+   if type -p fdfind > /dev/null ;then
+      alias fd='     fdfind -uu'
+      alias fdf='    fdfind -uu -t f'
+   else
+      alias fd='     fd -uu'
+      alias fdf='    fd -uu -t f'
+   fi
    if type -p exa > /dev/null ;then
-      alias ll='  exa -laa --group-directories-first'
+      alias ll='  exa -laa --group-directories-first --colour=always'
       alias ls='  exa --group-directories-first'
       lth()       { exa -la -s modified -r --color=always "$@" | head -20; }
    else
@@ -85,7 +90,7 @@ if [ -n "$PS1" ] ;then
    alias svnhead="svnlog --limit=20"
    alias rehash=" hash -r"
    alias sort='   LC_ALL=C sort'
-   alias reload=' PATH=/usr/local/bin:/bin:/usr/bin exec -l bash'
+   alias reload=' exec env -u AMPROOT PATH=/usr/local/bin:/bin:/usr/bin bash -c "exec -l bash"'
    alias tsel='   tmux show-buffer'
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
@@ -196,8 +201,13 @@ if [ -n "$PS1" ] ;then
    pv()        {
       if [[ $# -eq 1 && -e $1 ]] ;then
          BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat $1 
+      elif [[ $(type -t $1)  = alias ]] ;then
+         local CMD=$1 ; shift
+         COLORARG=on ${BASH_ALIASES[$CMD]} "$@" 2>&1 | less -R
+      elif [[ $(type -t $1) ]] ;then
+         COLORARG=on "$@" 2>&1 | less -R
       else
-         COLORARG=on "$@" 2>&1  | less -R
+         command pv "$@"
       fi
    }
 
@@ -404,21 +414,24 @@ if [ -n "$PS1" ] ;then
    function amptree()  {
       if [ $# -eq 0 ] ;then echo $AMPROOT ; return ;fi
       if [ $1 == --completions ] ;then
-         ( cd ~/amplex ; command ls -1d */arm9 */ampep */.git */.svn ) | cut -d/ -f1 | sort -u | command grep "^$3"
+         ( cd ~/repos ; command ls -1d */arm9 */ampep */.git */.svn ) | cut -d/ -f1 | sort -u | command grep "^$3"
          return 
       fi
       local noCD=""
       if [[ $1 == --nocd ]] ;then noCD=1; shift; fi
-      export AMPROOT=~/amplex/$1
+      export AMPROOT=~/repos/$1
       CDPATH=""
+      local D=""
       if [[ -d $AMPROOT/arm9 ]] ;then
-          local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/{utils,drivers,radiomodule}}"
-          export SVN=svn+ssh://ampsvn/srv/ampemb
-       elif [[ -d $AMPROOT/ampep ]] ;then
-          DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
-          export SVN=svn+ssh://ampsvn/srv/ampep
-       else
-          DL=$AMPROOT
+         local DL="$AMPROOT/{,arm9,arm9/agentframework/{,agents,libs},arm9/apps/{,drivers},arm9/{utils,drivers,radiomodule}}"
+         export SVN=svn+ssh://ampsvn/srv/ampemb
+         D=arm9
+      elif [[ -d $AMPROOT/ampep ]] ;then
+         DL="$AMPROOT/{,ampep,greenwise,greenwise/common-ui/src/main/webapp/modules}"
+         export SVN=svn+ssh://ampsvn/srv/ampep
+         D=ampep
+      else
+         DL=$AMPROOT
       fi
       for d in ~ $(eval echo $DL) ~/{repos,repos/modules,releases,src,stuff} ;do
          CDPATH=$CDPATH:$d
@@ -626,7 +639,7 @@ if [ -n "$PS1" ] ;then
    complete -F __vi vit
    complete -o default -F __vi vi vim nvim
 
-   [ -z "$AMPROOT" ] && amptree --nocd epgit
+   [ -z "$CDPATH" ] && amptree --nocd epgit
 fi
 
 # vim: set sw=3 sts=3 et:
