@@ -379,10 +379,12 @@ if &term ==# 'ansi' || &term ==# 'console' || &term ==# 'linux'
 endif
 
 function! Tjump(tag)
-   let tagnm = split(a:tag, ':')
-   exe 'tjump '.tagnm[0]
+   let tagnm = split(a:tag, '[^:]:[^:]')
    if len(tagnm) > 1
-      exe tagnm[1]
+      exe 'tjump '.split(a:tag, ':')[0]
+      exe split(a:tag, ':')[1]
+   else
+      exe 'tjump '.a:tag
    end
 endfunction
 
@@ -664,7 +666,7 @@ function! MakePrg(mkArg)
       setlocal makeprg=luacheck\ --no-color
       let makeArgs = '%'
    elseif findfile('pom.xml', '.;') ==# '' && findfile('gulpfile.js', '.;') !=# '' && &ft ==# 'javascript'
-      setlocal makeprg='gulp'
+      setlocal makeprg=gulp\ --no-color
       if makeArgs ==# ''
          let makeArgs = 'lint'
          compiler jshint
