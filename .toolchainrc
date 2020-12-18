@@ -12,7 +12,7 @@ un-xtensa() {
 tt-esp32() {
     un-xtensa
     export PATH=~/bin3/xtensa-esp32-elf/ccache/:~/bin3/xtensa-esp32-elf/bin/:$PATH
-    export IDF_PATH=~/amplex/esp-idf
+    export IDF_PATH=~/repos/esp-idf
 }
 
 tt-esp32V4() {
@@ -22,5 +22,5 @@ tt-esp32V4() {
     for path in /Users/fm/bin3/xtensa-esp32-V4/*/*/*/bin $IDF_PATH/tools $IDF_PYTHON_ENV_PATH/bin ;do
         export PATH=$path:$PATH
     done
-    export IDF_PATH=~/amplex/esp-idfV4
+    export IDF_PATH=~/repos/esp-idfV4
 }
