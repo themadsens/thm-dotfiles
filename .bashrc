@@ -249,7 +249,7 @@ if [ -n "$PS1" ] ;then
    }
    tmux-ssh() {
       tput smcup
-      ssh "$@" -A -X -t 'PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach'
+      ssh "$@" -A -X -t 'exec bash -i -c "PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach"'
       eof; printf '\e[?1000l'
    }
    alias tsel='tmux show-buffer'
@@ -625,7 +625,7 @@ if [ -n "$PS1" ] ;then
             D=$D"/.."
          done
          if  [[ -f $D"/tags" ]] ;then
-            mapfile -t COMPREPLY < <(grep ^$2 $D"/tags" | cut -f 1 2>/dev/null)
+            mapfile -t COMPREPLY < <(readtags -p -t $D"/tags" $2 | cut -f 1 2>/dev/null)
          fi
       fi
    }
