@@ -26,3 +26,4 @@
 	cdiff = diff --word-diff=color --word-diff-regex=.
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 	aliases = alias
+	quickserve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
