@@ -140,7 +140,7 @@ Install:andUse('AClock',              {fn=function(s) clock = s s:init():hide() 
 hs.hotkey.bind(hyper, "C", function() clock:toggleShow() end)
 
 Install:andUse("MouseCircle", {
-  config={color=hs.drawing.color.lists().Crayons.Tin},
+  config={color=hs.drawing.color.lists().Crayons.Tangerine},
   hotkeys={
     show={hyper, "M"},
   },
