@@ -193,8 +193,8 @@ setglobal shortmess=ato              " Brief messages to avoid 'Hit Return' prom
 setglobal formatoptions=crqlo        " Comment handling / Dont break while typing
 setglobal history=100
 setglobal viminfo='20,\"500          " Keep history listings across sessions
-setglobal wildmenu                   " Show completion matches on statusline
-setglobal wildmode=list:longest,full
+"setglobal wildmenu                   " Show completion matches on statusline
+"setglobal wildmode=list:longest,full " Default 'full' in neovim -> wildoptions=pum (popupmenu)
 setglobal complete=.,w,b,u,d         " The ,t,i from the default was too much, now ,d
 setglobal isfname-==                 " No = allows 'gf' in File=<Path> Constructs
 setglobal shiftwidth=4
@@ -280,6 +280,8 @@ cnoremap <Esc>f <S-Right>
 
 map <MiddleMouse> <Nop>
 imap <MiddleMouse> <Nop>
+
+command Q qall
 
 function! ToggleOpt(opt)
     exe 'set inv'.a:opt
@@ -373,28 +375,47 @@ hi NonText                                    ctermfg=lightgray
 hi Visual                           cterm=Inverse ctermfg=grey ctermbg=black
 
 if &term ==# 'ansi' || &term ==# 'console' || &term ==# 'linux'
-   setglobal background=dark
-   hi statusLine ctermfg=black
-   hi statusLineNC ctermfg=black ctermbg=yellow
+    setglobal background=dark
+    hi statusLine ctermfg=black
+    hi statusLineNC ctermfg=black ctermbg=yellow
 endif
 
 function! Tjump(tag)
-   let tagnm = split(a:tag, '[^:]:[^:]')
-   if len(tagnm) > 1
-      exe 'tjump '.split(a:tag, ':')[0]
-      exe split(a:tag, ':')[1]
-   else
-      exe 'tjump '.a:tag
-   end
+    let tagnm = split(a:tag, '[^:]:[^:]')
+    if len(tagnm) > 1
+        exe '1 tag '.split(a:tag, ':')[0]
+        exe split(a:tag, ':')[1]
+    else " Jump to tag directly if they all point to same kind in same file. Prefer search cmd
+        let fn = ""
+        let all = 1
+        let cnt = 1
+        for t in taglist(a:tag)
+            let all = all + 1
+            "let cur = t.name.':'.t.filename.':'.t.kind
+            let cur = t.filename.':'.t.kind
+            if fn != "" && fn != cur
+                let all = 0
+                break
+            elseif t.cmd[0] == '/'
+                let cnt = all
+            end
+            let fn = cur
+        endfor
+        if all > 0
+            exe cnt.' tag '.a:tag
+        else
+            exe 'tjump '.a:tag
+        end
+    end
 endfunction
 
 function! Tag(tag)
-   let tagnm = split(a:tag, ':')
-   exe 'tag '.tagnm[0]
-   if len(tagnm) > 1
-      exe tagnm[1]
-   end
-   let _=foreground()
+    let tagnm = split(a:tag, ':')
+    exe 'tag '.tagnm[0]
+    if len(tagnm) > 1
+        exe tagnm[1]
+    end
+    let _=foreground()
 endfunction
 
 " Use :T instead of :ta to see file names in ^D complete-lists
@@ -1286,6 +1307,13 @@ function! AirlineThemePatch(palette)
  endif
 endfunction
 
+if &wildoptions =~# 'pum'
+    cnoremap <expr> <Right> wildmenumode() ? "\<Down>"  : "\<Right>"
+    cnoremap <expr> <Left>  wildmenumode() ? "\<Up>"    : "\<Left>"
+    cnoremap <expr> <Up>    wildmenumode() ? "\<Left>"  : "\<Up>"
+    cnoremap <expr> <Down>  wildmenumode() ? "\<Right>" : "\<Down>"
+endif
+
 function! s:get_visual_selection()
     " Why is this not a built-in Vim script function?!
     let [line_start, column_start] = getpos("'<")[1:2]
@@ -1382,3 +1410,4 @@ nmap gG :Git<CR>
 
 " echo "DONE sourcing"
 
+" vim: set sw=4 sts=4 et:

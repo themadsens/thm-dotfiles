@@ -59,115 +59,115 @@
 
 
 "=========================================================================== 
-com! -ra -nargs=? Inc :call IncrementColumn(1,<args>)
-com! -ra -nargs=? IncR :call IncrementColumn(2,<args>)
-com! -ra -nargs=? IncN :call IncrementColumn(0,<args>)
-com! -ra -nargs=? IncA :call IncrementColumn(11,<args>)
-com! -ra -nargs=? IncAR :call IncrementColumn(12,<args>)
-com! -ra -nargs=? IncAN :call IncrementColumn(10,<args>)
+com! -range -nargs=? Inc   :call IncrementColumn(1,  <args>)
+com! -range -nargs=? IncR  :call IncrementColumn(2,  <args>)
+com! -range -nargs=? IncN  :call IncrementColumn(0,  <args>)
+com! -range -nargs=? IncA  :call IncrementColumn(11, <args>)
+com! -range -nargs=? IncAR :call IncrementColumn(12, <args>)
+com! -range -nargs=? IncAN :call IncrementColumn(10, <args>)
 vnoremap <c-a> :Inc<CR>
 
 "=========================================================================== 
 function! StrRepeat(str, count)
-	let i = 1
-	let retStr = ""
-	while i <= a:count
-		let retStr = retStr.a:str
-		let i = i + 1
-	endwhile
-	return retStr
+    let i = 1
+    let retStr = ""
+    while i <= a:count
+        let retStr = retStr.a:str
+        let i = i + 1
+    endwhile
+    return retStr
 endfunction
 
 " first argument is either 0 or 1 or 2 depending on whether padding with
 " spaces is desired (pad = 1,2) or not. the second argument contains the
 " counter increment. its optional. if not specified, its assumed to be 1.
 function! IncrementColumn(pad, ...)
-	if a:0 == 0
-		let incr = 1
-	elseif a:0 == 1
-		let incr = a:1
-	else
-		return
-	end
+    if a:0 == 0
+        let incr = v:count1
+    elseif a:0 == 1
+        let incr = a:1
+    else
+        return
+    end
 
-   let pad = a:pad
-   let addonly = 0
-   if pad >= 10
-      let addonly = 1
-      let pad = pad - 10
-   endif
+    let pad = a:pad
+    let addonly = 0
+    if pad >= 10
+        let addonly = 1
+        let pad = pad - 10
+    endif
 
-	let c1 = col("'<")
-	let c2 = col("'>")
-	let c1v = virtcol("'<")
-	let c2v = virtcol("'>")
-	let clen = c2v - c1v
-	if c1 > c2
-		let temp = c1
-		let c1 = c2
-		let c2 = temp
-	end
+    let c1 = col("'<")
+    let c2 = col("'>")
+    let c1v = virtcol("'<")
+    let c2v = virtcol("'>")
+    let clen = c2v - c1v
+    if c1 > c2
+        let temp = c1
+        let c1 = c2
+        let c2 = temp
+    end
 
-	let r1 = line("'<")
-	let r2 = line("'>")
-	if r1 > r2
-		let temp = r1
-		let r1 = r2
-		let r2 = temp
-	end
+    let r1 = line("'<")
+    let r2 = line("'>")
+    if r1 > r2
+        let temp = r1
+        let r1 = r2
+        let r2 = temp
+    end
 
-	exe r1
+    exe r1
 
-	exe "let presNum = ".strpart(getline('.'), c1-1, clen+1)
+    exe "let presNum = ".strpart(getline('.'), c1-1, clen+1)
 
-   let lastnum = presNum
-   if !addonly
-	   let lastnum = lastnum + incr*(r2-r1)
-   endif
-	" a simple way to find the number of digits in a number (including decimal
-	" points, - signs etc).
-	let maxstrlen = strlen("".lastnum)
+    let lastnum = presNum
+    if !addonly
+        let lastnum = lastnum + incr*(r2-r1)
+    endif
+    " a simple way to find the number of digits in a number (including decimal
+    " points, - signs etc).
+    let maxstrlen = strlen("".lastnum)
 
-	let r = r1
-	exe 'normal '.c1v.'|'
-	while (r <= r2)
-		let cnow = col(".")
-		let linebef = strpart(getline('.'), 0, cnow-1)
-		let lineaft = strpart(getline('.'), cnow+clen, 1000)
+    let r = r1
+    exe 'normal '.c1v.'|'
+    while (r <= r2)
+        let cnow = col(".")
+        let linebef = strpart(getline('.'), 0, cnow-1)
+        let lineaft = strpart(getline('.'), cnow+clen, 1000)
 
-      if addonly
-         exe "let presNum = ".strpart(getline('.'), cnow-1, clen+1)
-         let presNum = presNum + incr
-      endif
+        if addonly
+            exe "let presNum = ".strpart(getline('.'), cnow-1, clen+1)
+            let presNum = presNum + incr
+        endif
 
-		" find the number of padding spaces required for left/rigth alignment
-		if pad
-			let preslen = strlen("".presNum)
-			let padspace = StrRepeat(" ", maxstrlen - preslen)
-		else
-			let padspace = ""
-		end
+        " find the number of padding spaces required for left/rigth alignment
+        if pad
+            let preslen = strlen("".presNum)
+            let padspace = StrRepeat(" ", maxstrlen - preslen)
+        else
+            let padspace = ""
+        end
 
-		" the final line is made up of 
-		" 1. the part of the line before the number
-		" 2. the padding spaces.
-		" 3. the present number
-		" 4. the part of the line after the number
-		" the padding spaces are either before or after the current number
-		" depending on whether the pad argument is 1 or 2 (respectively).
-		if pad == 1
-			let lineset = linebef.padspace.presNum.lineaft
-		elseif pad == 2
-			let lineset = linebef.presNum.padspace.lineaft
-		else
-			let lineset = linebef.presNum.lineaft
-		end
+        " the final line is made up of 
+        " 1. the part of the line before the number
+        " 2. the padding spaces.
+        " 3. the present number
+        " 4. the part of the line after the number
+        " the padding spaces are either before or after the current number
+        " depending on whether the pad argument is 1 or 2 (respectively).
+        if pad == 1
+            let lineset = linebef.padspace.presNum.lineaft
+        elseif pad == 2
+            let lineset = linebef.presNum.padspace.lineaft
+        else
+            let lineset = linebef.presNum.lineaft
+        end
 
-		call setline('.', lineset)
-		let presNum = presNum + incr
-		normal j
-		let r = r + 1
-	endwhile
-	normal `<
+        call setline('.', lineset)
+        let presNum = presNum + incr
+        normal j
+        let r = r + 1
+    endwhile
+    normal `<
 endfunction
 
