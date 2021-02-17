@@ -42,7 +42,7 @@ cd bundle
     https://github.com/ctrlpvim/ctrlp.vim.git
     https://github.com/ternjs/tern_for_vim
     https://github.com/sjl/vitality.vim
-    https://github.com/zerowidth/vim-copy-as-rtf
+#   https://github.com/zerowidth/vim-copy-as-rtf
 #   https://github.com/natebosch/vim-lsc
 #   https://github.com/themadsens/VimPyServer
     https://github.com/rust-lang/rust.vim
