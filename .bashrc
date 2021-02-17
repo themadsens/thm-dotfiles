@@ -414,7 +414,7 @@ if [ -n "$PS1" ] ;then
    function amptree()  {
       if [ $# -eq 0 ] ;then echo $AMPROOT ; return ;fi
       if [ $1 == --completions ] ;then
-         ( cd ~/repos ; command ls -1d */arm9 */ampep */.git */.svn ) | cut -d/ -f1 | sort -u | command grep "^$3"
+         (cd ~/repos; for f in */arm9 */ampep */.git */.svn ;do [ -e $f ] && echo ${f%%/*} ;done) | sort -u | awk "/^$3/"
          return 
       fi
       local noCD=""
