@@ -19,7 +19,8 @@ tt-esp32V4() {
     un-xtensa
     export IDF_PATH=~/amplex/esp-idfV4
     export IDF_PYTHON_ENV_PATH=/Users/fm/.espressif/python_env/idf4.2_py3.8_env
-    for path in /Users/fm/bin3/xtensa-esp32-V4/*/*/*/bin $IDF_PATH/tools $IDF_PYTHON_ENV_PATH/bin ;do
+    for path in /Users/fm/bin3/xtensa-esp32-V4/*/*/*/bin /Users/fm/bin3/xtensa-esp32-V4/ccache \
+                $IDF_PATH/tools $IDF_PYTHON_ENV_PATH/bin ;do
         export PATH=$path:$PATH
     done
     export IDF_PATH=~/repos/esp-idfV4
