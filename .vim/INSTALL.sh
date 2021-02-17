@@ -30,7 +30,7 @@ cd bundle
  	https://github.com/edkolev/tmuxline.vim
 #   https://github.com/chrisbra/changesPlugin.git
     https://github.com/edkolev/promptline.vim
-    https://github.com/voithos/vim-python-matchit
+    https://github.com/vim-scripts/python_match.vim.git
     https://github.com/neomake/neomake
     https://github.com/vim-scripts/CmdlineComplete.git
     https://github.com/artur-shaik/vim-javacomplete2.git
