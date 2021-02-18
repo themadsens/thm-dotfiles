@@ -46,6 +46,7 @@ cd bundle
 #   https://github.com/natebosch/vim-lsc
 #   https://github.com/themadsens/VimPyServer
     https://github.com/rust-lang/rust.vim
+    https://github.com/preservim/nerdtree.git
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do

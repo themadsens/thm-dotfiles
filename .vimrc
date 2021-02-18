@@ -281,7 +281,7 @@ cnoremap <Esc>f <S-Right>
 map <MiddleMouse> <Nop>
 imap <MiddleMouse> <Nop>
 
-command Q qall
+command! Q qall
 
 function! ToggleOpt(opt)
     exe 'set inv'.a:opt
@@ -765,7 +765,7 @@ function! PrevBuf(closeThis, ...)
       let l:lastPos = getpos('.')
       let l:lastBuf = bufnr('%')
       exe "normal \<c-o>"
-      if bufnr('%') !=# l:curBuf && bufname('%') !~# '^__' && &buftype ==# ''
+      if bufnr('%') !=# l:curBuf && bufname('%') !~# '^__\|^NERD_' && &buftype ==# ''
          let l:ok = 1
          break
       endif
@@ -1164,10 +1164,11 @@ function! Menu(i)
    source $VIMRUNTIME/menu.vim
    set wildmenu
    set cpo-=<
-   set wcm=<C-Z>
-   map <F4> :emenu <C-Z>
+   set wildcharm=<C-Z>
+   " Shift-F4
+   nmap <F16> :emenu <C-Z>
    if a:i
-      echom 'You can now use <F4> to bring up the menu'
+      echom 'You can now use shift <F4> to bring up the menu'
       "call feedkeys("\<F4>")
    end
 endfunc
@@ -1407,6 +1408,9 @@ inoremap <M-c> <C-R>*
 " Fugitive
 nmap gy :Git log --pretty=oneline %<CR>
 nmap gG :Git<CR>
+
+" NerdTree
+nmap <F4> :NERDTreeToggle<CR>
 
 " echo "DONE sourcing"
 
