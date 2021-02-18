@@ -1410,7 +1410,17 @@ nmap gy :Git log --pretty=oneline %<CR>
 nmap gG :Git<CR>
 
 " NerdTree
-nmap <F4> :NERDTreeToggle<CR>
+function! NerdTreeFocusToggle()
+    if g:NERDTree.IsOpen()
+        call g:NERDTree.Close()
+    else
+        let buf = expand("%")
+        let path = expand("%:h")
+        exe "NERDTreeToggleVCS" fnameescape(path)
+        exe "NERDTreeFind" fnameescape(buf)
+    endif
+endfunction
+nmap <F4> :call NerdTreeFocusToggle()<CR>
 
 " echo "DONE sourcing"
 
