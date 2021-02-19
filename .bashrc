@@ -197,6 +197,7 @@ if [ -n "$PS1" ] ;then
    e()         { lua -e "print($*)"; }
    utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
    utf8sel()   { sel | utf8kill; }
+   pt()        { [[ $(tty) =~ /dev/ttys* ]] && ps -f -t $(printf "s%03d " $1) || ps -f -t $1; }
 
    pv()        {
       if [[ $# -eq 1 && -e $1 ]] ;then
