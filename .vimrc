@@ -10,7 +10,8 @@ if has('win32')
    endif
 endif
 
-execute pathogen#infect()
+" execute pathogen#infect() " Using https://github.com/junegunn/vim-plug these days
+source $HOME/.vim/plugins.vim
 
 syntax on
 filetype plugin indent on
@@ -1421,6 +1422,9 @@ function! NerdTreeFocusToggle()
     endif
 endfunction
 nmap <F4> :call NerdTreeFocusToggle()<CR>
+
+" fzf
+
 
 " echo "DONE sourcing"
 
