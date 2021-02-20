@@ -12,9 +12,13 @@ DocumentRoot "/Users/fm/thm-dotfiles/apache/www"
     Require all granted
 </Directory>
 
-<Location "/server-info">
-    SetHandler server-info
-    Require host localhost
-</Location>
+<IfModule php7_module>
+	AddType application/x-httpd-php .php
+	AddType application/x-httpd-php-source .phps
+
+	<IfModule dir_module>
+		DirectoryIndex index.html index.php
+	</IfModule>
+</IfModule>
 
 Include /Users/fm/thm-dotfiles/apache/conf.d/*.conf

@@ -13,7 +13,7 @@ cd bundle
 #	https://github.com/udalov/kotlin-vim
 #	https://github.com/vim-scripts/dbext.vim
 #	https://github.com/cosminadrianpopescu/vim-sql-workbench
-	https://github.com/majutsushi/tagbar.git
+    https://github.com/preservim/tagbar.git
     https://github.com/xolox/vim-easytags
     https://github.com/xolox/vim-misc
     https://github.com/tpope/vim-fugitive.git
@@ -47,6 +47,7 @@ cd bundle
 #   https://github.com/themadsens/VimPyServer
     https://github.com/rust-lang/rust.vim
     https://github.com/preservim/nerdtree.git
+    https://github.com/junegunn/fzf
 EOF
 ) | grep -v '^ *#'| \
 while read rep ;do
