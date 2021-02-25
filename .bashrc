@@ -136,7 +136,11 @@ if [ -n "$PS1" ] ;then
    if [ "$TERM" != dumb ] && [ -n "$_GRC" ] ;then
       colorize() {
          if { test -t 1; } || [ "$COLORARG" = on ] ;then
-            grc -es --colour=${COLORARG:-auto} "$@"
+            if [[ "$1" = *diff* || $2 = diff ]] ;then
+               grc -es --colour=on "$@" | diff-highlight
+            else
+               grc -es --colour=${COLORARG:-auto} "$@"
+            fi
          else
             command "$@"
          fi
