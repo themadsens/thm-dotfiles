@@ -179,7 +179,7 @@ setglobal textwidth=100
 setglobal whichwrap=h,l,<,>,[,]      " Do not backspace/space across line boundaries
 setglobal autoindent
 setglobal winheight=10               " Make new windows this high
-setglobal cmdheight=3                " status line area height - higher for quickfix
+setglobal cmdheight=2                " status line area height - higher for quickfix
 setglobal laststatus=2               " always with statusline
 setglobal showmatch
 setglobal autowrite                  " write files back at ^Z, :make etc.
@@ -1099,20 +1099,22 @@ function! ShowSyn()
 endfunc
 
 function! JumpBuffers()
-   let jumptxt = ''
-   redir! => jumptxt
-   silent jumps
-   redir END
    let byName = {}
    let byIndex = []
-   for line in reverse(split(jumptxt, '\n'))
-      let name = strpart(line, 16)
-      let bufno = bufnr(name)
-      if len(name) > 0 && bufno >= 0 && !has_key(byName, name)
-         let byIndex += [{'name': name, 'bufno': bufno, 'ix': len(byIndex)+1}]
+   for ent in reverse(getjumplist()[0])
+      let name = bufname(ent.bufnr)
+      if !has_key(byName, name)
+         let byIndex += [{'name': name, 'bufno': ent.bufnr, 'ix': len(byIndex)+1}]
          let byName[name] = len(byIndex)
       endif
    endfor
+
+   if &runtimepath =~ 'fzfx'
+       fzf#run({'source': map(byIndex,  {k,val -> printf('%2d %6d %s', ent.ix, ent.bufno, ent.name)}),
+            \   'sink':xx})
+       return
+   endif
+
    if v:count > 0
       if len(byIndex) >= v:count
          echomsg 'Count '.v:count.' Jumps to '.byIndex[v:count-1].bufno
@@ -1424,6 +1426,12 @@ endfunction
 nmap <F4> :call NerdTreeFocusToggle()<CR>
 
 " fzf
+nmap g/ :History/<CR>
+nmap g: :History:<CR>
+nmap F  :Buffers<CR>
+let $BAT_THEME = "ansi-light"
+let g:fzf_preview_window = ['up', 'ctrl-/']
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 
 
 " echo "DONE sourcing"
