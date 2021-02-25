@@ -65,11 +65,11 @@ if [ -n "$PS1" ] ;then
    alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
    if type -p fdfind > /dev/null ;then
-      alias fd='     fdfind -uu'
-      alias fdf='    fdfind -uu -t f'
+      alias fd='  fdfind -uu'
+      alias fdf=' fdfind -uu -t f'
    else
-      alias fd='     fd -uu'
-      alias fdf='    fd -uu -t f'
+      alias fd='  fd -uu'
+      alias fdf=' fd -uu -t f'
    fi
    if type -p exa > /dev/null ;then
       alias ll='  exa -laa --group-directories-first --colour=always'
@@ -78,11 +78,14 @@ if [ -n "$PS1" ] ;then
    else
       alias ll='  ls -la'
       if [[ $(uname -s) = Darwin ]] ;then
-         alias ls='  ls -G'
+         alias ls='ls -G'
       else
-         alias ls='  ls --color=auto'
+         alias ls='ls --color=auto'
       fi
       lth()       { ls -lat "$@" | head -20; }
+   fi
+   if type -p ag > /dev/null ;then
+      alias ag='  ag --skip-vcs-ignores --hidden'
    fi
    alias where='  type -a'
    alias watch='  watch -d -p'
