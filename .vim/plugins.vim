@@ -18,6 +18,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/tpope/vim-fugitive.git'
   Plug 'https://github.com/tpope/vim-scriptease.git'
   Plug 'https://github.com/junegunn/gv.vim.git'
+  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf.vim'
 " Plug 'https://github.com/scrooloose/syntastic'
   Plug 'https://github.com/cespare/vim-toml'
   Plug 'https://github.com/tmux-plugins/vim-tmux'
@@ -40,14 +42,13 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/themadsens/jcall.vim.git'
   Plug 'https://github.com/tomtom/quickfixsigns_vim.git'
   Plug 'https://github.com/ctrlpvim/ctrlp.vim.git'
-  Plug 'https://github.com/ternjs/tern_for_vim'
+" Plug 'https://github.com/ternjs/tern_for_vim'
   Plug 'https://github.com/sjl/vitality.vim'
 " Plug 'https://github.com/zerowidth/vim-copy-as-rtf'
 " Plug 'https://github.com/natebosch/vim-lsc'
 " Plug 'https://github.com/themadsens/VimPyServer'
   Plug 'https://github.com/rust-lang/rust.vim'
   Plug 'https://github.com/preservim/nerdtree.git'
-  Plug 'junegunn/fzf'
 
 call plug#end()
 
