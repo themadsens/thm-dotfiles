@@ -419,6 +419,12 @@ function! Tag(tag)
     let _=foreground()
 endfunction
 
+function! LoadFileAtLine(f)
+    let [fname, lineno] = split(a:f, ":")
+    exe "edit +"..lineno.." "..fnameescape(fname)
+    autocmd CursorHold <buffer=abuf> edit
+endfunction
+
 " Use :T instead of :ta to see file names in ^D complete-lists
 command! -complete=tag_listfiles -nargs=1 T call Tjump("<args>")|
                                            \call histadd("cmd", "T <args>")
@@ -434,6 +440,8 @@ augroup Private
 
    " Handle global (non bufferspecific) options
    autocmd BufEnter * call BufEnterGlobalOpts()
+
+   autocmd BufReadCmd *:[0-9]\\\{1,5\} call LoadFileAtLine(expand("<amatch>"))
 
    autocmd InsertEnter * call system("tmux set mouse off")
    autocmd InsertLeave * call system("tmux set mouse on")
