@@ -65,11 +65,11 @@ if [ -n "$PS1" ] ;then
    alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
    if type -p fdfind > /dev/null ;then
-      alias fd='  fdfind -uu'
-      alias fdf=' fdfind -uu -t f'
+      alias fd='  fdfind --no-ignore-vcs --hidden'
+      alias fdf=' fdfind --no-ignore-vcs --hidden -t f'
    else
-      alias fd='  fd -uu'
-      alias fdf=' fd -uu -t f'
+      alias fd='  fd --no-ignore-vcs --hidden'
+      alias fdf=' fd --no-ignore-vcs --hidden -t f'
    fi
    if type -p exa > /dev/null ;then
       alias ll='  exa -laa --group-directories-first --colour=always'
@@ -86,6 +86,9 @@ if [ -n "$PS1" ] ;then
    fi
    if type -p ag > /dev/null ;then
       alias ag='  ag --skip-vcs-ignores --hidden'
+   fi
+   if type -p rg > /dev/null ;then
+      alias rg='  rg --no-ignore-vcs --hidden'
    fi
    alias where='  type -a'
    alias watch='  watch -d -p'
@@ -243,6 +246,10 @@ if [ -n "$PS1" ] ;then
 
    tmux-attach() {
       # env | grep SSH
+      if type -p ss && ss --tcp state CLOSE-WAIT | grep -q CLOSE_WAIT ;then
+         # See https://stackoverflow.com/a/61139251/3697584
+         sudo ss --tcp state CLOSE-WAIT --kill
+      fi
       case $(tmux list-sessions 2>/dev/null | wc -l) in
          0) tmux ;;
          1) tmux attach ;;
