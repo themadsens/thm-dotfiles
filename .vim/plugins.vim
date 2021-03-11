@@ -49,6 +49,7 @@ call plug#begin('~/.vim/plugged')
 " Plug 'https://github.com/themadsens/VimPyServer'
   Plug 'https://github.com/rust-lang/rust.vim'
   Plug 'https://github.com/preservim/nerdtree.git'
+  Plug 'ziglang/zig.vim'
 
 call plug#end()
 
