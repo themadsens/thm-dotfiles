@@ -717,8 +717,8 @@ function! MakePrg(mkArg)
       if ! filereadable('pom.xml') || ! exists('here')
          let pom = FindDir('pom.xml', './;')
          if pom !=# ''
-            let oldwd = getcwd()
-            exe 'cd '.fnameescape(pom)
+             "echomsg 'makeArgs:'.makeArgs.' Pom:'.pom.' :'.split(pom, '/')[-1]
+             let makeArgs = makeArgs.' -pl :'.fnameescape(split(pom, '/')[-1])
          endif
       endif
    endif
