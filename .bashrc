@@ -195,7 +195,7 @@ if [ -n "$PS1" ] ;then
    pg()        { $GRC -es "$@" | less -R;}
    vis()       { vi +set\ hlsearch $(which "$@"); }
    _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
-   vif()       { vi -c set\ hlsearch "+/$*/" $(egrep -l "$*" $(_txt \*)); }
+   vif()       { vi -c set\ hlsearch "+/$*/" $(ag -wl "$@"); }
    vdiff()     { vim -g -f -d --cmd 'set columns=220' -c 'normal <C-W>=' "$@"; }
    mt()        { xterm +tb -e sh -c "while multitail $@; do : ;done"; }
    ToAURoot()  { tar zcf - $2 | command ssh $1 tar zxvf - -C /flash/root/; }
@@ -204,7 +204,8 @@ if [ -n "$PS1" ] ;then
                 | psnup -pa4 -2 -d1 | less -R;}
    f()         { awk -v N="$*" 'BEGIN {split(N, Nr, / |,/)}
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
-   e()         { lua -e "print($*)"; }
+   e()         { lua -e "print($*)";
+                 lua -e "print(select(2, pcall(function() return string.format('0x%X', math.floor($*)) end)))"; }
    utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
    utf8sel()   { sel | utf8kill; }
    pt()        { [[ $(tty) =~ /dev/ttys* ]] && ps -f -t $(printf "s%03d " $1) || ps -f -t $1; }
@@ -269,9 +270,10 @@ if [ -n "$PS1" ] ;then
    }
    alias tsel='tmux show-buffer'
 
-   alias hi="history|tail"
+   alias hi="history | tail"
    alias hist="history"
-   alias hgrep="history|grep"
+   alias histload="history -n"
+   alias histgrep="history | grep"
 
    case $TERM in
        sun-cmd) stln() { printf "\033]l %s \033" "$*"; } ; itit() { :; }
