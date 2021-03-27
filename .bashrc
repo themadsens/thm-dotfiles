@@ -15,7 +15,7 @@ if [ -n "$PS1" ] ;then
 
    unalias -a
 
-   shopt -s direxpand
+   [[ $BASH_VERSINFO -gt 4 ]] && shopt -s direxpand
    WF=/opt/wildfly/standalone/
    WFL=/opt/wildfly/standalone/log/
 
