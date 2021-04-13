@@ -72,9 +72,9 @@ if [ -n "$PS1" ] ;then
       alias fdf=' fd --no-ignore-vcs --hidden -t f'
    fi
    if type -p exa > /dev/null ;then
-      alias ll='  exa -laa --group-directories-first --colour=always'
+      alias ll='  exa -laB --group-directories-first --colour=always'
       alias ls='  exa --group-directories-first'
-      lth()       { exa -la -s modified -r --color=always "$@" | head -20; }
+      lth()       { exa -laB -s modified -r --color=always "$@" | head -20; }
    else
       alias ll='  ls -la'
       if [[ $(uname -s) = Darwin ]] ;then
