@@ -74,6 +74,7 @@ if [ -n "$PS1" ] ;then
    if type -p exa > /dev/null ;then
       alias ll='  exa -laaB --group-directories-first --colour=always'
       alias ls='  exa --group-directories-first'
+      alias tree='exa -laB --tree'
       lth()       { exa -laB -s modified -r --color=always "$@" | head -20; }
    else
       alias ll='  ls -la'
