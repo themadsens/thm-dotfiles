@@ -1,0 +1,4 @@
+#!/usr/bin/env awk -f
+
+/^==>/ { F=$2; next }
+{ print $0 > F }
