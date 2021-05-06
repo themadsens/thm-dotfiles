@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -o errexit
+export PATH=/usr/local/bin:/usr/sbin:/usr/bin:$PATH
+
+# Min free gigs
+MINFREE=200
+TMUTIL=/usr/bin/tmutil
+
+VOL=$($TMUTIL destinationinfo -X | plutil -convert json -o - - | jq -r '.Destinations[0].Name')
+
+tmfree() {
+    diskutil list "$VOL" > /dev/null || return 1
+    diskutil info -plist "$VOL" | plutil -convert json -o - - | jq '.APFSContainerFree/1024/1024/1024 | floor'
+}
+
+tmprune() {
+    MNT=$($TMUTIL destinationinfo -X | plutil -convert json -o - - | jq -r '.Destinations[0].MountPoint')
+    [[ "$MNT" ]] && tmfree >/dev/null || exit 1
+    $TMUTIL listbackups -d "$MNT" -m | while read DIR ;do
+        FREE=$(tmfree)
+        if (( FREE < MINFREE )) ;then
+            echo "Free: $FREE; Purge: $DIR"
+            sudo $TMUTIL delete -d "$MNT" $DIR
+        else
+            echo "Free: $FREE > $MINFREE"
+            break
+        fi
+    done
+}
+
+tmbackup() {
+    tmfree >/dev/null || exit 1
+    echo "$(date) - $(tminfo)" >> /tmp/tm-backup.log
+    (( $(tmfree) < MINFREE )) && tmprune | tee -a /tmp/tm-backup.log
+    $TMUTIL startbackup --auto
+}
+
+tminfo() {
+    echo "Time machine on '$VOL'. Free space $(tmfree) GB. Enforce $MINFREE GB"
+}
+
+tmhelp() {
+    cat << EOF
+Usage: ${0##*/} <verb>
+  help:   This text
+  prune:  Prune until free space >= $MINFREE GB
+  backup: Prune and then backup with tmutil
+  info:   Show volume & free space in GB
+EOF
+}
+
+if [[ $# -lt 1 ]] ;then
+    tmhelp
+    exit
+fi
+DO=$1 ; shift
+tm$DO "$@"
