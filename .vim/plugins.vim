@@ -50,6 +50,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/rust-lang/rust.vim'
   Plug 'https://github.com/preservim/nerdtree.git'
   Plug 'ziglang/zig.vim'
+  Plug 'simnalamburt/vim-mundo'
+  Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 call plug#end()
 
