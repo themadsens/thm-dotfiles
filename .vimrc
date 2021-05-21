@@ -1433,6 +1433,11 @@ function! NerdTreeFocusToggle()
 endfunction
 nmap <F4> :call NerdTreeFocusToggle()<CR>
 
+" Mundo
+nmap <F5> :MundoToggle<CR>
+let g:mundo_preview_bottom=1
+let g:mundo_preview_Height=20
+
 " fzf
 nmap g/ :History/<CR>
 nmap g: :History:<CR>
