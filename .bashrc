@@ -26,9 +26,11 @@ if [ -n "$PS1" ] ;then
    if [[ $PATH != *$HOME/bin3:* ]] ;then
        PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:/sbin:/usr/sbin:$PATH
    fi
-   if [[ $PATH != *$HOME/tmp/go/bin:* && -d $HOME/tmp/go/bin ]] ;then
-       export GOPATH=~/tmp/go
-       PATH=$GOPATH/bin:$PATH
+   if [[ ! "$GOPATH" && -d $HOME/go/bin ]] ;then
+       GOPATH=~/go
+   fi
+   if [[ "$GOPATH" && -d $GOPATH && $PATH != *$GOPATH/bin:* ]] ;then
+      PATH=$GOPATH/bin:$PATH
    fi
    if [[ $PATH != *$HOME/.cargo/bin:*  && -d $HOME/.cargo/bin ]] ;then
        PATH=$HOME/.cargo/bin:$PATH
@@ -481,8 +483,8 @@ if [ -n "$PS1" ] ;then
 
    ttprompt() {
       case "$1" in
-         1) echo "${TOOLCHAIN_PS1_LABEL/#tt/ tt${TARGET_PLATFORM/#V26/26}}" ;;
-         *) echo "${TOOLCHAIN_PS1_LABEL/#tt/[tt${TARGET_PLATFORM/#V26/26}] }" ;;
+         1) echo "${TOOLCHAIN_PS1_LABEL:+ }${TOOLCHAIN_PS1_LABEL}" ;;
+         *) echo "${TOOLCHAIN_PS1_LABEL:+[}${TOOLCHAIN_PS1_LABEL}${TOOLCHAIN_PS1_LABEL:+]}" ;;
       esac
    }
    __col() {
