@@ -52,6 +52,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'ziglang/zig.vim'
   Plug 'simnalamburt/vim-mundo'
   Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+  Plug 'kergoth/vim-bitbake'
 
 call plug#end()
 

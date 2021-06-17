@@ -6,7 +6,7 @@ umask 022
 if [ -n "$PS1" ] ;then
    _PS1=$PS1
    #[[ $0 != -* && $- != *l* ]] && . /etc/profile 
-   PATH=/bin/:/usr/bin
+   #PATH=/bin/:/usr/bin
    source /etc/profile 
    HISTCONTROL=ignoredups
    IGNOREEOF=1
@@ -64,7 +64,7 @@ if [ -n "$PS1" ] ;then
    findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
-   alias v="      BAT_THEME=ansi BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
+   alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
    if type -p fdfind > /dev/null ;then
       alias fd='  fdfind --no-ignore-vcs --hidden'
@@ -273,7 +273,7 @@ if [ -n "$PS1" ] ;then
    }
    alias tsel='tmux show-buffer'
 
-   alias hi="history | tail"
+   alias hi="builtin history | tail"
    alias hist="history"
    alias histload="history -n"
    alias histgrep="history | grep"
@@ -565,7 +565,15 @@ if [ -n "$PS1" ] ;then
       [[ "$TMUX" ]] && eval $(tmux show-environment -s -t 0)
    }
 
-   PROMPT_COMMAND='history -a; stdir; hash -r; timerep; profile_check; tmux_update'
+   _prompt_command() {
+      history -a
+      stdir
+      hash -r
+      timerep
+      profile_check
+      tmux_update
+   }
+   PROMPT_COMMAND=_prompt_command
 
    =()         {
       #local i e
@@ -614,7 +622,7 @@ if [ -n "$PS1" ] ;then
             read -n 1 -p " : " N </dev/tty >/dev/tty
             RC=5
          fi
-         if [[ $N = [0-9A-Z] && ${#C[$(__idx $N)]} > 0 ]] ;then
+         if [[ $N != q && $N = [0-9A-Z] && ${#C[$(__idx $N)]} > 0 ]] ;then
             echo -e "\b${C[$(__idx $N)]}" >/dev/tty
             echo -E "${C[$(__idx $N)]}"
             return $RC
