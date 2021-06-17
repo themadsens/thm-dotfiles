@@ -1,6 +1,6 @@
 #!/bin/bash
 LUADIR=${LUA_CPATH%/?.so}
 LUADIR=${LUADIR##*;}
-export LUA_CPATH=$LUA_CPATH';/opt/toolchain/X86/usr/lib/lua/5.1/?.so'
-export LUA_PATH=';;'$LUADIR'/lua-extra/?.lua;'$LUADIR'/?.lua;/opt/toolchain/X86/usr/share/lua/5.1/?.lua'
+export LUA_CPATH=$LUA_CPATH';/opt/toolchain/X86/usr/lib/lua/5.4/?.so'
+export LUA_PATH=';;'$LUADIR'/lua-extra/?.lua;'$LUADIR'/?.lua;/opt/toolchain/X86/usr/share/lua/5.4/?.lua'
 exec $VALGRIND ${LUADIR}/lua-agent "$@"
