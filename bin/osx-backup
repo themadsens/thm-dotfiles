@@ -1,5 +1,6 @@
 #!/bin/bash
 source /etc/profile 
+HEADERS=(-H "Content-type: application/json" -H "Accept: application/json");
 Suffix=''
 if [[ $(date +%u) -eq 5 ]] ;then # Friday
     week=$(date +%V)
@@ -22,6 +23,12 @@ if [ "$Suffix" ] ;then
         for t in CM-SITE CM-USER ;do
             curl -s -X GET -u 'CheckMarkBatch:beep[whob]bop' https://${h}/aasws/property/${t} \
                 | bzip2 > /Users/fm/tmp/cm-backup/${h}-${t}-${Suffix}.json.bz2
+        done
+    done
+    for h in one.gridlight.dk ;do 
+        for p in gridCPU gridDOT ;do
+            curl --fail --silent -X GET "${HEADERS[@]}" -u amplexfm:ccswe124 https://${h}/aasws/moduleproddata/${p} \
+                | bzip2 > /Users/fm/tmp/prod-backup/${h}-${p}-${Suffix}.json.bz2
         done
     done
 fi
