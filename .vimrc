@@ -1289,7 +1289,7 @@ let g:jsx_ext_required = 1
 "let g:changes_linehi_diff = 0 " Experimental!
 "let g:changes_sign_text_utf8 = 0
 "nmap zv :ToggleChangeView<CR>
-let g:quickfixsigns_classes = ['qfl', 'vcsdiff', 'vcsmerge']
+let g:quickfixsigns_classes = ['qfl', 'loc', 'marks']
 nmap zv :QuickfixsignsToggle<CR>
 nmap qd :Quickfixsignsecho<CR>
 highlight SignColumn cterm=NONE ctermbg=187
@@ -1302,6 +1302,7 @@ let g:airline_mode_map = {'__':'-','n':'N','i':'I','R':'R','c':'C','v':'V','V':'
 let g:airline_section_y = '%{ShowSyn()}%{VimBuddy()} '.
          \                '[%#__accent_red#%{Modified()}%#airline_y#%n,%#airline_y_bold#%{CaseStat()}%#airline_y#,%02B]'
 let g:airline#extensions#whitespace#enabled = 0
+let g:webdevicons_enable_airline_statusline = 0
 function! AirlineInit()
   let g:airline_section_c = substitute(g:airline_section_c, '%m','','')
 endfunction
