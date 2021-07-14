@@ -1,2 +1,2 @@
 #!/bin/sh
-exec nvim "$@"
+exec /snap/bin/nvim "$@"

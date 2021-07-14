@@ -36,13 +36,13 @@ $endif
 "\d": forward-backward-delete-char
 "\C-h": backward-delete-char
 "\C-x\C-h": backward-kill-line
-"\C-x\C-s": reverse-search-history
-"\C-x\C-f": forward-search-history
 #"\C-w": backward-kill-word
 "\C-w": unix-word-rubout
 "\ew": unix-filename-rubout
 "\eu": undo
 "\e " magic-space
+"\e/" complete-filename
+"\e*" glob-expand-word
 
 # CTRL Arrow up and down searches for what is typed so far
 "\e[1;9A": history-search-backward

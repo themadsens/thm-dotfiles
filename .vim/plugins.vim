@@ -52,6 +52,13 @@ call plug#begin('~/.vim/plugged')
   Plug 'ziglang/zig.vim'
   Plug 'simnalamburt/vim-mundo'
   Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+  Plug 'kdheepak/lazygit.nvim'
+  Plug 'mhinz/vim-signify'
+
+  Plug 'ryanoasis/vim-devicons'
+" Plug 'kyazdani42/nvim-web-devicons'
+
+
 
 call plug#end()
 
