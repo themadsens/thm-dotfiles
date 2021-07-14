@@ -64,7 +64,7 @@ if [ -n "$PS1" ] ;then
    findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
-   alias v="      BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
+   alias v="      BAT_THEME=ansi BAT_PAGER='less -RN' BAT_STYLE='plain' bat"
    alias tree='   tree -uph'
    if type -p fdfind > /dev/null ;then
       alias fd='  fdfind --no-ignore-vcs --hidden'
@@ -312,7 +312,7 @@ if [ -n "$PS1" ] ;then
    espmon ()
    {
       itit MON-${1##*/};
-      python -m serial.tools.miniterm --rts 0 --dtr 0 --raw $1 ${2:-115200}
+      python3 -m serial.tools.miniterm --rts 0 --dtr 0 --raw $1 ${2:-115200}
    }
 
    eof() {
