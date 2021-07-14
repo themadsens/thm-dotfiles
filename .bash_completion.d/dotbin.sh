@@ -1,1 +1,1 @@
-PATH="${HOME}/.bin:${PATH}"
+[[ $PATH = *${HMOME}/.bin* ]] || PATH="${HOME}/.bin:${PATH}"
