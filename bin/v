@@ -1,0 +1,4 @@
+#!/bin/sh
+export LESSOPEN='|sh -c "BAT_THEME=ansi BAT_STYLE=plain bat --paging=never --color=always %s"'
+export LESSCLOSE='sh -c "true %s; rm -f %s"'
+less -R "$@"
