@@ -7,7 +7,8 @@ if [ -n "$PS1" ] ;then
    _PS1=$PS1
    #[[ $0 != -* && $- != *l* ]] && . /etc/profile 
    #PATH=/bin/:/usr/bin
-   source /etc/profile 
+
+   [[ $(uname -s) != Darwin ]] && source /etc/profile 
    HISTCONTROL=ignoredups
    IGNOREEOF=1
    HISTSIZE=999000
