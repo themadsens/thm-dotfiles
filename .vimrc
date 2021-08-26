@@ -279,7 +279,7 @@ cnoremap <C-B> <Left>
 cnoremap <Esc>b <S-Left>
 cnoremap <Esc>f <S-Right>
 
-map <MiddleMouse> <Nop>
+nmap <MiddleMouse> <Nop>
 imap <MiddleMouse> <Nop>
 
 command! Q qall
@@ -300,7 +300,7 @@ imap <S-Up>     <Esc>
 imap <S-Down>   <Esc>
 let g:ftplugin_sql_omni_key_right = '<C-C><Right>'
 let g:ftplugin_sql_omni_key_left  = '<C-C><Left>'
-map <F12> <Cmd>set nopaste<CR>
+nmap <F12> <Cmd>set nopaste<CR>
 lnoremap <F12> <C-O><Cmd>set nopaste<CR>
 
 " Movement with "2x3" block navigation keys. Customize to your liking
@@ -322,7 +322,7 @@ inoremap <Esc><PageUp>   gT
 inoremap <Esc><PageDown> gt
 
 " Insert some standard blobs
-map <F2> :r $SCCSHOME/SccsHeaders/static.hdr<CR>
+nmap <F2> :r $SCCSHOME/SccsHeaders/static.hdr<CR>
 
 " Always delete to left of cursor
 inoremap <Del> <C-H>
@@ -661,7 +661,7 @@ function! Show_g_CTRLG()
    echo out_str
 endfunction
 " This is _much_ faster than g<C-G> on large files. And it is more verbose
-map gK :call Show_g_CTRLG()<CR>
+nmap gK :call Show_g_CTRLG()<CR>
 
 function! Incr()
    if ! exists('g:Incr')
@@ -917,8 +917,8 @@ nmap  lc :SvnCommitInfo <C-R><C-W><CR>
 "
 " Extra vim stuff
 "
-map gjh <Plug>jdocConvertHere
-map gjc <Plug>jdocConvertCompact
+nmap gjh <Plug>jdocConvertHere
+nmap gjc <Plug>jdocConvertCompact
 
 nmap <F2> :call SetCHdr()<CR>
 
@@ -1411,12 +1411,6 @@ nmap <Leader>jS <Plug>(JavaComplete-Imports-RemoveUnused)<Plug>(JavaComplete-Imp
 
 " vim-lsc
 " let g:lsc_server_commands = {'java': $HOME.'/stuff/java-language-server/dist/lang_server_mac.sh'}
-
-" Workaround for https://github.com/neovim/neovim/issues/12023
-inoremap <C-C> <C-V>
-inoremap <C-V> <C-R>*
-inoremap <M-v> <C-R>*
-inoremap <M-c> <C-R>*
 
 " Fugitive
 nmap gy :Git log --pretty=oneline %<CR>
