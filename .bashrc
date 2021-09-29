@@ -212,6 +212,11 @@ if [ -n "$PS1" ] ;then
    utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
    utf8sel()   { sel | utf8kill; }
    pt()        { [[ $(tty) =~ /dev/ttys* ]] && ps -f -t $(printf "s%03d " $1) || ps -f -t $1; }
+   # https://stackoverflow.com/a/8661395/3697584
+   deflate()   { python3 -c 'import os,zlib; os.write(1, zlib.compress(os.read(0,1<<42)))'; }
+   inflate()   { python3 -c 'import os,zlib; os.write(1, zlib.decompress(os.read(0,1<<42)))'; }
+   #inflate()   { ruby -rzlib -e 'print Zlib::Inflate.new.inflate(STDIN.read)'; }
+   #deflate()   { ruby -rzlib -e 'print Zlib::Deflate.new(6).deflate(STDIN.read, Zlib::FINISH)'; }
 
    pv()        {
       if [[ $# -eq 1 && -e $1 ]] ;then
