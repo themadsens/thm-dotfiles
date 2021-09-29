@@ -1,0 +1,101 @@
+#!/usr/bin/env jimsh
+#
+# @file upload.jim
+# ABSTRACT HERE << 
+#
+# $Id$
+#
+# (C) Copyright 2020 Amplex, fm@amplex.dk
+#
+
+lassign $argv input server pause
+if {$pause eq ""} {
+    puts "Usage upload.jim inputfile server:port pausemillis"
+    exit 1
+}
+
+if {[stdin isatty]} {
+    stdin tty input raw
+    stdin tty vmin 1
+    stdin buffering none
+    stdin readable stdinCmd
+}
+
+set inputfd [open $input]
+#set fdlist {}
+if {[string first ":" $server] > 0} {
+    set chan [socket stream $server]
+    set fdlist [list $chan]
+    $chan buffering none
+    after idle readLine
+} else {
+    proc doAccept {srv} {
+        global fdlist
+        set new [$srv accept]
+        if {! [info exists fdlist]} {
+            set fdlist {}
+            after idle readLine
+        }
+        lappend fdlist $new
+        $new buffering none
+        $new ndelay 1
+        $new readable [list doClose $new]
+    }
+    set srvSock [socket stream.server $server]
+    $srvSock readable [list doAccept $srvSock]
+}
+
+proc doClose fd {
+    global fdlist
+    set err EOF
+    if {[$fd eof] || [catch {$fd gets req} err]} {
+        set ix [lsearch -exact $fdlist $fd]
+        puts "\nClosed:$ix: $err $fd"
+        flush stdout
+        $fd close
+        if {$ix >= 0} {
+            set fdlist [lreplace $fdlist $ix $ix]
+        }
+    }
+}
+
+proc stdinCmd {} {
+    global inputfd lineno done
+    set ch [stdin read 1]
+    puts -nonewline "\[$ch]"
+    if {$ch eq "."} {
+        puts -nonewline "S"
+        for {set x 0} {$x < 100} {incr x} {
+            gets $inputfd line
+        }
+        incr lineno 100
+    } elseif {$ch eq "q"} {
+        incr done
+    }
+    stdin readable stdinCmd
+}
+
+proc readLine {} {
+    global inputfd fdlist pause lineno done
+    if {[gets $inputfd line] <= 0 || [llength [signal check]]} {
+        incr done
+        return
+    }
+    incr lineno
+    foreach fd $fdlist {
+        puts -nonewline $fd "$line\r\n"
+    }
+    if {($lineno % 100) == 0} {
+        puts -nonewline "\n$lineno: "
+    }
+    puts -nonewline [llength $fdlist]
+    flush stdout
+    after $pause readLine
+}
+
+signal ignore SIGINT SIGTERM
+catch -signal {vwait done}
+puts "QUIT"
+if {[stdin isatty]} { stdin tty input cooked }
+
+# vim: set sw=2 sts=2 et ft=tcl:
