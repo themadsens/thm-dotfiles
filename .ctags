@@ -27,20 +27,20 @@
 --regex-css=/^([A-Za-z0-9_-]+) = /\1/v,variable,variables/
 --regex-css=/^[ \t]*(@mixin |= ?)([A-Za-z0-9_-]+)/\2/m,mixin,mixins/
 
---langmap=javascript:+.jsp
---langmap=javascript:+.jspf
---regex-javascript=/\.controller *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-javascript=/\.filter *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-javascript=/\.factory *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-javascript=/\.service *\( *'([A-Za-z0-9_$]+)' *,/\1/f,function/
---regex-javascript=/\.directive *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
---regex-javascript=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/f,function/
---regex-javascript=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*([A-Za-z_$][A-Za-z0-9_$]*[ \t]*)?\(/\5/f,function/
---regex-javascript=/^[ \t]*function[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)[ \t]*\(/\1/f,function/
---regex-javascript=/^[ \t]+([A-Za-z_$][A-Za-z0-9_$.]+)\:[ \t]+function[ \t]*\(/\1/f,function/
---regex-javascript=/^(let|var)[ \t]([A-Za-z0-9_$]+)[ \t]*=[^(]+$/\2/v,global/
---regex-javascript=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
---regex-javascript=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
+--langdef=javascript2
+--langmap=javascript2:.js
+--regex-javascript2=/\.controller *\( *'([A-Za-z0-9_$]+)' *,/\1/C,constant/
+--regex-javascript2=/\.filter *\( *'([A-Za-z0-9_$]+)' *,/\1/C,constant/
+--regex-javascript2=/\.factory *\( *'([A-Za-z0-9_$]+)' *,/\1/C,constant/
+--regex-javascript2=/\.service *\( *'([A-Za-z0-9_$]+)' *,/\1/C,constant/
+--regex-javascript2=/\.directive *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/C,constant/
+--regex-javascript2=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/C,constant/
+--regex-javascript2=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*([A-Za-z_$][A-Za-z0-9_$]*[ \t]*)?\(/\5/f,function/
+--regex-javascript2=/^[ \t]*function[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)[ \t]*\(/\1/f,function/
+--regex-javascript2=/^[ \t]+([A-Za-z_$][A-Za-z0-9_$.]+)\:[ \t]+function[ \t]*\(/\1/f,function/
+--regex-javascript2=/^(let|var)[ \t]([A-Za-z0-9_$]+)[ \t]*=[^(]+$/\2/v,global/
+--regex-javascript2=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
+--regex-javascript2=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 
 
 --langdef=markdown

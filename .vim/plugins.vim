@@ -1,12 +1,12 @@
 
 call plug#begin('~/.vim/plugged')
 
-  Plug 'https://github.com/vim-scripts/matchit.zip'
+" Plug 'https://github.com/vim-scripts/matchit.zip'
   Plug 'https://github.com/JalaiAmitahl/maven-compiler.vim'
   Plug 'https://github.com/junegunn/vim-easy-align'
 " Plug 'https://github.com/pangloss/vim-javascript'
 " Plug 'https://github.com/othree/yajs.vim'
-  Plug 'https://github.com/jelera/vim-javascript-syntax.git'
+" Plug 'https://github.com/jelera/vim-javascript-syntax.git'
   Plug 'https://github.com/othree/javascript-libraries-syntax.vim'
   Plug 'https://github.com/mxw/vim-jsx.git'
 " Plug 'https://github.com/udalov/kotlin-vim'
@@ -57,6 +57,11 @@ call plug#begin('~/.vim/plugged')
   Plug 'ryanoasis/vim-devicons'
 " Plug 'kyazdani42/nvim-web-devicons'
   Plug 'kergoth/vim-bitbake'
+if 0 && has('nvim')
+  Plug 'andymass/vim-matchup'
+  Plug 'nvim-treesitter/nvim-treesitter'
+endif
+
 
 call plug#end()
 

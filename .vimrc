@@ -29,10 +29,11 @@ let g:tagbar_autofocus = 1
 let g:tagbar_sort = 0
 let g:tagbar_zoomwidth = 0
 let g:tagbar_type_lua = { 'replace': 1, 'ctagstype': 'MYLUA', 'kinds': [ 'f:functions', 'c:constants', ] }
-let g:tagbar_type_javascript = { 'replace': 1,
+let g:tagbar_type_javascript = { 'ctagstype': 'javascript2', 'replace': 1,
     \ 'kinds' : [
         \ 'v:globals',
         \ 'c:classes',
+        \ 'C:constants',
         \ 'p:properties',
         \ 'm:methods',
         \ 'f:functions',
@@ -558,7 +559,7 @@ function! SetFileTypeOpts()
      "setlocal cindent
      "setlocal indentexpr& " The provided indent file is hopeless
    elseif ft ==# 'python'
-     setlocal sw=2 ts=2 noet
+     setlocal sw=2 ts=2 et
    elseif ft ==# 'css' || ft ==# 'html'
      setlocal sw=2 ts=2 et
    end
@@ -1443,6 +1444,31 @@ let $BAT_THEME = "ansi-light"
 let g:fzf_preview_window = ['up', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 
+" Signify
+autocmd User SignifyHunk call s:show_current_hunk()
+function! s:show_current_hunk() abort
+  let h = sy#util#get_hunk_stats()
+  if !empty(h)
+    echo printf('[Hunk %d/%d]', h.current_hunk, h.total_hunks)
+  endif
+endfunction
+nmap gkh :SignifyHunkDiff<CR>
+
+" Matchup -- treesitter
+if 0 && has('nvim')
+  lua <<EOF
+  require'nvim-treesitter.configs'.setup {
+    matchup = {
+      enable = true,              -- mandatory, false will disable the whole extension
+    },
+    highlight = {
+      enable = true,              -- mandatory, false will disable the whole extension
+    },
+  }
+EOF
+endif
+let g:matchup_matchparen_deferred_fade_time = 800
+let g:matchup_matchparen_deferred = 1
 
 " echo "DONE sourcing"
 

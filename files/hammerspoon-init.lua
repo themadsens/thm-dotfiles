@@ -136,7 +136,8 @@ Install:andUse('ReloadConfiguration', {start=true})
 Install:andUse('RoundedCorners',      {start=true})
 
 local clock
-Install:andUse('AClock',              {fn=function(s) clock = s s:init():hide() end})
+Install:andUse('AClock',              {format = "%H:%M:%S",
+                                       fn=function(s) clock = s s:init():hide() end})
 hs.hotkey.bind(hyper, "C", function() clock:toggleShow() end)
 
 Install:andUse("MouseCircle", {
