@@ -33,9 +33,11 @@ if [ -n "$PS1" ] ;then
    if [[ "$GOPATH" && -d $GOPATH && $PATH != *$GOPATH/bin:* ]] ;then
       PATH=$GOPATH/bin:$PATH
    fi
-   if [[ $PATH != *$HOME/.cargo/bin:*  && -d $HOME/.cargo/bin ]] ;then
-       PATH=$HOME/.cargo/bin:$PATH
-   fi
+   for p in .cargo/bin .local/bin .bin ;do
+      if [[ $PATH != *$HOME/$p:*  && -d $HOME/$p ]] ;then
+         PATH=$HOME/$p:$PATH
+      fi
+   done
 
    export SVN_EDITOR=vi
    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
