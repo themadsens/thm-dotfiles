@@ -21,4 +21,6 @@ DocumentRoot "/Users/fm/thm-dotfiles/apache/www"
 	</IfModule>
 </IfModule>
 
+Include /usr/local/etc/httpd/extra/httpd-manual.conf
 Include /Users/fm/thm-dotfiles/apache/conf.d/*.conf
+
