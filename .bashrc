@@ -280,8 +280,7 @@ if [ -n "$PS1" ] ;then
    }
    alias tsel='tmux show-buffer'
 
-   alias hi="builtin history | tail"
-   alias hist="history"
+   alias hist="builtin history | tail"
    alias histload="history -n"
    alias histgrep="history | grep"
 
