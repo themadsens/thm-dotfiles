@@ -9,7 +9,7 @@ un-xtensa() {
     unset IDF_PYTHON_ENV_PATH
 }
 
-tt-esp32() {
+tt-esp32V3() {
     un-xtensa
     export PATH=~/bin3/xtensa-esp32-elf/ccache/:~/bin3/xtensa-esp32-elf/bin/:$PATH
     export IDF_PATH=~/repos/esp-idfV3
