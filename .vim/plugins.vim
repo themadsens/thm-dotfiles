@@ -57,6 +57,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'ryanoasis/vim-devicons'
 " Plug 'kyazdani42/nvim-web-devicons'
   Plug 'kergoth/vim-bitbake'
+  Plug 'Vimjas/vim-python-pep8-indent'
 if 0 && has('nvim')
   Plug 'andymass/vim-matchup'
   Plug 'nvim-treesitter/nvim-treesitter'
