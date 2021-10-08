@@ -514,7 +514,7 @@ function! SetFileTypeOpts()
    if index(['tcl','postscr','c','cpp','arduino','java','jsp'], ft) >= 0
       " NO autowrap while typing in source code files
       setlocal formatoptions-=t
-      setlocal sw=4 ts=4
+      setlocal sw=4 ts=4 et
    endif
    if index(['java','jsp'], ft) >= 0
       " Ampep java settings
