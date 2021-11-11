@@ -1,0 +1,3 @@
+Create certificates with:
+ mkcert localhost
+ mkcert fmmbp
