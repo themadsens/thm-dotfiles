@@ -248,6 +248,12 @@ if [ -n "$PS1" ] ;then
 
    rmline() { sed -i '' "$1 d" "$2"; }
 
+   tunnelstart() {
+      tunnelblickctl status > /dev/null || tunnelblickctl launch
+      tunnelblickctl connect "$(tunnelblickctl list | awk NR==1)"
+      tunnelblickctl status
+   }
+
    tmux-x-attach() {
       ps -f -u fm | grep -v grep | grep -q 'xpra start' || xpra start :9
       xpra attach :9 --opengl=no > /tmp/xpra-attach.log 2>&1 &
