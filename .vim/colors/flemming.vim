@@ -49,6 +49,7 @@ hi SpellBad ctermbg=168 gui=undercurl guisp=Red
 
 highlight LineNr cterm=NONE ctermbg=187 ctermfg=3 guifg=brown
 highlight CursorLine cterm=NONE ctermbg=186
+highlight CursorLineNr term=bold cterm=bold ctermbg=186 ctermfg=130
 highlight CursorColumn cterm=NONE ctermbg=187
 
 hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey

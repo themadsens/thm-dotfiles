@@ -558,8 +558,8 @@ function! SetFileTypeOpts()
      setlocal sw=2 ts=2 et
      "setlocal cindent
      "setlocal indentexpr& " The provided indent file is hopeless
-   elseif ft ==# 'python'
-     setlocal sw=4 ts=4 et 
+   elseif ft ==# 'python' || ft ==# 'go'
+     setlocal sw=3 ts=3 et 
    elseif ft ==# 'css' || ft ==# 'html'
      setlocal sw=2 ts=2 et
    end
