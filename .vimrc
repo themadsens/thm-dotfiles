@@ -1292,8 +1292,6 @@ let g:jsx_ext_required = 1
 "let g:changes_sign_text_utf8 = 0
 "nmap zv :ToggleChangeView<CR>
 let g:quickfixsigns_classes = ['qfl', 'loc', 'marks']
-nmap zv :QuickfixsignsToggle<CR>
-nmap qd :Quickfixsignsecho<CR>
 highlight SignColumn cterm=NONE ctermbg=187
 let g:quickfixsigns#vcsdiff#extra_args_git = '-w'
 let g:quickfixsigns#vcsdiff#extra_args_svn = '-x -w'
@@ -1453,6 +1451,7 @@ function! s:show_current_hunk() abort
   endif
 endfunction
 nmap gkh :SignifyHunkDiff<CR>
+nmap zv :SignifyToggle<CR>
 
 " Matchup -- treesitter
 if 0 && has('nvim')
