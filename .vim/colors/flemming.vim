@@ -39,10 +39,10 @@ hi WarningMsg term=standout ctermfg=1 gui=bold guifg=Red
 hi WildMenu term=standout ctermfg=0 ctermbg=227 guifg=Black guibg=Yellow
 hi Folded term=standout ctermfg=4 ctermbg=7 guifg=Black guibg=#e3c1a5
 hi FoldColumn term=standout ctermfg=4 ctermbg=7 guifg=DarkBlue guibg=Gray80
-hi DiffAdd term=bold ctermbg=4 guibg=White
-hi DiffChange term=bold ctermbg=5 guibg=#edb5cd
-hi DiffDelete term=bold cterm=bold ctermfg=4 ctermbg=6 gui=bold guifg=LightBlue guibg=#f6e8d0
-hi DiffText term=reverse cterm=bold ctermbg=1 gui=bold guibg=#ff8060
+hi DiffAdd term=bold ctermbg=36 guibg=#0087ff
+hi DiffChange term=bold ctermbg=172 guibg=#d787d7
+hi DiffDelete term=bold cterm=bold ctermbg=204 gui=bold guifg=LightBlue guibg=#f6e8d0
+hi DiffText term=reverse cterm=bold ctermbg=202 gui=bold guibg=#ff8060
 hi Cursor guifg=bg guibg=fg
 hi lCursor guifg=bg guibg=fg
 hi SpellBad ctermbg=168 gui=undercurl guisp=Red
@@ -51,6 +51,7 @@ highlight LineNr cterm=NONE ctermbg=187 ctermfg=3 guifg=brown
 highlight CursorLine cterm=NONE ctermbg=186
 highlight CursorLineNr term=bold cterm=bold ctermbg=186 ctermfg=130
 highlight CursorColumn cterm=NONE ctermbg=187
+highlight SignColumn cterm=NONE ctermbg=187 guifg=brown
 
 hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey
 hi StatusLine     term=reverse      cterm=NONE ctermbg=grey  ctermfg=black    gui=NONE guibg=darkgrey
