@@ -289,6 +289,7 @@ if [ -n "$PS1" ] ;then
    alias hist="builtin history | tail"
    alias histload="history -n"
    alias histgrep="history | grep"
+   alias dhcp-assigned='ssh amplex@amplan0 "grep DHCPACK /var/log/syslog | tail "'
 
    case $TERM in
        sun-cmd) stln() { printf "\033]l %s \033" "$*"; } ; itit() { :; }
@@ -468,7 +469,7 @@ if [ -n "$PS1" ] ;then
       for d in ~ $(eval echo $DL) ~/{repos,repos/modules,releases,src,stuff} ;do
          CDPATH=$CDPATH:$d
       done
-      export LUA_CPATH=";;$AMPROOT/arm9/agentframework/lua/?.so"
+      export LUA_CPATH=";;/opt/toolchain/X86/usr/lib/lua/5.4/?.so;$AMPROOT/arm9/agentframework/lua/?.so"
       if [[ ! -n $noCD ]] ;then
          echo $AMPROOT/$D
          cd $AMPROOT/$D
