@@ -211,6 +211,8 @@ if [ -n "$PS1" ] ;then
                  {for (n in Nr) {printf("%s%s", (n>1) ? " " : "", $Nr[n])}; print ""}'; }
    e()         { lua -e "print($*)";
                  lua -e "print(select(2, pcall(function() return string.format('0x%X', math.floor($*)) end)))"; }
+   _utf8cat()  { iconv -f utf8 -t ascii  --byte-subst=" <0x%x> " --unicode-subst=" <U%04X> "; }
+   utf8cat()   { if [[ $# -gt 0 ]] ;then _utf8cat <<< "$@" ;else _utf8cat ;fi; }
    utf8kill()  { if [[ $# -gt 0 ]] ;then iconv -f utf8 -t ascii -c <<< "$@" ;else iconv -f utf8 -t ascii -c ;fi; }
    utf8sel()   { sel | utf8kill; }
    pt()        { [[ $(tty) =~ /dev/ttys* ]] && ps -f -t $(printf "s%03d " $1) || ps -f -t $1; }
