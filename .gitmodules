@@ -1,0 +1,3 @@
+[submodule ".qfc"]
+	path = .qfc
+	url = git@github.com:themadsens/qfc.git
