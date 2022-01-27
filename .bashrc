@@ -200,7 +200,7 @@ if [ -n "$PS1" ] ;then
    pg()        { $GRC -es "$@" | less -R;}
    vis()       { vi +set\ hlsearch $(which "$@"); }
    _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
-   vif()       { vi -c set\ hlsearch "+/$*/" $(ag -wl "$@"); }
+   vif()       { vi -c set\ hlsearch "+/$*/" $(ag --ignore .svn --ignore .git -wl "$@"); }
    vdiff()     { vim -g -f -d --cmd 'set columns=220' -c 'normal <C-W>=' "$@"; }
    mt()        { xterm +tb -e sh -c "while multitail $@; do : ;done"; }
    ToAURoot()  { tar zcf - $2 | command ssh $1 tar zxvf - -C /flash/root/; }
@@ -246,6 +246,17 @@ if [ -n "$PS1" ] ;then
       read -n 1 -t 10 -p "Really exit. Exits in 10 sec? [y/N] " ans
       [[ "$ans" = [yY]* || $? -gt 128 ]] && builtin exit "$@"
       echo "Phew!"
+   }
+
+   bindkeys() {
+      echo -e "-- Readline (bind -P)"
+      bind -P \
+       | awk '/ can be found on / { split($0, W, / can be found on /); printf("%-40s %s\n", W[1], W[2]) }' \
+       | sed 's/"\.$/"/'
+      echo -e "\n-- Mappings (bind -s)"
+      bind -s
+      echo -e "\n-- Commands (bind -X)"
+      bind -X
    }
 
    rmline() { sed -i '' "$1 d" "$2"; }
