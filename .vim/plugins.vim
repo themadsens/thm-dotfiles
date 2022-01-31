@@ -59,9 +59,13 @@ call plug#begin('~/.vim/plugged')
   Plug 'kergoth/vim-bitbake'
   Plug 'Vimjas/vim-python-pep8-indent'
   Plug 'khaveesh/vim-fish-syntax'
-if 0 && has('nvim')
-  Plug 'andymass/vim-matchup'
+  Plug 'neoclide/jsonc.vim'
+
+if has('nvim')
+  "Plug 'andymass/vim-matchup'
   Plug 'nvim-treesitter/nvim-treesitter'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'Yggdroot/LeaderF'
 endif
 
 
