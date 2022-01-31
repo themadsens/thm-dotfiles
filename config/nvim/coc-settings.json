@@ -1,0 +1,71 @@
+{
+  "Lua.workspace.preloadFileSize": 500,
+  "Lua.diagnostics.enable": false,
+  "Lua.diagnostics.disable": [
+      "lowercase-global", "unused-local", "unused-function", "undefined=global"
+  ]
+  "pylsp.plugins.pycodestyle.ignore": ["E501"],
+  "languageserver": {
+    "tagls": {
+      "install_command": "pip3 install tagls",
+      "homepage":        "https://github.com/daquexian/tagls",
+      "command": "python3",
+      "args": ["-m", "tagls"],
+      "filetypes": [
+        "c",
+        "cpp",
+        "lua"
+      ],
+      "initializationOptions": {
+        // Add the following line if you only want tagls as a fallback (also see "Custom LSP methods" section)
+        // "register_official_methods": []
+        // Add the following line for LeaderF support (https://github.com/daquexian/tagls/issues/1)
+        // "gtags_provider": "leaderf"
+        // Add the following line for custom cache dir
+        // "cache_dir": "/tmp/gtags"
+      },
+      "settings": {}
+    },
+    "bash": {
+      "install_command": "npm i -g bash-language-server",
+      "homepage":        "https://github.com/bash-lsp/bash-language-server",
+      "command": "bash-language-server",
+      "args": ["start"],
+      "filetypes": ["sh"],
+      "ignoredRootPaths": ["~"]
+    },
+    "vimls": {
+      "install_command": "npm install -g vim-language-server",
+      "homepage":        "https://github.com/iamcco/vim-language-server",
+      "command": "vim-language-server",
+      "args": ["--stdio"],
+      "initializationOptions": {
+        "isNeovim": true, // is neovim, default false
+        "iskeyword": "@,48-57,_,192-255,-#", // vim iskeyword option
+        "vimruntime": "",                    // $VIMRUNTIME option
+        "runtimepath": "",                   // vim runtime path separate by `,`
+        "diagnostic": {
+          "enable": true
+        },
+        "indexes": {
+          "runtimepath": true,      // if index runtimepath's vim files this will effect the suggest
+          "gap": 100,               // index time gap between next file
+          "count": 3,               // count of files index at the same time
+          "projectRootPatterns" : ["strange-root-pattern", ".git", "autoload", "plugin"] // Names of files used as the mark of project root. If empty, the default value [".git", "autoload", "plugin"] will be used
+        },
+        "suggest": {
+          "fromVimruntime": true,   // completionItems from vimruntime's vim files
+          "fromRuntimepath": false  // completionItems from runtimepath's vim files, if this is true that fromVimruntime is true
+        }
+      },
+      "filetypes": [ "vim" ]
+    },
+    /*"lua": {
+      "command": "java",
+      "args": ["-cp", "/home/fm/bin3/EmmyLua-LS-all.jar", "com.tang.vscode.MainKt"],
+      "filetypes": ["lua"],
+      "rootPatterns": [".git/", ".svn", "tags"]
+    }*/
+
+  }
+}

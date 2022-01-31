@@ -1,1 +1,1 @@
-nmap <buffer> K :help <C-R><C-W><CR>
+"nmap <buffer> K :help <C-R><C-W><CR>
