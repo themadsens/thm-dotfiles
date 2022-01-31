@@ -312,15 +312,24 @@ nnoremap <xHome>    <C-Y>
 nnoremap <End>      <C-E>
 nnoremap <M-Up>     <C-Y>
 nnoremap <M-Down>   <C-E>
-nmap <Insert>   [[zz
-nmap <Del>      ]]zz
-nmap <kDel>     ]]zz
+
+nnoremap [[ ?{<CR>w99[{
+nnoremap ][ /}<CR>b99]}
+nnoremap ]] j0[[%/{<CR>
+nnoremap [] k$][%?}<CR>
+
+nmap <M-PageUp>   [[z.
+nmap <M-PageDown> ]]z.
+nmap <Insert>   [[z.
+nmap <Del>      ]]z.
+nmap <kDel>     ]]z.
 nmap <S-Up>     {
 nmap <S-Down>   }
-nnoremap <Esc><PageUp>   gT
-nnoremap <Esc><PageDown> gt
-inoremap <Esc><PageUp>   gT
-inoremap <Esc><PageDown> gt
+
+nnoremap <C-PageUp>   gT
+nnoremap <C-PageDown> gt
+inoremap <C-PageUp>   gT
+inoremap <C-PageDown> gt
 
 " Insert some standard blobs
 nmap <F2> :r $SCCSHOME/SccsHeaders/static.hdr<CR>
@@ -472,17 +481,11 @@ function! BufEnterGlobalOpts()
       inoremap # X<BS>#
    endif
    if ft ==# 'java'
-      nmap [[ [m
-      nmap ]] ]m
-      nmap gd "zyiw[m/\<<C-R>z\><CR>
-      nmap <Insert>   [mzz
-      nmap <Del>      ]mzz
-   else
-      nnoremap gd gd
-      nnoremap [[ [[
-      nnoremap ]] ]]
-      nmap <Insert>   [[zz
-      nmap <Del>      ]]zz
+      nnoremap <silent><buffer> [[ [m
+      nnoremap <silent><buffer> ]] ]m
+      nmap     <silent><buffer> gd "zyiw[m/\<<C-R>z\><CR>
+      nnoremap <silent><buffer> <Insert>   [mz.
+      nnoremap <silent><buffer> <Del>      ]mz.
    endif
    syntax sync minlines=1000
 endfunc
@@ -662,7 +665,8 @@ function! Show_g_CTRLG()
    echo out_str
 endfunction
 " This is _much_ faster than g<C-G> on large files. And it is more verbose
-nmap gK :call Show_g_CTRLG()<CR>
+nmap g<C-G> :call Show_g_CTRLG()<CR>
+nnoremap gK K
 
 function! Incr()
    if ! exists('g:Incr')
@@ -1451,10 +1455,12 @@ function! s:show_current_hunk() abort
   endif
 endfunction
 nmap gkh :SignifyHunkDiff<CR>
+nmap <Leader>h :SignifyHunkDiff<CR>
+nmap <Leader>uh :SignifyHunkUndo<CR>
 nmap zv :SignifyToggle<CR>
 
 " Matchup -- treesitter
-if 0 && has('nvim')
+if has('nvim')
   lua <<EOF
   require'nvim-treesitter.configs'.setup {
     matchup = {
@@ -1466,7 +1472,7 @@ if 0 && has('nvim')
   }
 EOF
 endif
-let g:matchup_matchparen_deferred_fade_time = 800
+let g:matchup_matchparen_deferred_fade_time = 100
 let g:matchup_matchparen_deferred = 1
 
 " echo "DONE sourcing"
