@@ -3,12 +3,12 @@
   "Lua.diagnostics.enable": false,
   "Lua.diagnostics.disable": [
       "lowercase-global", "unused-local", "unused-function", "undefined=global"
-  ]
+  ],
   "pylsp.plugins.pycodestyle.ignore": ["E501"],
   "languageserver": {
     "tagls": {
-      "install_command": "pip3 install tagls",
-      "homepage":        "https://github.com/daquexian/tagls",
+      // "install_command": "pip3 install tagls",
+      // "homepage":        "https://github.com/daquexian/tagls",
       "command": "python3",
       "args": ["-m", "tagls"],
       "filetypes": [
@@ -27,16 +27,21 @@
       "settings": {}
     },
     "bash": {
-      "install_command": "npm i -g bash-language-server",
-      "homepage":        "https://github.com/bash-lsp/bash-language-server",
+      // "install_command": "npm i -g bash-language-server",
+      // "homepage":        "https://github.com/bash-lsp/bash-language-server",
       "command": "bash-language-server",
       "args": ["start"],
       "filetypes": ["sh"],
       "ignoredRootPaths": ["~"]
     },
+    "ts": {
+      "command": "deno",
+      "args": ["lsp"],
+      "filetypes": ["ts"]
+    },
     "vimls": {
-      "install_command": "npm install -g vim-language-server",
-      "homepage":        "https://github.com/iamcco/vim-language-server",
+      // "install_command": "npm install -g vim-language-server",
+      // "homepage":        "https://github.com/iamcco/vim-language-server",
       "command": "vim-language-server",
       "args": ["--stdio"],
       "initializationOptions": {
