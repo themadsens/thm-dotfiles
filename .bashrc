@@ -221,6 +221,7 @@ if [ -n "$PS1" ] ;then
    inflate()   { python3 -c 'import os,zlib; os.write(1, zlib.decompress(open(0,"rb").read()))'; }
    #inflate()   { ruby -rzlib -e 'print Zlib::Inflate.new.inflate(STDIN.read)'; }
    #deflate()   { ruby -rzlib -e 'print Zlib::Deflate.new(6).deflate(STDIN.read, Zlib::FINISH)'; }
+   waitsocks() { lsof -i TCP | awk 'NR==1 || (/WAIT/ && /^'"$1"'/) {print $0}'; }
 
    pv()        {
       if [[ $# -eq 1 && -e $1 ]] ;then
