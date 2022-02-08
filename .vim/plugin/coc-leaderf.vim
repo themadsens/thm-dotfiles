@@ -195,7 +195,7 @@ let g:Lf_RootMarkers = ["tags", ".git", ".svn"]
 let g:Lf_WindowPosition = 'popup'
 let g:Lf_PreviewInPopup = 1
 "let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "DejaVu Sans Mono for Powerline" }
-let g:Lf_PreviewResult = {'BufTag': 1, 'Rg':1, 'Line':1, 'Gtags':1}
+let g:Lf_PreviewResult = {'BufTag':0, 'Function':0, 'Rg':1, 'Line':0, 'Gtags':1}
 
 let g:Lf_ShortcutF = "<leader>ff"
 nnoremap <leader>fb :<C-U><C-R>=printf("Leaderf  buffer %s", "")<CR><CR>
