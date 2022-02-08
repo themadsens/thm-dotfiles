@@ -1,0 +1,6 @@
+if [[ $PATH != */.deno* ]] ;then
+  export DENO_INSTALL="/home/fm/.deno"
+  export PATH="$DENO_INSTALL/bin:$PATH"
+
+  source <(deno completions bash)
+fi
