@@ -508,6 +508,12 @@ if [ -n "$PS1" ] ;then
       fi
    }
 
+   bgstatp() {
+      if [[ $(jobs -s; jobs -r) ]] ;then
+         echo " BG:"$(jobs -s -p | wc -w),$(jobs -r -p | wc -w)
+      fi
+   }
+
    ttprompt() {
       case "$1" in
          1) echo "${TOOLCHAIN_PS1_LABEL:+ }${TOOLCHAIN_PS1_LABEL}" ;;
@@ -517,7 +523,8 @@ if [ -n "$PS1" ] ;then
    __col() {
       [[ $TERM == xterm*  || $TERM == screen* || $TERM == tmux* || $TERM == linux ]] && echo -n '\[\e[3'${1}'m\]'
    }
-   PS1="[$(__col 1)\h $(__col 2)\W$(__col 6)\$(gitps1)$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
+
+   PS1="[$(__col 1)\h $(__col 2)\W$(__col 6)\$(gitps1)\$(bgstatp)$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
 
    run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
    __run() {
