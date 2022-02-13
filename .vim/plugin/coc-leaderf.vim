@@ -1,6 +1,7 @@
 "
 " Adapted from
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
+if !has("nvim") | finish | endif
 "
 let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-sumneko-lua', '@yaegassy/coc-pylsp']
 "                              'coc-vimlsp',          Also: npm install -g vim-language-server
@@ -14,14 +15,26 @@ set encoding=utf-8
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
+if 1
+    " Use tab for trigger completion with characters ahead and navigate.
+    " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+    " other plugin before putting this into your config.
+    inoremap <silent><expr> <TAB>
+                \ pumvisible() ? "\<C-n>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ coc#refresh()
+    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+    " Make <tab> used for trigger completion, completion confirm, snippet expand and jump like VSCode.
+    inoremap <silent><expr> <M-l>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<C-l>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+    let g:coc_snippet_next = '<M-l>'
+    let g:coc_snippet_prev = '<M-L>'
+endif
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -54,19 +67,28 @@ nmap <silent> gr <Plug>(coc-references)
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
+function! s:fallbackK(error, res)
+    " echomsg "Error: "..string(a:error).." Res: "..string(a:res)
+    if !a:res
+        normal! K
+    endif
+endfunction
+
 function! s:show_documentation()
  " if (index(['vim','help'], &filetype) >= 0)
  "   execute 'h '.expand('<cword>')
  " elseif (coc#rpc#ready())
  if (coc#rpc#ready() && CocHasProvider('hover'))
-    call CocActionAsync('doHover')
+    call CocActionAsync('doHover', function("s:fallbackK"))
   else
     normal! K
   endif
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
+nmap gh :call CocActionAsync('highlight')<CR>
+highlight link CocHighlightText DiffChange
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
@@ -109,12 +131,12 @@ omap ac <Plug>(coc-classobj-a)
 
 " Remap <C-f> and <C-b> for scroll float windows/popups.
 if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  nnoremap <silent><nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-j>"
+  nnoremap <silent><nowait><expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-k>"
+  inoremap <silent><nowait><expr> <C-j> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<C-j>"
+  inoremap <silent><nowait><expr> <C-k> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<C-k>"
+  vnoremap <silent><nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-j>"
+  vnoremap <silent><nowait><expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-k>"
 endif
 
 " Use CTRL-S for selections ranges.
