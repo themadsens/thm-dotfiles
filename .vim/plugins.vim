@@ -51,7 +51,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/preservim/nerdtree.git'
   Plug 'ziglang/zig.vim'
   Plug 'simnalamburt/vim-mundo'
-  Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+" Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
   Plug 'kdheepak/lazygit.nvim'
   Plug 'mhinz/vim-signify'
   Plug 'ryanoasis/vim-devicons'
@@ -60,6 +60,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'Vimjas/vim-python-pep8-indent'
   Plug 'khaveesh/vim-fish-syntax'
   Plug 'neoclide/jsonc.vim'
+  Plug 'dhruvasagar/vim-table-mode'
 
 if has('nvim')
   "Plug 'andymass/vim-matchup'
