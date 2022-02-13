@@ -12,9 +12,9 @@
       "command": "python3",
       "args": ["-m", "tagls"],
       "filetypes": [
-        "c",
-        "cpp",
-        "lua"
+        //"c",
+        //"cpp",
+        //"lua"
       ],
       "initializationOptions": {
         // Add the following line if you only want tagls as a fallback (also see "Custom LSP methods" section)
