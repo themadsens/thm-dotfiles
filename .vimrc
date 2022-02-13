@@ -1487,6 +1487,10 @@ endif
 let g:matchup_matchparen_deferred_fade_time = 100
 let g:matchup_matchparen_deferred = 1
 
+" table-mode
+let g:table_mode_corner_corner='+'
+
+
 " echo "DONE sourcing"
 
 " vim: set sw=4 sts=4 et:
