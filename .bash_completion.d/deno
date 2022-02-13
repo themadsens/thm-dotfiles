@@ -1,5 +1,5 @@
-if [[ $PATH != */.deno* ]] ;then
-  export DENO_INSTALL="/home/fm/.deno"
+if [[ -d ~/.deno/bin/deno && $PATH != */.deno* ]] ;then
+  export DENO_INSTALL="~/.deno"
   export PATH="$DENO_INSTALL/bin:$PATH"
 
   source <(deno completions bash)
