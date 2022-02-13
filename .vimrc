@@ -444,7 +444,9 @@ augroup Private
    autocmd BufReadPost * call SetBufferOpts()
    autocmd BufNewFile  * call SetBufferOpts()
    autocmd BufNewFile  * call SetBufferOpts()
-   autocmd DirChanged  * call SetBufferOpts()
+   if has("nvim")
+       autocmd DirChanged  * call SetBufferOpts()
+   endif
    autocmd FileType    * call SetFileTypeOpts()
    " autocmd CursorMoved * call qfutil#followLine(0)
 
@@ -1363,6 +1365,16 @@ function! s:ShowHTML() range
 endfunction
 command! -bar -range ShowHTML call <SID>ShowHTML()
 
+function! ShowSynStack ()
+    for i1 in synstack(line("."), col("."))
+        let i2 = synIDtrans(i1)
+        let n1 = synIDattr(i1, "name")
+        let n2 = synIDattr(i2, "name")
+        echo n1 "->" n2
+    endfor
+endfunction
+nmap <Leader>ss :call ShowSynStack()<CR>
+
 let g:airline#extensions#tmuxline#enabled = 0
 let g:tmuxline_theme = 'powerline'
 let g:tmuxline_preset = {
@@ -1460,7 +1472,7 @@ nmap <Leader>uh :SignifyHunkUndo<CR>
 nmap zv :SignifyToggle<CR>
 
 " Matchup -- treesitter
-if has('nvim')
+if has('nvimXXXX')
   lua <<EOF
   require'nvim-treesitter.configs'.setup {
     matchup = {

@@ -63,7 +63,7 @@ call plug#begin('~/.vim/plugged')
 
 if has('nvim')
   "Plug 'andymass/vim-matchup'
-  Plug 'nvim-treesitter/nvim-treesitter'
+  "Plug 'nvim-treesitter/nvim-treesitter'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'Yggdroot/LeaderF'
 endif
