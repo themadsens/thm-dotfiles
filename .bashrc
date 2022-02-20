@@ -542,15 +542,6 @@ if [ -n "$PS1" ] ;then
 
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
 
-   if [[ $_PS1 != tmux-ssh- ]] ;then
-      # See https://github.com/themadsens/qfc
-      [[ -d ~/.qfc ]] && source ~/.qfc/bin/qfc.sh
-      [[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
-      #qfc_quick_command 'vim' '\C-p' 'vim $0'
-      #qfc_quick_command 'cd' '\C-b' 'cd $0'
-   fi
-   unset _PS1
-
    function timerep() {
       local timeRep=$TIMESHOW ; [[ $timeRep ]] || timeRep=$TIMEREPORT
       [[ ! -n $timeRep ]] && return
@@ -707,6 +698,17 @@ if [ -n "$PS1" ] ;then
    complete -c vis env where 
    complete -F __vi vit
    complete -o default -F __vi vi vim nvim
+
+   if [[ $_PS1 != tmux-ssh- ]] ;then
+      # See https://github.com/themadsens/qfc
+      [[ -d ~/.qfc ]] && source ~/.qfc/bin/qfc.sh
+      [[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+      [[ -f ~/.fzf.bash ]] && source ~/thm-dotfiles/files/fzf.bash
+      #qfc_quick_command 'vim' '\C-p' 'vim $0'
+      #qfc_quick_command 'cd' '\C-b' 'cd $0'
+   fi
+   unset _PS1
+
 
    [ -z "$CDPATH" ] && amptree --nocd epgit
 fi
