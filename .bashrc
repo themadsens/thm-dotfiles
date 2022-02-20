@@ -542,9 +542,10 @@ if [ -n "$PS1" ] ;then
 
    [ -f /etc/rc.d/functions ] && USECOLOR=yes source /etc/rc.d/functions
 
-   if [[ -d ~/.qfc && $_PS1 != tmux-ssh- ]] ;then
+   if [[ $_PS1 != tmux-ssh- ]] ;then
       # See https://github.com/themadsens/qfc
-      source ~/.qfc/bin/qfc.sh
+      [[ -d ~/.qfc ]] && source ~/.qfc/bin/qfc.sh
+      [[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
       #qfc_quick_command 'vim' '\C-p' 'vim $0'
       #qfc_quick_command 'cd' '\C-b' 'cd $0'
    fi
@@ -625,7 +626,7 @@ if [ -n "$PS1" ] ;then
                   print(string.format('%s -- 0x%x', val, val//1))"
    }
 
-   tac() {
+   _tac() {
       awk '
          BEGIN {N=0; delete A}
          { A[N++]=$0 }
@@ -653,7 +654,7 @@ if [ -n "$PS1" ] ;then
       local -i I
       local N
       local RC=0
-      eval $(command grep "$@" ~/.bash_history | uniq | command tail -35 | tac \
+      eval $(command grep "$@" ~/.bash_history | uniq | command tail -35 | _tac \
              | gawk '{print "C[" I++ "]=\047" gensub("\047", "\047\\\\\047\047", "g", $0) "\047"}')
       if [[ ${#C[@]} > 0 ]] ;then
          for ((I=0; I<${#C[@]}; I++ )) ;do echo "$(__idx $I): ${C[$I]}" > /dev/tty ;done
@@ -712,4 +713,3 @@ fi
 
 # vim: set sw=3 sts=3 et:
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash

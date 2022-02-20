@@ -1,7 +1,14 @@
 #!/bash
 # 
 
-export FZF_DEFAULT_OPTS="--exact --height=70%"
+h() {
+    local SRCH
+    local res=$(READLINE_LINE="$@" __fzf_history__)
+    [[ $? = 0 ]] && inject.py "$res"
+}
+
+
+export FZF_DEFAULT_OPTS="--exact --height=70% --border=rounded --color=hl:bold:1"
 # Override this one to use ~/.bash_history
 __fzf_history__() {
   local output
