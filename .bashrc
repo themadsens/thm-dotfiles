@@ -1,4 +1,9 @@
 
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the start of this file.
+[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
+#### END FIG ENV VARIABLES ####
+
 SHELL=$BASH
 export LC_CTYPE=en_US.UTF-8
 umask 022
@@ -47,6 +52,7 @@ if [ -n "$PS1" ] ;then
    export MAVEN_OPTS="-Xmx1024m"
    export PGDATABASE=ampep
    #export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
+   export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
 
    [[ "$(type -p dircolors)" ]] && eval `dircolors`
    # eval `dircolors ~/.dircolors`
@@ -76,7 +82,12 @@ if [ -n "$PS1" ] ;then
       alias fdf=' fd --no-ignore-vcs --hidden -t f'
    fi
    if type -p exa > /dev/null ;then
-      alias ll='  exa -laaB --group-directories-first --colour=always'
+      _green_to_thousands() { luajit -e 'for l in io.stdin:lines() do
+                                local p1,s,p2 = l:match("(.-\x1b%[1;32m)([%d,.]+)(\x1b.*)")
+                                local x,n = (s or ""):gsub("(%d)[,.]","\x1b[4m%1\x1b[24m")
+                                print(p2 and (p1..(" "):rep(n)..x..p2) or l)
+                              end'; }
+      ll() {      exa -laaB "$@" --group-directories-first --colour=always | _green_to_thousands; }
       alias ls='  exa --group-directories-first'
       alias tree='exa -laB --tree'
       lth()       { exa -laB -s modified -r --color=always "$@" | head -20; }
@@ -707,3 +718,8 @@ fi
 # vim: set sw=3 sts=3 et:
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the end of this file.
+[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
+#### END FIG ENV VARIABLES ####

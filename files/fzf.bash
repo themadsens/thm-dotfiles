@@ -1,22 +1,17 @@
 #!/bash
 # 
-# See /usr/local/opt/fzf/shell/key-bindings.bash for the magic
-
-__fzf_history__() (
-  local line
-  shopt -u nocaseglob nocasematch
-  line=$(
-    HISTTIMEFORMAT= cat ~/.bash_history |
-    FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-25%} $FZF_DEFAULT_OPTS --tac --sync -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS +m" $(__fzfcmd) |
-    command grep '^ *[0-9]') &&
-    if [[ $- =~ H ]]; then
-      sed 's/^ *\([0-9]*\)\** .*/!\1/' <<< "$line"
-    else
-      sed 's/^ *\([0-9]*\)\** *//' <<< "$line"
-    fi
-)
-
-
-  # CTRL-R - Paste the selected command from history into the command line
-  bind '"\C-r": "\C-x\C-addi`__fzf_history__`\C-x\C-e\C-x\C-r\C-x^\C-x\C-a$a"'
-  bind -m vi-command '"\C-r": "i\C-r"'
+# Override
+__fzf_history__() {
+  local output
+  output=$(
+    command tac ~/.bash_history | mawk '{print "\t" $0}' |
+      last_hist=$(HISTTIMEFORMAT='' builtin history 1) perl -n -l0 -e 'BEGIN { getc; $/ = "\n\t"; $HISTCMD = $ENV{last_hist} + 1 } s/^[ *]//; print $HISTCMD - $. . "\t$_" if !$seen{$_}++' |
+      FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort,ctrl-z:ignore $FZF_CTRL_R_OPTS +m --read0" $(__fzfcmd) --query "$READLINE_LINE"
+  ) || return
+  READLINE_LINE=${output#*$'\t'}
+  if [ -z "$READLINE_POINT" ]; then
+    echo "$READLINE_LINE"
+  else
+    READLINE_POINT=0x7fffffff
+  fi
+}
