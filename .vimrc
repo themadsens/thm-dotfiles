@@ -313,18 +313,31 @@ nnoremap <End>      <C-E>
 nnoremap <M-Up>     <C-Y>
 nnoremap <M-Down>   <C-E>
 
-nnoremap [[ ?{<CR>w99[{
-nnoremap ][ /}<CR>b99]}
-nnoremap ]] j0[[%/{<CR>
-nnoremap [] k$][%?}<CR>
+function s:SetSrchReg(s, w)
+    let @/ = a:s
+    let &wrapscan = a:w
+endfunction
+function s:ProtectSrchReg(map)
+    echomsg "ProtectSrchReg "..a:map
+    let srchSave = @/
+    let wsSave = &wrapscan
+    set nowrapscan
+    exe timer_start(50, {-> s:SetSrchReg(srchSave, wsSave)})
+    return a:map
+endfunction
 
-nmap <M-PageUp>   [[z.
-nmap <M-PageDown> ]]z.
-nmap <Insert>   [[z.
-nmap <Del>      ]]z.
-nmap <kDel>     ]]z.
-nmap <S-Up>     {
-nmap <S-Down>   }
+nnoremap <expr> <silent> [[ <SID>ProtectSrchReg('?{<CR>w99[{')
+nnoremap <expr> <silent> ][ <SID>ProtectSrchReg('/}<CR>b99]}')
+nnoremap <expr> <silent> ]] <SID>ProtectSrchReg('/{<CR>?{<CR>j099[{%/{<CR>')
+nnoremap <expr> <silent> [] <SID>ProtectSrchReg('k$99]}%?}<CR>')
+
+nmap <silent> <M-PageUp>   [[:normal! zz<CR>
+nmap <silent> <M-PageDown> ]]:normal! zz<CR>
+nmap <silent> <Insert>   [[:normal! zz<CR>
+nmap <silent> <Del>      ]]:normal! zz<CR>
+nmap <silent> <kDel>     ]]:normal! zz<CR>
+nmap <silent> <S-Up>     {
+nmap <silent> <S-Down>   }
 
 nnoremap <C-PageUp>   gT
 nnoremap <C-PageDown> gt
@@ -1125,12 +1138,6 @@ function! JumpBuffers()
       endif
    endfor
 
-   if &runtimepath =~ 'fzfx'
-       fzf#run({'source': map(byIndex,  {k,val -> printf('%2d %6d %s', ent.ix, ent.bufno, ent.name)}),
-            \   'sink':xx})
-       return
-   endif
-
    if v:count > 0
       if len(byIndex) >= v:count
          echomsg 'Count '.v:count.' Jumps to '.byIndex[v:count-1].bufno
@@ -1150,8 +1157,8 @@ function! JumpBuffers()
    endif
 endfunc
 " Note this overrides :goto
-nmap go :<C-U>call JumpBuffers()<CR>
-nmap <C-G><C-O> 2go
+"nmap go :<C-U>call JumpBuffers()<CR>
+"nmap <C-G><C-O> 2go
 " Remap builtin 'go'
 nnoremap g<C-O> go
 
