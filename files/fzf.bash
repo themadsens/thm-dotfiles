@@ -1,6 +1,8 @@
 #!/bash
 # 
-# Override
+
+export FZF_DEFAULT_OPTS="--exact --height=70%"
+# Override this one to use ~/.bash_history
 __fzf_history__() {
   local output
   output=$(
@@ -9,7 +11,7 @@ __fzf_history__() {
       FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort,ctrl-z:ignore $FZF_CTRL_R_OPTS +m --read0" $(__fzfcmd) --query "$READLINE_LINE"
   ) || return
   READLINE_LINE=${output#*$'\t'}
-  if [ -z "$READLINE_POINT" ]; then
+  if [[ -z "$READLINE_POINT" ]]; then
     echo "$READLINE_LINE"
   else
     READLINE_POINT=0x7fffffff

@@ -72,5 +72,6 @@
       "rootPatterns": [".git/", ".svn", "tags"]
     }*/
 
-  }
+  },
+  "Lua.telemetry.enable": false
 }
