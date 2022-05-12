@@ -21,7 +21,7 @@ if [ "$Suffix" ] ;then
         | gzip > /$HOME/tmp/db-backup/greenwise-${Suffix}.gz
     for h in checkmark.amsdns.net app.checkmarks.co.uk ;do 
         for t in CM-SITE CM-USER ;do
-            curl -s -X GET -u 'CheckMarkBatch:beep[whob]bop' https://${h}/aasws/property/${t} \
+            curl -s -X GET -u 'CheckMarkBatch:beep[whob]bop' https://${h}/aasws/jsonstore/query/${t}/%25 \
                 | bzip2 > /Users/fm/tmp/cm-backup/${h}-${t}-${Suffix}.json.bz2
         done
     done
