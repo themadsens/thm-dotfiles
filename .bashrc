@@ -205,7 +205,7 @@ if [ -n "$PS1" ] ;then
    pg()        { $GRC -es "$@" | less -R;}
    vis()       { vi +set\ hlsearch $(which "$@"); }
    _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
-   vif()       { vi -c set\ hlsearch "+/$*/" $(ag --ignore .svn --ignore .git -wl "$@"); }
+   vif()       { vi -c set\ hlsearch "+/$*/" $(ag --ignore .svn --ignore .git --ignore \*-pak -wl "$@"); }
    vdiff()     { vim -g -f -d --cmd 'set columns=220' -c 'normal <C-W>=' "$@"; }
    mt()        { xterm +tb -e sh -c "while multitail $@; do : ;done"; }
    ToAURoot()  { tar zcf - $2 | command ssh $1 tar zxvf - -C /flash/root/; }
