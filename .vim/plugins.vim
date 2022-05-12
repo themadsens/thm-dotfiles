@@ -61,6 +61,9 @@ call plug#begin('~/.vim/plugged')
   Plug 'khaveesh/vim-fish-syntax'
   Plug 'neoclide/jsonc.vim'
   Plug 'dhruvasagar/vim-table-mode'
+" Plug 'Rykka/riv.vim'
+" Plug 'Rykka/InstantRst'
+  Plug 'juneedahamed/vc.vim'
 
 if has('nvim')
   "Plug 'andymass/vim-matchup'
