@@ -4,7 +4,9 @@
   "Lua.diagnostics.disable": [
       "lowercase-global", "unused-local", "unused-function", "undefined=global"
   ],
-  "pylsp.plugins.pycodestyle.ignore": ["E501"],
+  "pylsp.plugins.pycodestyle.ignore": ["E501", "E302", "E221", "E251", "E226", "E265", "E305", "E227",
+                                       "E261"],
+  "pylsp.plugins.pycodestyle.enabled": false,
   "languageserver": {
     "tagls": {
       // "install_command": "pip3 install tagls",

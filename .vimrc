@@ -145,16 +145,6 @@ else
          setglobal cursorline
          set cursorline
 
-         " Make shifted cursor keys work.
-         " For the necessary xmodmap commands, see :help hpterm
-         map  <t_F3>   <S-Up>
-         map! <t_F3>   <S-Up>
-         map  <t_F6>   <S-Down>
-         map! <t_F6>   <S-Down>
-         map  <t_F8>   <S-Left>
-         map! <t_F8>   <S-Left>
-         map  <t_F9>   <S-Right>
-         map! <t_F9>   <S-Right>
          " To make the shift-Tab <S-Tab> key work, also see :help suffixes
          cmap <Esc>[1~ <C-P>
          cmap <Esc>[1;2~ <C-P>
@@ -270,7 +260,6 @@ nmap zm    :call ToggleOpt("cursorcolumn")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zz    :call ToggleOpt("ignorecase")<CR>
 nmap zp    :call ToggleOpt("paste")<CR>
-nmap [s    :exe "g/".@/."/p"<CR>
 
 " Bashify command line
 cnoremap <C-A> <Home>
@@ -291,14 +280,14 @@ function! ToggleOpt(opt)
 endfunction
 
 " Make cursor keys jump out of insert. Your preference may differ
-imap <Left>     <Esc>
-imap <Right>    <Esc>
-imap <Up>       <Esc>
-imap <Down>     <Esc>
-imap <S-Left>   <Esc>
-imap <S-Right>  <Esc>
-imap <S-Up>     <Esc>
-imap <S-Down>   <Esc>
+imap <expr><Left>    pumvisible() ? "\<Left>"    : "\<Esc>"
+imap <expr><Right>   pumvisible() ? "\<Right>"   : "\<Esc>"
+imap <expr><Up>      pumvisible() ? "\<Up>"      : "\<Esc>"
+imap <expr><Down>    pumvisible() ? "\<Down>"    : "\<Esc>"
+imap <expr><S-Left>  pumvisible() ? "\<S-Left>"  : "\<Esc>"
+imap <expr><S-Right> pumvisible() ? "\<S-Right>" : "\<Esc>"
+imap <expr><S-Up>    pumvisible() ? "\<S-Up>"    : "\<Esc>"
+imap <expr><S-Down>  pumvisible() ? "\<S-Down>"  : "\<Esc>"
 let g:ftplugin_sql_omni_key_right = '<C-C><Right>'
 let g:ftplugin_sql_omni_key_left  = '<C-C><Left>'
 nmap <F12> <Cmd>set nopaste<CR>
@@ -445,6 +434,7 @@ endfunction
 function! LoadFileAtLine(f)
     let [fname, lineno] = split(a:f, ":")
     exe "edit +"..lineno.." "..fnameescape(fname)
+    bdelete #
     autocmd CursorHold <buffer=abuf> edit
 endfunction
 
@@ -466,7 +456,7 @@ augroup Private
    " Handle global (non bufferspecific) options
    autocmd BufEnter * call BufEnterGlobalOpts()
 
-   autocmd BufReadCmd *:[0-9]\\\{1,5\} call LoadFileAtLine(expand("<amatch>"))
+   autocmd BufReadCmd *:[0-9]\\\{1,5\} nested call LoadFileAtLine(expand("<amatch>"))
 
    autocmd InsertEnter * call system("tmux set mouse off")
    autocmd InsertLeave * call system("tmux set mouse on")
@@ -529,7 +519,7 @@ function! SetFileTypeOpts()
       " Match open brace above )
       setlocal cinoptions=(0,w1,u0,:1,=2
    endif
-   if index(['tcl','postscr','c','cpp','arduino','java','jsp'], ft) >= 0
+   if index(['tcl','postscr','c','cpp','arduino','java','jsp', 'python', 'go'], ft) >= 0
       " NO autowrap while typing in source code files
       setlocal formatoptions-=t
       setlocal sw=4 ts=4 et
@@ -540,6 +530,12 @@ function! SetFileTypeOpts()
       compiler mvn
       setlocal includeexpr=JspPath(v:fname)
       setlocal cinkeys-=:
+   endif
+   if ft ==# 'javascript'
+      compiler jshint
+      setlocal sw=2 ts=2 et
+      "setlocal cindent
+      "setlocal indentexpr& " The provided indent file is hopeless
    endif
    if ft ==# 'sh'
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--')
@@ -570,16 +566,8 @@ function! SetFileTypeOpts()
    elseif ft ==# 'xml'
       call TextEnableCodeSnip('sql', '<sql>', '</sql>') |
       setlocal sw=2 ts=2 et
-   elseif ft ==# 'javascript'
-     compiler jshint
-     setlocal formatoptions-=t
-     setlocal sw=2 ts=2 et
-     "setlocal cindent
-     "setlocal indentexpr& " The provided indent file is hopeless
-   elseif ft ==# 'python' || ft ==# 'go'
-     setlocal sw=3 ts=3 et 
    elseif ft ==# 'css' || ft ==# 'html'
-     setlocal sw=2 ts=2 et
+      setlocal sw=2 ts=2 et
    end
    if filereadable(findfile('_vimrc', '.;'))
       exe 'source '.fnameescape(findfile('_vimrc', '.;'))
@@ -1312,7 +1300,7 @@ let g:quickfixsigns#vcsdiff#extra_args_svn = '-x -w'
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'dark' " 'flemming', 'distinguished'
 let g:airline_mode_map = {'__':'-','n':'N','i':'I','R':'R','c':'C','v':'V','V':'V','':'V','s':'S','S':'S','':'S',}
-let g:airline_section_y = '%{ShowSyn()}%{VimBuddy()} '.
+let g:airline_section_y = '%{ShowSyn()}'.
          \                '[%#__accent_red#%{Modified()}%#airline_y#%n,%#airline_y_bold#%{CaseStat()}%#airline_y#,%02B]'
 let g:airline#extensions#whitespace#enabled = 0
 let g:webdevicons_enable_airline_statusline = 0
@@ -1497,7 +1485,6 @@ let g:matchup_matchparen_deferred = 1
 " table-mode
 let g:table_mode_corner_corner='+'
 
-
 " echo "DONE sourcing"
 
-" vim: set sw=4 sts=4 et:
+" vim: set sw=3 sts=3 et:

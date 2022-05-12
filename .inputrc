@@ -16,6 +16,7 @@ set blink-matching-paren on
 set menu-complete-display-prefix on
 set show-all-if-ambiguous on
 set skip-completed-text on
+set enable-bracketed-paste on
 
 # Bindings - make it somewhat more like tcsh
 "\C-x": redraw-current-line

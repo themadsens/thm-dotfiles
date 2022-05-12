@@ -68,7 +68,6 @@ if [ -n "$PS1" ] ;then
    findfile() { if [[ $(uname -s) = Darwin ]] ;then mdfind "kMDItemDisplayName == $1" ;else locate -b "$@" ;fi; }
    alias mark='   echo -e "\n\n\n\n      ${C_H2}---- `date` ----${C_CLEAR}\n\n\n\n"'
    alias l='      less -R'
-   alias tree='   tree -uph'
    if type -p fdfind > /dev/null ;then
       alias fd='  fdfind --no-ignore-vcs --hidden'
       alias fdf=' fdfind --no-ignore-vcs --hidden -t f'
@@ -84,8 +83,8 @@ if [ -n "$PS1" ] ;then
                               end'; }
       ll() {      exa -laaB "$@" --group-directories-first --colour=always | _green_to_thousands; }
       alias ls='  exa --group-directories-first'
-      alias tree='exa -laB --tree'
-      lth()       { exa -laB -s modified -r --color=always "$@" | head -20; }
+      tree()      { exa -laB --tree --color=always "$@" | _green_to_thousands; }
+      lth()       { exa -laB -s modified -r --color=always "$@" | head -20 | _green_to_thousands; }
    else
       alias ll='  ls -la'
       if [[ $(uname -s) = Darwin ]] ;then
@@ -230,7 +229,9 @@ if [ -n "$PS1" ] ;then
    waitsocks() { lsof -i TCP | awk 'NR==1 || (/WAIT/ && /^'"$1"'/) {print $0}'; }
 
    pv()        {
-      if [[ $# -eq 1 && -e $1 ]] ;then
+      if [[ $1 = -* ]] ;then
+         command pv "$@"
+      elif [[ $# -eq 1 && -e $1 ]] ;then
          BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat $1 
       elif [[ $(type -t $1)  = alias ]] ;then
          local CMD=$1 ; shift
@@ -714,4 +715,3 @@ if [ -n "$PS1" ] ;then
 fi
 
 # vim: set sw=3 sts=3 et:
-
