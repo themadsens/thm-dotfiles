@@ -1445,10 +1445,11 @@ let g:mundo_preview_bottom=1
 let g:mundo_preview_Height=20
 
 " fzf
-nmap g/ :History/<CR>
+let g:fzf_command_prefix = "Fzf"
+nmap g/ :FzfHistory/<CR>
 nmap g: :History:<CR>
-"nmap F  :Buffers<CR>
-nmap F  :files<CR>
+nmap F  :FzfBuffers<CR>
+"nmap F  :files<CR>
 let $BAT_THEME = "ansi-light"
 let g:fzf_preview_window = ['up', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
