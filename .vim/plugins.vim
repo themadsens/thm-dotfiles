@@ -65,12 +65,12 @@ call plug#begin('~/.vim/plugged')
 " Plug 'Rykka/InstantRst'
   Plug 'juneedahamed/vc.vim'
 
-if has('nvim')
+"if has('nvim')
   "Plug 'andymass/vim-matchup'
   "Plug 'nvim-treesitter/nvim-treesitter'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'Yggdroot/LeaderF'
-endif
+"endif
 
 
 call plug#end()

@@ -192,7 +192,7 @@ if [ -n "$PS1" ] ;then
                                --show-revs ${@:-eligible} | \
                  xargs -i svnlog '-{}' svn+ssh://ampsvn/srv/ampemb/trunk/embedded; }
 
-   svnst()     { command svn st "$@" | command grep -v  '^[X?]'; }
+   svnst()     { command svn st "$@" | command grep -v -e '^[X?]' -e '^    X'; }
    hgst()      { hg  st "$@" | command grep -v  '^[X?]'; }
    # alias open='kfmclient exec'
    url()       { kfmclient openURL "$*"; }

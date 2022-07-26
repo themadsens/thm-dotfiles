@@ -7,6 +7,7 @@ MINFREE=200
 TMUTIL=/usr/bin/tmutil
 
 VOL=$($TMUTIL destinationinfo -X | plutil -convert json -o - - | jq -r '.Destinations[0].Name')
+MNT=$($TMUTIL destinationinfo -X | plutil -convert json -o - - | jq -r '.Destinations[0].MountPoint')
 
 tmfree() {
     diskutil list "$VOL" > /dev/null || return 1
@@ -14,13 +15,16 @@ tmfree() {
 }
 
 tmprune() {
-    MNT=$($TMUTIL destinationinfo -X | plutil -convert json -o - - | jq -r '.Destinations[0].MountPoint')
     [[ "$MNT" ]] && tmfree >/dev/null || exit 1
-    $TMUTIL listbackups -d "$MNT" -m | while read DIR ;do
-        FREE=$(tmfree)
+    local DIR
+    while true ;do
+        local FREE=$(tmfree)
         if (( FREE < MINFREE )) ;then
-            echo "Free: $FREE; Purge: $DIR"
-            sudo $TMUTIL delete -d "$MNT" $DIR
+            local OLDEST=$($TMUTIL listbackups -d "$MNT" | grep backup | sort | head -1)
+            echo "Free: $FREE; Purge: $OLDEST at $MNT"
+            local TS=${OLDEST%.backup}
+            sudo $TMUTIL delete -d "$MNT" -t "$TS"
+            sleep 30 # Apparantly needs some grace time to stabilize free space
         else
             echo "Free: $FREE > $MINFREE"
             break
@@ -30,13 +34,14 @@ tmprune() {
 
 tmbackup() {
     tmfree >/dev/null || exit 1
-    echo "$(date) - $(tminfo)" >> /tmp/tm-backup.log
+    echo "==> $(date) - $(tminfo)" >> /tmp/tm-backup.log
     (( $(tmfree) < MINFREE )) && tmprune | tee -a /tmp/tm-backup.log
     $TMUTIL startbackup --auto
 }
 
 tminfo() {
-    echo "Time machine on '$VOL'. Free space $(tmfree) GB. Enforce $MINFREE GB"
+    echo "Time machine on '$VOL' at '$MNT'"
+    echo "Free space $(tmfree) GB. Enforce $MINFREE GB"
 }
 
 tmhelp() {

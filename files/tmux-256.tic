@@ -1,4 +1,4 @@
 # Compile with: tic -x tmux-256.tic
 # Dump with:    infocmp -I tmux-256color (or tmux)
 tmux-256color|TMUX 256 color,
-  XT, Enbp, use=tmux,
+  XT, Enbp, use=screen-256color-bce,
