@@ -1447,7 +1447,7 @@ let g:mundo_preview_Height=20
 " fzf
 let g:fzf_command_prefix = "Fzf"
 nmap g/ :FzfHistory/<CR>
-nmap g: :History:<CR>
+nmap g: :FzfHistory:<CR>
 nmap F  :FzfBuffers<CR>
 "nmap F  :files<CR>
 let $BAT_THEME = "ansi-light"
