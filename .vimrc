@@ -256,7 +256,7 @@ nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
 nmap zs    :call ToggleOpt("spell")<CR>
 nmap zn    :call ToggleOpt("number")<CR>
-nmap zm    :call ToggleOpt("cursorcolumn")<CR>
+nmap zm    :call ToggleOpt("cursorcolumn", "colorcolumn=129")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zz    :call ToggleOpt("ignorecase")<CR>
 nmap zp    :call ToggleOpt("paste")<CR>
@@ -272,16 +272,27 @@ cnoremap <Esc>f <S-Right>
 nmap <MiddleMouse> <Nop>
 imap <MiddleMouse> <Nop>
 
-command! Q qall
+command! Q qall"resource"
 
-function! ToggleOpt(opt)
-    exe 'set inv'.a:opt
-    echo "Option '".a:opt."' : ".eval('&'.a:opt)
+function! ToggleOpt(...)
+   for opt in a:000
+      if  opt =~ '='
+         let optname = substitute(opt, '=.*', '', '')
+         if eval('&'.optname) == ''
+            exe"set ".opt
+         else
+            exe"set ".optname."&"
+         endif
+      else
+         exe 'set inv'.opt
+         echo "Option '".opt."' : ".eval('&'.opt)
+      endif
+   endfor
 endfunction
 
 " Make cursor keys jump out of insert. Your preference may differ
-imap <expr><Left>    pumvisible() ? "\<Left>"    : "\<Esc>"
-imap <expr><Right>   pumvisible() ? "\<Right>"   : "\<Esc>"
+imap <Left>          <Esc>
+imap <expr><Right>   pumvisible() ? "\<C-Y>"     : "\<Esc>"
 imap <expr><Up>      pumvisible() ? "\<Up>"      : "\<Esc>"
 imap <expr><Down>    pumvisible() ? "\<Down>"    : "\<Esc>"
 imap <expr><S-Left>  pumvisible() ? "\<S-Left>"  : "\<Esc>"
@@ -301,6 +312,9 @@ nnoremap <xHome>    <C-Y>
 nnoremap <End>      <C-E>
 nnoremap <M-Up>     <C-Y>
 nnoremap <M-Down>   <C-E>
+
+nmap <M-j> <C-D>
+nmap <M-k> <C-U>
 
 function s:SetSrchReg(s, w)
     let @/ = a:s
@@ -857,7 +871,6 @@ function! SvnDiff(f)
 endfunc
 command! -nargs=? -complete=buffer SvnDiff call SvnDiff(<q-args>)
 nmap gkd :SvnDiff<CR>
-nmap  ld :SvnDiff<CR>
 
 function! SvnBlame(f)
    let f = a:f
@@ -890,7 +903,6 @@ function! SvnBlame(f)
 endfunc
 command! -nargs=? -complete=buffer SvnBlame call SvnBlame(<q-args>)
 nmap gkb :SvnBlame<CR>
-nmap  lb :SvnBlame<CR>
 
 function! SvnCommitInfo(id, ...)
    let f = a:1
@@ -919,7 +931,6 @@ function! SvnCommitInfo(id, ...)
 endfunc
 command! -nargs=? -complete=buffer SvnCommitInfo call SvnCommitInfo(<q-args>)
 nmap gkc :SvnCommitInfo <C-R><C-W><CR>
-nmap  lc :SvnCommitInfo <C-R><C-W><CR>
 
 
 "
@@ -1043,8 +1054,6 @@ func! CsSearch(pattern)
    cwindow 20
    redraw!
 endfunc
-nmap              lr      :call CsSearch("<C-R><C-W>")<CR>
-vmap              lr      :call CsSearch(VisVal())<CR>
 command! -nargs=1 Cscope   call CsSearch("<args>")
 set cscopequickfix=c-
 
@@ -1349,7 +1358,6 @@ function! s:formatForSQL()
     let @* = text
 endfunc
 command! -bar -range SqlCopy call <SID>formatForSQL()
-vmap lsq :call <SID>formatForSQL()<CR>
 
 function! s:ShowHTML() range
     execute "'<,'> TOhtml"
@@ -1395,13 +1403,8 @@ vmap              gb      :call brep#Grep(VisVal(), 0)<CR>
 let g:neomake_open_list = 2
 let g:neomake_javascript_enabled_makers = [ 'jslint' ]
 let g:neomake_lua_enabled_makers        = [ 'luacheck' ]
-nmap ln :lnext<CR>
 nmap <M-C-N> :lnext<CR>
-nmap lp :lprev<CR>
 nmap <M-C-P> :lprev<CR>
-nmap lc :ll<CR>
-nmap ll :lwindow<CR>
-nmap lm :write\|Neomake<CR>
 augroup Private
     autocmd User NeomakeJobFinished silent! lrewind
 augroup END
