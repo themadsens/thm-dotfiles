@@ -256,7 +256,7 @@ nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
 nmap zs    :call ToggleOpt("spell")<CR>
 nmap zn    :call ToggleOpt("number")<CR>
-nmap zm    :call ToggleOpt("cursorcolumn", "colorcolumn=129")<CR>
+nmap zm    :call ToggleOpt("cursorcolumn", "colorcolumn=125")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zz    :call ToggleOpt("ignorecase")<CR>
 nmap zp    :call ToggleOpt("paste")<CR>
