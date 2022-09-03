@@ -452,6 +452,17 @@ if [ -n "$PS1" ] ;then
    }
    function findTests() { find . -name surefire-reports | xargs -I % open %/index.html; }
 
+   function SvnUpRev () {
+      if [[ $# = 0 ]] ;then
+         echo "Usage: SvnUpRev <revision>"
+         return 1
+      fi
+      REVISION=$1
+      svn up -r$REVISION | egrep '^Fetching external' \
+         | awk -F"'" '/^Fetching external item into/ {print $2}' \
+         | xargs -I '{}' svn up -r$REVISION '{}'
+   }
+
    if [[ -d ~/.keychain && "$UID" -ne 0 && -z "$SSH_AUTH_SOCK" ]] ;then
       #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
       HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}

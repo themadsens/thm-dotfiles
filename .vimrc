@@ -256,7 +256,7 @@ nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
 nmap zs    :call ToggleOpt("spell")<CR>
 nmap zn    :call ToggleOpt("number")<CR>
-nmap zm    :call ToggleOpt("cursorcolumn", "colorcolumn=129")<CR>
+nmap zm    :call ToggleOpt("cursorcolumn", "colorcolumn=125")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zz    :call ToggleOpt("ignorecase")<CR>
 nmap zp    :call ToggleOpt("paste")<CR>
@@ -940,6 +940,7 @@ nmap gjh <Plug>jdocConvertHere
 nmap gjc <Plug>jdocConvertCompact
 
 nmap <F2> :call SetCHdr()<CR>
+nmap ges :e %:h/
 
 function! SetCHdr()
    call append(0, ['/**',
@@ -1397,8 +1398,8 @@ let g:easytags_events = ['BufWritePost']
 call xolox#easytags#filetypes#add_mapping('lua', 'MYLUA')
 
 let g:brep#use_bufdo = 1   " Force searching unloaded buffers
-nmap              gb      :call brep#Grep("<C-R><C-W>", 1)<CR>
-vmap              gb      :call brep#Grep(VisVal(), 0)<CR>
+nmap              gb      :call <SID>GrepHereHL("<C-R><C-W>")<CR>
+vmap              gb      :call <SID>GrepHereHL(VisVal())<CR>
 
 let g:neomake_open_list = 2
 let g:neomake_javascript_enabled_makers = [ 'jslint' ]
