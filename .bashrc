@@ -229,11 +229,7 @@ if [ -n "$PS1" ] ;then
    waitsocks() { lsof -i TCP | awk 'NR==1 || (/WAIT/ && /^'"$1"'/) {print $0}'; }
 
    pv()        {
-      if [[ $1 = -* ]] ;then
-         command pv "$@"
-      elif [[ $# -eq 1 && -e $1 ]] ;then
-         BAT_THEME=ansi-light BAT_PAGER='less -RN' BAT_STYLE='plain' bat $1 
-      elif [[ $(type -t $1)  = alias ]] ;then
+      if [[ $(type -t $1)  = alias ]] ;then
          local CMD=$1 ; shift
          COLORARG=on ${BASH_ALIASES[$CMD]} "$@" 2>&1 | less -R
       elif [[ $(type -t $1) ]] ;then
