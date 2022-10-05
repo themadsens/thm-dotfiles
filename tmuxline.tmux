@@ -1,7 +1,7 @@
 # This tmux statusbar config was created by tmuxline.vim
 # on Thu, 05 Oct 2017
 
-set -wg pane-border-format "  #[fg=colour#{?pane_active,31,242}]#[fg=black,bg=colour#{?pane_active,31,242}]-- #{pane_index} #[fg=colour#{?pane_active,244,238}]#[fg=black]#[bg=colour#{?pane_active,244,238}]#{pane_title}#[default]#[fg=colour#{?pane_active,244,238}]  "
+set -wg pane-border-format "  #[fg=colour#{?pane_active,31,242}]#[fg=black,bg=colour#{?pane_active,31,242}]-- #{pane_index} #[fg=colour#{?pane_active,244,238}]#[fg=black]#[bg=colour#{?pane_active,244,238}]#{pane_title}#[default]#[fg=colour#{?pane_active,244,238}]#{?window_zoomed_flag, #[fg=colour31]#[fg=black]#[bg=colour31][ZOOMED:#{pane_index}/#{window_panes}]#[default]#[fg=colour31]#[default], } "
 set -g  status-justify "centre"
 set -g  status "on"
 set -g  status-style "none"
