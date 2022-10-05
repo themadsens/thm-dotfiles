@@ -1,0 +1,34 @@
+[colors]
+ansi = [
+    '#000000',
+    '#8A252C',
+    '#107A02',
+    '#706F00',
+    '#0220B2',
+    '#CA30C7',
+    '#008383',
+    '#9c9c9c',
+]
+background = '#ddd9c2'
+brights = [
+    '#555753',
+    '#EF2929',
+    '#99E343',
+    '#FDEB61',
+    '#729FCF',
+    '#AD7FA8',
+    '#34E2E2',
+    '#EEEEEC',
+]
+cursor_bg = '#000000'
+cursor_border = '#222222'
+cursor_fg = '#ffffff'
+foreground = '#000000'
+selection_bg = '#C1DEFF'
+selection_fg = '#000000'
+
+[colors.indexed]
+
+[metadata]
+name = 'Novelty-fm2'
+
