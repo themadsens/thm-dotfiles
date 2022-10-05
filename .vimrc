@@ -1490,6 +1490,9 @@ let g:matchup_matchparen_deferred = 1
 " table-mode
 let g:table_mode_corner_corner='+'
 
+" hexokinase
+let g:Hexokinase_highlighters = ['virtual', 'backgroundfull']
+
 " echo "DONE sourcing"
 
 " vim: set sw=3 sts=3 et:

@@ -318,6 +318,7 @@ if [ -n "$PS1" ] ;then
        xterm*|linux*|screen*|tmux*)
                 stln() { printf "\033]2;%s\007" "$*" ; }
                 itit() { printf "\033]1;%s\007" "$*" ; }
+                [ $WEZTERM_PANE ] && itit() { :; }
                 ;;
        *)       stln() { :; } ; itit() { :; }
        ;;
@@ -328,19 +329,19 @@ if [ -n "$PS1" ] ;then
    if [[ "$NVIM_LISTEN_ADDRESS" ]] ;then
       itit() { :; }
    fi
-   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:`tty | cut -c10- | sed 's/^\(0*\)\(..*\)/\2/'`
    Tty=`tty | cut -c10- | sed 's/^\(0*\)\(..*\)/\2/'`
+   HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:$Tty
    stdir() {
       local p=${PWD/$AMPROOT/@}
       if [[ $p = @/* ]] ;then Path=${p:2}; else Path=""; fi
       local p=${p/$HOME/\~}
       local V=''
-      stln "-- $HostnTty $(ttprompt 2)- ${AMPROOT##*/} - $p --"
       if [[ "$TMUX" ]] ;then
          itit "$Tty-$(cut -c1-3 <<< ${AMPROOT##*/})-${p##*/}"
       else
          itit "$Tty - $(cut -c1-3 <<< ${AMPROOT##*/}) - ${p##*/}"
       fi
+      stln "-- $HostnTty $(ttprompt 2)- ${AMPROOT##*/} - $p --"
    }
 
    espmon ()

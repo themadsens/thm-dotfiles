@@ -70,6 +70,7 @@ call plug#begin('~/.vim/plugged')
   "Plug 'nvim-treesitter/nvim-treesitter'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'Yggdroot/LeaderF'
+  Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 "endif
 
 
