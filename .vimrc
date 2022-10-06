@@ -1493,6 +1493,9 @@ let g:table_mode_corner_corner='+'
 " hexokinase
 let g:Hexokinase_highlighters = ['virtual', 'backgroundfull']
 
+"coc
+imap <expr><M-C> coc#start()
+
 " echo "DONE sourcing"
 
 " vim: set sw=3 sts=3 et:
