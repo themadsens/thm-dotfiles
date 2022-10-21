@@ -1,4 +1,4 @@
-
+#bash
 SHELL=$BASH
 export LC_CTYPE=en_US.UTF-8
 umask 022
@@ -314,7 +314,8 @@ if [ -n "$PS1" ] ;then
        xterm*|linux*|screen*|tmux*)
                 stln() { printf "\033]2;%s\007" "$*" ; }
                 itit() { printf "\033]1;%s\007" "$*" ; }
-                [ $WEZTERM_PANE ] && itit() { :; }
+                [ $WEZTERM_PANE ] &&
+                   itit() { printf "\033]1337;SetUserVar=itit=%s\007" "$(echo -n "$*" | base64)"; }
                 ;;
        *)       stln() { :; } ; itit() { :; }
        ;;

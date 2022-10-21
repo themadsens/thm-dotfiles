@@ -123,7 +123,7 @@ local function WHFunc(key)
   end
 end
 hs.hotkey.bind(hyper, "W", function() WHFunc("W") end)
-hs.hotkey.bind(hyper, "H", function() WHFunc("H") end)
+hs.hotkey.bind(hyper, "V", function() WHFunc("H") end)
 hs.hotkey.bind(hyper, "F", function() WHFunc("F") end)
 
 local mspoon = hs.loadSpoon('LightAndScroll'):start()
