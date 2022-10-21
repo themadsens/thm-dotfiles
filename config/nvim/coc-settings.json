@@ -67,7 +67,7 @@
         }
       },
       "filetypes": [ "vim" ]
-    },
+    }
     /*"lua": {
       "command": "java",
       "args": ["-cp", "/home/fm/bin3/EmmyLua-LS-all.jar", "com.tang.vscode.MainKt"],
