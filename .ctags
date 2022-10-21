@@ -1,5 +1,5 @@
 -I--exclude=@.agignore
---extra=+fq
+--extras=+fq
 
 -I ROMFN_ATTR
 -I IRAM_ATTR
@@ -16,16 +16,16 @@
 --langmap=C++:+.ino
 
 -I-From-https://github.com/rstacruz/ctags-css
---langdef=css
---langmap=css:.css
---langmap=css:+.scss
---langmap=css:+.sass
---langmap=css:+.styl
---langmap=css:+.less
---regex-css=/^([a-z.].*\.|\.)([a-z][A-Za-z0-9_-]+)([ {]|$)/\2/c,class,classes/
---regex-css=/^([\$@][A-Za-z0-9_-]+): /\1/v,variable,variables/
---regex-css=/^([A-Za-z0-9_-]+) = /\1/v,variable,variables/
---regex-css=/^[ \t]*(@mixin |= ?)([A-Za-z0-9_-]+)/\2/m,mixin,mixins/
+--langdef=css2
+--langmap=css2:.css
+--langmap=css2:+.scss
+--langmap=css2:+.sass
+--langmap=css2:+.styl
+--langmap=css2:+.less
+--regex-css2=/^([a-z.].*\.|\.)([a-z][A-Za-z0-9_-]+)([ {]|$)/\2/c,class,classes/
+--regex-css2=/^([\$@][A-Za-z0-9_-]+): /\1/v,variable,variables/
+--regex-css2=/^([A-Za-z0-9_-]+) = /\1/v,variable,variables/
+--regex-css2=/^[ \t]*(@mixin |= ?)([A-Za-z0-9_-]+)/\2/m,mixin,mixins/
 
 --langdef=javascript2
 --langmap=javascript2:.js
@@ -43,14 +43,14 @@
 --regex-javascript2=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 
 
---langdef=markdown
---langmap=markdown:.md
---regex-markdown=/^(#[^#].*)/\1/1,level1/
---regex-markdown=/^(##[^#].*)/\1/2,level2/
---regex-markdown=/^(###[^#].{0,19})/\1/3,level3/
---regex-markdown=/^(=[^=].*)/\1/1,level1/
---regex-markdown=/^(==[^=].*)/\1/2,level2/
---regex-markdown=/^(===[^=].{0,19})/\1/3,level3/
+--langdef=markdown2
+--langmap=markdown2:.md
+--regex-markdown2=/^(#[^#].*)/\1/x,level1/
+--regex-markdown2=/^(##[^#].*)/\1/y,level2/
+--regex-markdown2=/^(###[^#].{0,19})/\1/z,level3/
+--regex-markdown2=/^(=[^=].*)/\1/x,level1/
+--regex-markdown2=/^(==[^=].*)/\1/t,level2/
+--regex-markdown2=/^(===[^=].{0,19})/\1/z,level3/
 
 -I-From-https://gist.github.com/redguardtoo/b12ddae3b8010a276e9b
 --languages=-Lua
@@ -73,12 +73,12 @@
 
 --langmap=ruby:+.rake
 --regex-ruby=/(^|[:;])[ \t]*([A-Z][[:alnum:]_]+) *=/\2/c,class,constant/
---regex-ruby=/(^|;)[ \t]*(has_many|belongs_to|has_one|has_and_belongs_to_many)\(? *:([[:alnum:]_]+)/\3/f,function,association/
---regex-ruby=/(^|;)[ \t]*(named_)?scope\(? *:([[:alnum:]_]+)/\3/f,function,named_scope/
---regex-ruby=/(^|;)[ \t]*expose\(? *:([[:alnum:]_]+)/\2/f,function,exposure/
---regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2/f,function,aasm_event/
---regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2!/f,function,aasm_event/
---regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2?/f,function,aasm_event/
+--regex-ruby=/(^|;)[ \t]*(has_many|belongs_to|has_one|has_and_belongs_to_many)\(? *:([[:alnum:]_]+)/\3/x,function,association/
+--regex-ruby=/(^|;)[ \t]*(named_)?scope\(? *:([[:alnum:]_]+)/\3/x,function,named_scope/
+--regex-ruby=/(^|;)[ \t]*expose\(? *:([[:alnum:]_]+)/\2/x,function,exposure/
+--regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2/x,function,aasm_event/
+--regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2!/x,function,aasm_event/
+--regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2?/x,function,aasm_event/
 
 --langdef=ini
 --langmap=ini:.ini
