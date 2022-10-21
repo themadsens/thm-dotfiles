@@ -1471,8 +1471,12 @@ nmap <Leader>h :SignifyHunkDiff<CR>
 nmap <Leader>uh :SignifyHunkUndo<CR>
 nmap zv :SignifyToggle<CR>
 
+if has('nvim')
+   tnoremap <Esc> <C-\><C-n>
+endif
+
 " Matchup -- treesitter
-if has('nvimXXXX')
+if has('nvim-HIDE')
   lua <<EOF
   require'nvim-treesitter.configs'.setup {
     matchup = {
