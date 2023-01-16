@@ -1488,7 +1488,8 @@ nmap g/ :FzfHistory/<CR>
 nmap g: :FzfHistory:<CR>
 nmap F  :FzfBuffers<CR>
 "nmap F  :files<CR>
-let $BAT_THEME = "ansi-light"
+let $BAT_THEME = "ansi"
+let $FZF_DEFAULT_OPTS = "--exact --query=^"
 let g:fzf_preview_window = ['up', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 
@@ -1505,8 +1506,14 @@ nmap <Leader>h :SignifyHunkDiff<CR>
 nmap <Leader>uh :SignifyHunkUndo<CR>
 nmap zv :SignifyToggle<CR>
 
+if has('nvim-DISABLE')
+   " https://github.com/junegunn/fzf.vim/issues/544#issuecomment-457456166
+  au TermOpen * tnoremap <Esc> <c-\><c-n>
+  au FileType fzf tunmap <Esc>
+endif
+
 if has('nvim')
-   tnoremap <Esc> <C-\><C-n>
+   lua require 'smart-term-esc' .setup {key='<Esc>', except={'nvim', 'vim', 'fx', 'fzf'}}
 endif
 
 " Matchup -- treesitter
