@@ -1,5 +1,4 @@
 -I--exclude=@.agignore
---extras=+fq
 
 -I ROMFN_ATTR
 -I IRAM_ATTR
