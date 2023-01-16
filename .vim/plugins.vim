@@ -18,8 +18,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/tpope/vim-fugitive.git'
   Plug 'https://github.com/tpope/vim-scriptease.git'
   Plug 'https://github.com/junegunn/gv.vim.git'
-  Plug 'junegunn/fzf'
-  Plug 'junegunn/fzf.vim'
+  Plug 'https://github.com/junegunn/fzf'
+  Plug 'https://github.com/junegunn/fzf.vim'
 " Plug 'https://github.com/scrooloose/syntastic'
   Plug 'https://github.com/cespare/vim-toml'
   Plug 'https://github.com/tmux-plugins/vim-tmux'
@@ -49,28 +49,30 @@ call plug#begin('~/.vim/plugged')
 " Plug 'https://github.com/themadsens/VimPyServer'
   Plug 'https://github.com/rust-lang/rust.vim'
   Plug 'https://github.com/preservim/nerdtree.git'
-  Plug 'ziglang/zig.vim'
-  Plug 'simnalamburt/vim-mundo'
-" Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
-  Plug 'kdheepak/lazygit.nvim'
-  Plug 'mhinz/vim-signify'
-  Plug 'ryanoasis/vim-devicons'
+  Plug 'https://github.com/ziglang/zig.vim'
+  Plug 'https://github.com/simnalamburt/vim-mundo'
+" Plug 'https://github.com/iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+  Plug 'https://github.com/kdheepak/lazygit.nvim'
+  Plug 'https://github.com/mhinz/vim-signify'
+  Plug 'https://github.com/ryanoasis/vim-devicons'
 " Plug 'kyazdani42/nvim-web-devicons'
-  Plug 'kergoth/vim-bitbake'
-  Plug 'Vimjas/vim-python-pep8-indent'
-  Plug 'khaveesh/vim-fish-syntax'
-  Plug 'neoclide/jsonc.vim'
-  Plug 'dhruvasagar/vim-table-mode'
-" Plug 'Rykka/riv.vim'
-" Plug 'Rykka/InstantRst'
-  Plug 'juneedahamed/vc.vim'
+  Plug 'https://github.com/kergoth/vim-bitbake'
+  Plug 'https://github.com/Vimjas/vim-python-pep8-indent'
+  Plug 'https://github.com/khaveesh/vim-fish-syntax'
+  Plug 'https://github.com/neoclide/jsonc.vim'
+  Plug 'https://github.com/dhruvasagar/vim-table-mode'
+" Plug 'https://github.com/Rykka/riv.vim'
+" Plug 'https://github.com/Rykka/InstantRst'
+  Plug 'https://github.com/juneedahamed/vc.vim'
+  Plug 'https://github.com/fcpg/vim-colddeck'
 
 "if has('nvim')
   "Plug 'andymass/vim-matchup'
   "Plug 'nvim-treesitter/nvim-treesitter'
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  Plug 'Yggdroot/LeaderF'
-  Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+  Plug 'https://github.com/neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'https://github.com/Yggdroot/LeaderF'
+  Plug 'https://github.com/sychen52/smart-term-esc.nvim'
+  Plug 'https://github.com/rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 "endif
 
 
