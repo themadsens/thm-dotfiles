@@ -236,6 +236,7 @@ setglobal virtualedit=block
 setglobal noignorecase
 setglobal smartcase
 setglobal nofoldenable
+setglobal wildoptions=pum,tagfile
 "setglobal undofile
 if has('nvim')
    setglobal list
