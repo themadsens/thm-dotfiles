@@ -1,7 +1,7 @@
 "
 " Adapted from
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
-if !has("nvim") | finish | endif
+"if !has("nvim") | finish | endif
 "
 let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-sumneko-lua', '@yaegassy/coc-pylsp']
 "                              'coc-vimlsp',          Also: npm install -g vim-language-server

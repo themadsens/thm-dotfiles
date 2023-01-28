@@ -29,14 +29,14 @@
       },
       "settings": {}
     },
-    "bash": {
+    /*"bash": {
       // "install_command": "npm i -g bash-language-server",
       // "homepage":        "https://github.com/bash-lsp/bash-language-server",
       "command": "bash-language-server",
       "args": ["start"],
       "filetypes": ["sh"],
       "ignoredRootPaths": ["~"]
-    },
+    },*/
     "ts": {
       "command": "deno",
       "args": ["lsp"],

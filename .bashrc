@@ -172,7 +172,7 @@ if [ -n "$PS1" ] ;then
    unset _GRC
 
    diff() { colorize diff -u "$@"; }
-   df()   { colorize df -k "$@"; }
+   df()   { colorize df -klP "$@"; }
 
    # Xubuntu: CapsLock -> CTRL-G + Control-R pressed -> DK layout
    fixkbd() { 
@@ -526,7 +526,7 @@ if [ -n "$PS1" ] ;then
 
    bgstatp() {
       if [[ $(jobs -s; jobs -r) ]] ;then
-         echo " BG:"$(jobs -s -p | wc -w),$(jobs -r -p | wc -w)
+         printf ' BG:%d,%d' "$(jobs -s -p | wc -w)" "$(jobs -r -p | wc -w)"
       fi
    }
 
