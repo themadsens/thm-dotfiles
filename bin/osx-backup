@@ -14,10 +14,10 @@ fi
 if [ "$Suffix" ] ;then
     $HOME/bin/ampbackup $Suffix
     echo "Backup ampep at $(date)"
-    pg_dump --clean --if-exists ampep \
+    PgLaunch.sh pgcmd pg_dump --clean --if-exists ampep \
         | gzip > $HOME/tmp/db-backup/ampep-${Suffix}.gz
     echo "Backup greenwise at $(date)"
-    pg_dump --clean --if-exists --exclude-table tz_world greenwise \
+    PgLaunch.sh pgcmd pg_dump --clean --if-exists --exclude-table tz_world greenwise \
         | gzip > /$HOME/tmp/db-backup/greenwise-${Suffix}.gz
     for h in checkmark.amsdns.net app.checkmarks.co.uk ;do 
         for t in CM-SITE CM-USER ;do

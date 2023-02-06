@@ -56,7 +56,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/mhinz/vim-signify'
   Plug 'https://github.com/ryanoasis/vim-devicons'
 " Plug 'kyazdani42/nvim-web-devicons'
-<<<<<<< Updated upstream
   Plug 'https://github.com/kergoth/vim-bitbake'
   Plug 'https://github.com/Vimjas/vim-python-pep8-indent'
   Plug 'https://github.com/khaveesh/vim-fish-syntax'
@@ -75,26 +74,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/sychen52/smart-term-esc.nvim'
   Plug 'https://github.com/rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 "endif
-=======
-  Plug 'kergoth/vim-bitbake'
-  Plug 'Vimjas/vim-python-pep8-indent'
-  Plug 'khaveesh/vim-fish-syntax'
-  Plug 'neoclide/jsonc.vim'
-  Plug 'dhruvasagar/vim-table-mode'
-" Plug 'Rykka/riv.vim'
-" Plug 'Rykka/InstantRst'
-  Plug 'juneedahamed/vc.vim'
-  Plug 'elixir-editors/vim-elixir'
-
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  Plug 'Yggdroot/LeaderF'
-if has('nvim')
-  "Plug 'andymass/vim-matchup'
-  "Plug 'nvim-treesitter/nvim-treesitter'
-  Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
-endif
->>>>>>> Stashed changes
-
 
 call plug#end()
 
