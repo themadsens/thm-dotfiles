@@ -76,5 +76,6 @@
     }*/
 
   },
-  "Lua.telemetry.enable": false
+  "Lua.telemetry.enable": false,
+  "snippets.ultisnips.pythonPrompt": false
 }
