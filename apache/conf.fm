@@ -12,7 +12,8 @@ DocumentRoot "/Users/fm/thm-dotfiles/apache/www"
     Require all granted
 </Directory>
 
-<IfModule php7_module>
+<IfModule php_module>
+	AddHandler php-script .php
 	AddType application/x-httpd-php .php
 	AddType application/x-httpd-php-source .phps
 

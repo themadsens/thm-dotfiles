@@ -14,6 +14,7 @@ case $1 in
 esac
 
 case $1 in 
+	fri) NODE=1199 ;;
 	kant*) NODE=1210 ;;
 	k*ld*) NODE=1209 ;;
 	loc21)   NODE=10;   SERVER=localhost;;

@@ -8,6 +8,8 @@
  * (C) Copyright 2020 Amplex, fm@amplex.dk
 --]]
 
+require 'lua_debug'
+
 local hs = _G.hs
 require 'hs.ipc'
 package.path = package.path:gsub('/thm%-dotfiles/files/', '/.hammerspoon/');
@@ -158,8 +160,40 @@ Install:andUse("FadeLogo", {
   start = true
 })
 
+local wifiIfNames, wifiTimer
+local function isEthernetConnected()
+  ipv4 = hs.network.primaryInterfaces()
+  if not wifiIfNames then
+    wifiIfNames = {}
+    for _, wf in ipairs(hs.wifi.interfaces()) do
+      wifiIfNames[wf] = true
+    end
+  end
 
-hs.timer.doAfter(0.6, findMyWindows)
+  return ipv4 and not wifiIfNames[ipv4]
+end
+
+local function toggleWifi()
+  wifiTimer:start()
+  desiredState = not isEthernetConnected() and true or false
+  -- print("isEthernetConnected", isEthernetConnected(), desiredState, pp(wifiIfNames))
+
+  if hs.wifi.interfaceDetails()['power'] ~= desiredState then
+    hs.wifi.setPower(desiredState)
+
+    newState = desiredState and "on" or "off"
+    hs.alert.show("Turning wifi " .. newState)
+  end
+end
+wifiTimer = hs.timer.delayed.new(5, function() toggleWifi() end)
+print("TIMER", wifiTimer)
+wifiTimer:start()
+
+
+-- Toggle WiFi based on Ethernet being connected or not
+-- local systemWatcher = hs.caffeinate.watcher.new(handleMyWifi)
+
+print("TIMER", hs.timer.doAfter(0.6, findMyWindows))
 print "\n\n-------------------------------------\n\n"
 
 -- vim: set sw=2 sts=2 et:
