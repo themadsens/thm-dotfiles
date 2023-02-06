@@ -1,0 +1,104 @@
+--[[
+* @file init.lua
+* ABSTRACT HERE <<
+*
+* (C) Copyright 2020 Amplex, fm@themadsens.dk
+--]]
+local hs = _G.hs
+local spoon = {
+  name = "LightAndScroll",
+  version = "1.0",
+  author = "Flemming <hammerspoon@themadsens.dk>",
+  homepage = "https://github.com/Hammerspoon/Spoons",
+  license = "MIT - https://opensource.org/licenses/MIT",
+}
+setmetatable(spoon, spoon)
+spoon.__gc = function(t)
+  t:stop()
+end
+
+local mePath = (function() return debug.getinfo(2, "S").source end)():sub(2):match("(.*/)")
+local imgOn = hs.image.imageFromPath(mePath.."/bulb-on.png"):size({h=16, w=16})
+local imgOff = hs.image.imageFromPath(mePath.."/bulb-off.png"):size({h=16, w=16})
+local imgScroll = hs.image.imageFromPath(mePath.."/scroll.tiff"):size({h=16, w=16})
+
+function spoon.setDisplay(on)
+  spoon.menuBar:setIcon(on and imgOn or imgOff)
+end
+
+local oldMousePosition = {}
+local scrollIntensity = 1
+
+local buttonDownMouseTracker = hs.eventtap.new({ hs.eventtap.event.types.mouseMoved }, function(e)
+  oldMousePosition = hs.mouse.getAbsolutePosition()
+
+  local dX = e:getProperty(hs.eventtap.event.properties['mouseEventDeltaX'])
+  local dY = e:getProperty(hs.eventtap.event.properties['mouseEventDeltaY'])
+
+  hs.eventtap.scrollWheel({dX * scrollIntensity , - dY * scrollIntensity }, {})
+  -- put the mouse back
+  hs.mouse.setAbsolutePosition(oldMousePosition)
+  return false
+end)
+
+local eventTypes = hs.eventtap.event.types
+local buttonDownToScroll = hs.eventtap.new({ eventTypes.flagsChanged }, function(e)
+  if e:getFlags().ctrl then
+    buttonDownMouseTracker:start()
+    spoon.menuBar:setIcon(imgScroll)
+  else
+    buttonDownMouseTracker:stop()
+    spoon.setDisplay(spoon.scrollOn)
+  end
+end)
+
+
+function spoon.start()
+  if spoon.menuBar then spoon:stop() end
+
+  local menu
+  menu = {
+    {title="Console", checked=false, fn=function()
+      local show = not hs.console.hswindow()
+      menu[1].checked = show
+      if show then
+        hs.openConsole()
+        hs.focus()
+      else
+        hs.closeConsole()
+      end
+    end},
+    {title="Ctrl scroll", checked=true, fn=function()
+      spoon.scrollOn = not spoon.scrollOn
+      menu[2].checked = spoon.scrollOn
+      if spoon.scrollOn then
+        buttonDownToScroll:start()
+      else
+        buttonDownToScroll:stop()
+      end
+    end},
+  }
+
+  spoon.menuBar = hs.menubar.new()
+  :setTitle(hs.styledtext.new("Text", {
+    font=hs.styledtext.defaultFonts.label,
+    paragraphStyle={maximumLineHeight=9}
+  }))
+  :setMenu(function()
+    menu[1].checked = hs.console.hswindow() ~= nil
+    if menu[1].checked then
+      hs.openConsole(true)
+    end
+    return menu
+  end)
+
+  spoon.scrollOn = true
+  spoon.setDisplay(spoon.scrollOn)
+  buttonDownToScroll:start()
+end
+
+function spoon.stop()
+end
+
+return spoon
+-- vim: set sw=2 sts=2 et:

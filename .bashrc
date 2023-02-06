@@ -41,6 +41,8 @@ if [ -n "$PS1" ] ;then
 
    export SVN_EDITOR=vi
    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
+   [[ -d $JAVA_HOME ]] || export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_361.jdk/Contents/Home/
+   [[ -d $JAVA_HOME ]] || export JAVA_HOME=/tmp/NONE
    export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.4.1_1/
    export JBOSS_HOME=/opt/wildfly
    export AMPCOM_HOME=/opt/ampcom
@@ -86,7 +88,7 @@ if [ -n "$PS1" ] ;then
       tree()      { exa -laB --tree --color=always "$@" | _green_to_thousands; }
       lth()       { exa -laB -s modified -r --color=always "$@" | head -20 | _green_to_thousands; }
    else
-      alias ll='  ls -la'
+      ll() { ls -la "$*"; }
       if [[ $(uname -s) = Darwin ]] ;then
          alias ls='ls -G'
       else
@@ -207,7 +209,7 @@ if [ -n "$PS1" ] ;then
    _txt()      { eval "file $*" | command grep -w text | cut -d: -f1; }
    vif()       { vi -c set\ hlsearch "+/$*/" $(ag --ignore .svn --ignore .git --ignore \*-pak -wl "$@"); }
    vdiff()     { vim -g -f -d --cmd 'set columns=220' -c 'normal <C-W>=' "$@"; }
-   mt()        { xterm +tb -e sh -c "while multitail $@; do : ;done"; }
+   multitail() { XDG_CONFIG_HOME=$HOME/.config command multitail "$@"; }
    ToAURoot()  { tar zcf - $2 | command ssh $1 tar zxvf - -C /flash/root/; }
    Trace()     { amp-backtrace.lua "$@" | less +/'ERROR=>' --jump-target=.5; }
    psman()     { man -aW "$@" | xargs zcat | groff -man -Tps -P-pa4 \
@@ -298,7 +300,7 @@ if [ -n "$PS1" ] ;then
    }
    tmux-ssh() {
       tput smcup
-      ssh "$@" -A -X -t 'exec bash -i -c "PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach"'
+      sshwrap ssh "$@" -A -X -t 'exec bash -i -c "PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach"'
       eof; printf '\e[?1000l'
    }
    alias tsel='tmux show-buffer'
@@ -368,7 +370,16 @@ if [ -n "$PS1" ] ;then
             return 0
          fi
       fi
-      command $Cmd "$@"
+      if ping -c 1 -t 1 "$Host"  |&  command grep -q 'Unknown host' ;then
+         HostIP=$(host -4 -t A $Host | awk '/has address/ {print $4}')
+         if [[ "$HostIP" ]] ;then
+            command $Cmd "$@" -o "ProxyCommand=nc $HostIP %p"
+         else
+            command $Cmd "$@"
+         fi
+      else
+         command $Cmd "$@"
+      fi
       eof
    }
    function ssh()      { if [[ $# -eq 1 ]] ;then sshwrap ssh "$@" ;else command ssh "$@" ;fi; }
@@ -509,11 +520,15 @@ if [ -n "$PS1" ] ;then
    # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
    for f in bash_completion profile.d/bash_completion.sh ;do
       for d in /etc/ /usr/local/etc /usr/local/share/bash-completion ;do
-         [ -f $d/$f ] && source $d/$f
+         if [ -r $d/$f ] ;then
+            source $d/$f
+         fi
       done
    done
-   for f in ~/.bash_completion.d/* /usr/local/etc/bash_completion.d/* ;do
-      [ -r $f ] && source $f
+   for f in ~/.bash_completion.d/* ;do
+      if [ -r $f ] ;then
+         source $f
+      fi
    done
 
    gitps1() {

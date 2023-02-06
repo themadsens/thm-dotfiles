@@ -1,9 +1,15 @@
 #!/bin/bash
 
 PGOLD=/Applications/Postgres.app/Contents/Versions/9.4
-PG=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
 DATAOLD="/Volumes/ToolChain/Postgres/var-9.4"
-DATA="/Volumes/ToolChain/Postgres/var-10"
+PGNEW=/Applications/Postgres.app/Contents/Versions/14/
+DATANEW="/Volumes/Option/Postgres/var-14"
+PG=/Applications/Postgres.app/Contents/Versions/10/
+DATA="/Volumes/Option/Postgres/var-10"
+if [[ ! -d $PG ]] ;then
+    PG=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
+    DATA="/Volumes/ToolChain/Postgres/var-10"
+fi
 
 if [[ "$1" = old ]] ;then
     DATA="$DATAOLD"
