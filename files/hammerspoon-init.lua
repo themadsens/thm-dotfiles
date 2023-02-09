@@ -173,21 +173,50 @@ local function isEthernetConnected()
   return ipv4 and not wifiIfNames[ipv4]
 end
 
+local setState = nil
 local function toggleWifi()
-  wifiTimer:start()
+  wifiTimer:start(10)
   desiredState = not isEthernetConnected() and true or false
   -- print("isEthernetConnected", isEthernetConnected(), desiredState, pp(wifiIfNames))
 
-  if hs.wifi.interfaceDetails()['power'] ~= desiredState then
+  if setState ~= desiredState then
     hs.wifi.setPower(desiredState)
+    setState = desiredState
 
     newState = desiredState and "on" or "off"
+    print("WIFI Turning wifi " .. newState)
     hs.alert.show("Turning wifi " .. newState)
   end
 end
 wifiTimer = hs.timer.delayed.new(5, function() toggleWifi() end)
-print("TIMER", wifiTimer)
-wifiTimer:start()
+print("WiFi timer", wifiTimer:start(2))
+
+eventTimer = hs.timer.delayed.new(2, function() 
+  print("EVENT timer trigger")
+  wifiTimer:start(1)
+  mspoon.refresh()
+end)
+wakeEv = {[hs.caffeinate.watcher.screensaverDidStop] = "ssStop", [hs.caffeinate.watcher.screensDidUnlock] = "scrUnlk",
+          [hs.caffeinate.watcher.screensDidWake] = "scrWake", [hs.caffeinate.watcher.systemDidWake] = "sysWake"}
+print("hs.caffeinate.watcher", hs.caffeinate.watcher.new(function(t)
+  if wakeEv[t] then
+    print("Wake event:", wakeEv[t])
+    eventTimer:start()
+  end
+end):start())
+_G.wifiWatcher = hs.wifi.watcher.new(function(w, m)
+  print("WiFi changed", m)
+  eventTimer:start()
+end):watchingFor({"linkChange", "modeChange", "powerChange"}):start()
+print("hs.wifi.watcher", wifiWatcher, wifiWatcher:watchingFor())
+print("hs.usb.watcher", hs.usb.watcher.new(function(typ, prod, name, vid, pid)
+  print("USB", typ, prod, name, vid, pid)
+  eventTimer:start()
+end):start())
+print("hs.screen.watcher", hs.screen.watcher.new(function()
+  print("Screen change")
+  eventTimer:start()
+end):start())
 
 
 -- Toggle WiFi based on Ethernet being connected or not
