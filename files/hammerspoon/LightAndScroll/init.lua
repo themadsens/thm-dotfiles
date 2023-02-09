@@ -23,7 +23,7 @@ local pp = function(val, opt, showMeta)
 end
 
 --local color = require "hs.drawing.color"
-local refresh, toggleLight
+local toggleLight
 local spoon = {
   name = "LightAndScroll",
   version = "1.0",
@@ -160,7 +160,7 @@ local buttonDownToScroll = hs.eventtap.new({eventTypes.flagsChanged, eventTypes.
 end)
 
 function spoon.start()
-  if spoon.menuBar then spoon:stop() end
+  if spoon.menuBar then spoon.stop() end
 
   local menu
   menu = {
@@ -189,7 +189,7 @@ function spoon.start()
     {title="Preferences", fn=function() hs.openPreferences() end},
     {title="Exit HS", fn=function() os.exit() end},
     {title="-"},
-    {title="Refresh", fn=refresh},
+    {title="Refresh", fn=function() spoon.refresh() end},
   }
 
   for _,seg in ipairs(segs) do
@@ -214,7 +214,7 @@ function spoon.start()
   buttonDownToScroll:start()
 
   --setSegs() -- FIXME: SHOULD BE: refresh() 
-  refresh()
+  spoon.refresh()
   return spoon
 end
 
@@ -225,7 +225,7 @@ local function makeUrl(url, repl)
 end
 
 local wsNotice
-function refresh()
+function spoon.refresh()
   local url = makeUrl("https://"..segs.server.."/gridlight/rs/segment/below/{{node}}", {node=segs.topNode})
   local headers = {['content-type']='application/json'}
   headers.authorization = "Basic "..hs.base64.encode(spoon.user..":"..spoon.pw)
@@ -245,9 +245,7 @@ function refresh()
       end
       print(pp(segs,2), pp(segOn, 2))
       setSegs()
-      if not wsNotice then
-        spoon.wsNotify()
-      end
+      spoon.wsNotify()
     end
   end)
   setSegs()

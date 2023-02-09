@@ -615,6 +615,14 @@ function! SetFileTypeOpts()
    elseif ft ==# 'xml'
       call TextEnableCodeSnip('sql', '<sql>', '</sql>') |
       setlocal sw=2 ts=2 et
+   elseif ft ==# 'javascript'
+     compiler jshint
+     setlocal formatoptions-=t
+     setlocal sw=2 ts=2 et
+     "setlocal cindent
+     "setlocal indentexpr& " The provided indent file is hopeless
+   elseif ft ==# 'python'
+     setlocal sw=4 ts=4 et 
    elseif ft ==# 'css' || ft ==# 'html'
       setlocal sw=2 ts=2 et
    end
