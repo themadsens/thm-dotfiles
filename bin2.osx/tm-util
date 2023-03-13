@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -o errexit
-export PATH=/usr/local/bin:/usr/sbin:/usr/bin:$PATH
+export PATH=/usr/local/bin:/opt/homebrew/bin:/usr/sbin:/usr/bin:$PATH
 
 # Min free gigs
 MINFREE=200
