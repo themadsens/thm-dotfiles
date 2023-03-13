@@ -124,7 +124,7 @@ local function WHFunc(key)
     win:setFrame(frame, 0)
   end
 end
-hs.hotkey.bind(hyper, "W", function() WHFunc("W") end)
+-- hs.hotkey.bind(hyper, "W", function() WHFunc("W") end)
 hs.hotkey.bind(hyper, "V", function() WHFunc("H") end)
 hs.hotkey.bind(hyper, "F", function() WHFunc("F") end)
 

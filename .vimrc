@@ -176,8 +176,6 @@ else
          exe 'setglobal t_Co=16'
          " highlight LineNr cterm=NONE ctermbg=187
          " highlight CursorLine cterm=NONE ctermbg=186
-         setglobal cursorline
-         set cursorline
 
          " To make the shift-Tab <S-Tab> key work, also see :help suffixes
          cmap <Esc>[1~ <C-P>
@@ -238,6 +236,8 @@ setglobal smartcase
 setglobal nofoldenable
 setglobal wildoptions=pum,tagfile
 "setglobal undofile
+setglobal cursorline
+set cursorline
 if has('nvim')
    setglobal list
    setlocal  list
@@ -291,7 +291,7 @@ nmap [f    :bunload<CR>
 nmap zx    :call ToggleOpt("hlsearch")<CR>
 nmap zs    :call ToggleOpt("spell")<CR>
 nmap zn    :call ToggleOpt("number")<CR>
-nmap zm    :call ToggleOpt("cursorcolumn", "colorcolumn=125")<CR>
+nmap zm    :call ToggleOpt("cursorcolumn", "colorcolumn=128")<CR>
 nmap zf    :call ToggleOpt("foldenable")<CR>
 nmap zz    :call ToggleOpt("ignorecase")<CR>
 nmap zp    :call ToggleOpt("paste")<CR>
@@ -761,7 +761,7 @@ function! MakePrg(mkArg)
    elseif makeArgs ==# 'luacheck' || (&ft ==# 'lua' && !filereadable('Makefile'))
       setlocal makeprg=luacheck\ --no-color
       let makeArgs = '%'
-   elseif findfile('pom.xml', '.;') ==# '' && findfile('gulpfile.js', '.;') !=# '' && &ft ==# 'javascript'
+   elseif findfile('pom.xml', '.;') == '' && findfile('gulpfile.js', '.;') != '' && &ft ==# 'javascript'
       setlocal makeprg=gulp\ --no-color
       if makeArgs ==# ''
          let makeArgs = 'lint'

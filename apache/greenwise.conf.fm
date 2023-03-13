@@ -74,6 +74,8 @@ ProxyPassReverse /cm-listener http://${VHOST}:30005
 ProxyPass /cm-listenerX http://${VHOST}:30005
 ProxyPassReverse /cm-listenerX http://${VHOST}:30005
 
+Header set WWW-Authenticate "OC_Basic realm=\"gridlight\""
+
 #ProxyPass / http://${VHOST}:8000/common-ui
 #ProxyPassReverse / http://${VHOST}:8000/common-ui
 

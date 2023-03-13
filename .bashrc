@@ -24,8 +24,8 @@ if [ -n "$PS1" ] ;then
       export TERM=${TERM}-256color
    fi
 
-   if [[ $PATH != *$HOME/bin3:* ]] ;then
-       PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:/sbin:/usr/sbin:$PATH
+   if [[ -x /opt/homebrew/bin/brew ]] ;then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
    fi
    if [[ ! "$GOPATH" && -d $HOME/go/bin ]] ;then
        GOPATH=~/go
@@ -38,10 +38,14 @@ if [ -n "$PS1" ] ;then
          PATH=$HOME/$p:$PATH
       fi
    done
+   if [[ $PATH != *$HOME/bin3:* ]] ;then
+       PATH=$HOME/bin3:$HOME/bin2:$HOME/bin:/usr/local/bin:/opt/local/bin:/sbin:/usr/sbin:$PATH
+   fi
 
    export SVN_EDITOR=vi
-   export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
+   export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home/
    [[ -d $JAVA_HOME ]] || export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_361.jdk/Contents/Home/
+   [[ -d $JAVA_HOME ]] || export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
    [[ -d $JAVA_HOME ]] || export JAVA_HOME=/tmp/NONE
    export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.4.1_1/
    export JBOSS_HOME=/opt/wildfly
@@ -108,7 +112,7 @@ if [ -n "$PS1" ] ;then
    alias svnhead="svnlog --limit=20"
    alias rehash=" hash -r"
    alias sort='   LC_ALL=C sort'
-   alias reload=' exec env -u AMPROOT PATH=/usr/local/bin:/bin:/usr/bin bash -c "exec -l bash"'
+   alias reload=' exec env -u AMPROOT PATH=/usr/local/bin:/bin:/usr/bin bash -c "exec -l $(which bash)"'
    alias tsel='   tmux show-buffer'
    alias luai='   with-readline luajit'
    alias se='     vim -g --remote'
@@ -300,7 +304,7 @@ if [ -n "$PS1" ] ;then
    }
    tmux-ssh() {
       tput smcup
-      sshwrap ssh "$@" -A -X -t 'exec bash -i -c "PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach"'
+      sshwrap ssh "$@" -A -t 'exec bash -i -c "PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach"'
       eof; printf '\e[?1000l'
    }
    alias tsel='tmux show-buffer'
@@ -518,13 +522,17 @@ if [ -n "$PS1" ] ;then
    }
 
    # [[ $BASH_COMPLETION ]] || . /etc/bash_completion
-   for f in bash_completion profile.d/bash_completion.sh ;do
-      for d in /etc/ /usr/local/etc /usr/local/share/bash-completion ;do
-         if [ -r $d/$f ] ;then
-            source $d/$f
-         fi
+   if [[ -x /opt/homebrew/bin/brew ]] ;then
+      [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+   else
+      for f in bash_completion profile.d/bash_completion.sh ;do
+         for d in /etc/ /usr/local/etc /usr/local/share/bash-completion ;do
+            if [ -r $d/$f ] ;then
+               source $d/$f
+            fi
+         done
       done
-   done
+   fi
    for f in ~/.bash_completion.d/* ;do
       if [ -r $f ] ;then
          source $f
@@ -638,7 +646,7 @@ if [ -n "$PS1" ] ;then
       #i="${i//m/*}"
       #e="$(($i))"
       #printf "%d -- 0x%x\n" $e $e
-      lua-5.3 -e "val = ${*//@/*}
+      lua-5.4 -e "val = ${*//@/*}
                   print(string.format('%s -- 0x%x', val, val//1))"
    }
 

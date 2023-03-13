@@ -7,34 +7,39 @@ CMD=''
 SERVER=demo.gridlight.dk
 
 case $1 in 
-	on|1) CMD=on; shift;;
-	off|0) CMD=off; shift;;
-	dim1|2) CMD=dim1; shift;;
-	dim2|3) CMD=dim2; shift;;
+    on|1) CMD=on; shift;;
+    off|0) CMD=off; shift;;
+    dim1|2) CMD=dim1; shift;;
+    dim2|3) CMD=dim2; shift;;
 esac
 
 case $1 in 
-	fri) NODE=1199 ;;
-	kant*) NODE=1210 ;;
-	k*ld*) NODE=1209 ;;
-	loc21)   NODE=10;   SERVER=localhost;;
-	loc21-1) NODE=7;    SERVER=localhost;;
-	loc21-all) NODE=279;    SERVER=localhost;;
-	prloc21-1) NODE=3617; SERVER=localhost;;
-	prloc21-2) NODE=3618; SERVER=localhost;;
-	dev21)   NODE=0;    SERVER=devel.gridlight.dk;;
-	dev21-1) NODE=1330; SERVER=devel.gridlight.dk;;
-	dev133)  NODE=1415; SERVER=demo.gridlight.dk;;
-	#dev133)  NODE=3688; SERVER=feature.gridlight.dk;;
-	test133) NODE=2659; SERVER=test.gridlight.dk;;
+    fri) NODE=1199 ;;
+    kant*) NODE=1210 ;;
+    k*ld*) NODE=1209 ;;
+    m*debord) NODE="1477 1478" ;;
+    loc21)   NODE=10;   SERVER=localhost;;
+    loc21-1) NODE=7;    SERVER=localhost;;
+    loc21-all) NODE=279;    SERVER=localhost;;
+    prloc21-1) NODE=3617; SERVER=localhost;;
+    prloc21-2) NODE=3618; SERVER=localhost;;
+    dev21)   NODE=0;    SERVER=devel.gridlight.dk;;
+    dev21-1) NODE=1330; SERVER=devel.gridlight.dk;;
+    dev133)  NODE=1415; SERVER=demo.gridlight.dk;;
+    #dev133)  NODE=3688; SERVER=feature.gridlight.dk;;
+    test133) NODE=2659; SERVER=test.gridlight.dk;;
 esac
 
 if [ "$CMD" ] ;then
-	curl -k -s -w 'RES: %{http_code}\n' -u amplexfm:ccswe124 -XPUT -H 'content-type: application/json' \
-					"https://$SERVER/gridlight/rs/segment/action/${NODE}?action=${CMD}" -d '{"password":"ccswe124"}'
+    for N in $NODE ;do
+        curl -k -s -w 'RES: %{http_code}\n' -u amplexfm:ccswe124 -XPUT -H 'content-type: application/json' \
+            "https://$SERVER/gridlight/rs/segment/action/${N}?action=${CMD}" -d '{"password":"ccswe124"}'
+    done
 else
-	curl -k -s -w 'GET: %{http_code}\n' -u amplexfm:ccswe124 -XGET -H 'content-type: application/json' \
-			"https://$SERVER/gridlight/rs/segment/below/${NODE}" \
-			-o /tmp/light-state.out
-	cat /tmp/light-state.out | tr , '\012' | grep '"state"' | cut -d: -f2 | sed 's/"//g'
+    for N in $NODE ;do
+        curl -k -s -w 'GET: %{http_code}\n' -u amplexfm:ccswe124 -XGET -H 'content-type: application/json' \
+            "https://$SERVER/gridlight/rs/segment/below/${N}" \
+            -o /tmp/light-state.out
+        cat /tmp/light-state.out | tr , '\012' | grep '"state"' | cut -d: -f2 | sed 's/"//g'
+    done
 fi
