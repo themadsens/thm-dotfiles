@@ -224,7 +224,7 @@ local function makeUrl(url, repl)
   return url:gsub('{{([%w_-]+)}}',repl)
 end
 
-local wsNotice
+-- local wsNotice
 function spoon.refresh()
   local url = makeUrl("https://"..segs.server.."/gridlight/rs/segment/below/{{node}}", {node=segs.topNode})
   local headers = {['content-type']='application/json'}
@@ -281,46 +281,71 @@ function spoon.notified(msg)
   end
 end
 
-function spoon.wsNotify(customer)
+spoon.pingTimer = hs.timer.delayed.new(330, function()
+  print("WS Timeout")
+  spoon.refresh()
+end)
+spoon.pingSender = hs.timer.delayed.new(300, function()
+  if wsNotice then
+      wsNotice:send(hs.json.encode {
+      type = "navigation", username = spoon.user,
+      data = {type = "node", id = segs.topNode, pagerefresh = true},
+    }, false)
+  end
+end)
+function spoon.wsNotify()
   if wsNotice then
     wsNotice:close()
   end
   --local headers = { authorization = "Basic "..hs.base64.encode(spoon.user..":"..spoon.pw) }
   --wsNotice = hs.websocket.new("wss://"..segs.server.."/changes",  headers, function(typ, msg)
-  wsNotice = hs.websocket.new("wss://"..segs.server.."/changes", function(typ, msg)
-    --print(typ, msg)
+  local ws
+  local wsUrl = "wss://"..segs.server.."/changes"
+  print("WS open", wsUrl)
+  ws = hs.websocket.new(wsUrl, function(typ, msg)
+    print("WS:", typ, msg)
     if typ == "open" then
-      print(typ)
+      print("WS open", ws)
     elseif typ == "closed" then
-      print(typ)
-      wsNotice = nil
+      print("WS closed", ws)
+      if wsNotice == ws then
+        wsNotice = nil
+      end
     elseif typ == "received" then
       if msg == "authenticate" then
         print(msg)
         --hs.timer.doAfter(0.2, function()
           local auth = hs.json.encode({user=spoon.user, pw=spoon.pw})
-          print("Sending auth", wsNotice:status(), pp(auth))
-          wsNotice:send(auth, false)
+          print("Sending auth", ws, ws:status(), pp(auth))
+          ws:send(auth, false)
         --end)
       elseif msg == "authenticated" then
-        print(msg)
+        wsNotice = ws
+        print("WS authenticated", ws)
       else
         local r, s = pcall(hs.json.decode, msg)
         print("spoon.notified", r, msg)
         if s.messages and #s.messages > 0 and s.messages[1].type == "session" then
           hs.timer.doAfter(0.1, function()
             print("sending sub")
-            wsNotice:send(hs.json.encode {
-              customerId = customer, type = "navigation", username = spoon.user,
+            ws:send(hs.json.encode {
+              type = "navigation", username = spoon.user,
               data = {type = "node", id = segs.topNode, pagerefresh = true},
             }, false)
           end)
+        elseif s.status == "ok" then
+          -- Periodidally set up subscr as heartbeat
+          -- print("WS Heartbeat")
+          spoon.pingTimer.start()
+          spoon.pingSender.start()
         else
           spoon.notified(s)
         end
       end
     end
   end)
+  spoon.pingTimer.start()
+  spoon.pingSender.start()
 end
 
 function spoon.stop()

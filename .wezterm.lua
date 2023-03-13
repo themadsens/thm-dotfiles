@@ -56,18 +56,14 @@ return {
   color_scheme = "Novelty-fm2",
   enable_scroll_bar = true,
   use_fancy_tab_bar = true,
-<<<<<<< Updated upstream
-  window_background_opacity = 0.95,
-  font_size=9,
-  line_height=1.1,
-=======
+  --window_background_opacity = 0.95,
+  --font_size=9,
 --window_decorations = "RESIZE",
   tab_max_width = 20,
   use_resize_increments = true,
   font = setFont(stdFont, {weight = 'Regular', stretch='Normal'}),
   font_size=10.5,
-  line_height=0.9,
->>>>>>> Stashed changes
+  line_height=1.1,
   cell_width=0.9,
   bold_brightens_ansi_colors = false,
   harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
