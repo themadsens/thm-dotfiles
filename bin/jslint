@@ -1,6 +1,6 @@
 #!/bin/bash
+#set -x
 
-jshint "$@" \
-    | fgrep -v -e "line 0, col 0, Bad option: '_" -e "let' is available in ES6" \
+jshint --verbose --config <(echo '{"esversion": 6, "loopfunc": true, "evil": true}') "$@" \
     | awk '/: line [0-9]+,/ {print; X=1} END {exit X?1:0}'
 
