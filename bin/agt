@@ -14,4 +14,5 @@ atTags() {
 }
 
 ( atTags "$@" ) && exit
+echo "Searching from `pwd`:"
 ag --skip-vcs-ignores --ignore tags --follow "$@"
