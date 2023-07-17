@@ -1,5 +1,10 @@
 {
   "suggest.autoTrigger": "none",
+
+  // See https://github.com/neoclide/coc.nvim/issues/1667
+  "diagnostic.virtualText": false,
+  "diagnostic.checkCurrentLine": true,
+
   "Lua.workspace.preloadFileSize": 500,
   "Lua.diagnostics.enable": false,
   "Lua.diagnostics.disable": [
