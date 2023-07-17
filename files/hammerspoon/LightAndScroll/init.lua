@@ -185,9 +185,14 @@ function spoon.start()
       end
     end},
     {title="-"},
-    {title="Hammerspoon help", fn=function() hs.hsdocs() end},
-    {title="Preferences", fn=function() hs.openPreferences() end},
-    {title="Exit HS", fn=function() os.exit() end},
+    {title="Hammerspoon", menu = {
+      {title="Help ...", fn=function() hs.hsdocs() end},
+      {title="Preferences ...", fn=function() hs.openPreferences() end},
+      {title="Updates ...", fn=function() hs.checkForUpdates() end},
+      {title="About ...", fn=function() hs.openAbout() end},
+      {title="Reload config", fn=function() hs.reload() end},
+      {title="Exit", fn=function() os.exit() end},
+    }},
     {title="-"},
     {title="Refresh", fn=function() spoon.refresh() end},
   }

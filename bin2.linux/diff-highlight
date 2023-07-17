@@ -1,2 +1,3 @@
 #!/bin/sh
-exec perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight
+#exec perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight
+exec perl ${0}.pl
