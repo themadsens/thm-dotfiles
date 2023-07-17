@@ -29,7 +29,7 @@ end
 
 local line,file,modified,pid,running
 local pids = {}
-local fd = io.popen("sh -c 'vim -r 2>&1'", "r")
+local fd = io.popen("sh -c 'nvim -r 2>&1'", "r")
 while true do
     local t = {}
 

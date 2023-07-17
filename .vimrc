@@ -1549,6 +1549,7 @@ let g:Hexokinase_highlighters = ['virtual', 'backgroundfull']
 
 "coc
 imap <expr><M-C> coc#start()
+nmap zh :CocCommand document.toggleInlayHint<CR>
 
 " echo "DONE sourcing"
 
