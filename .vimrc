@@ -228,8 +228,10 @@ setlocal  number
 setglobal expandtab
 setglobal spelllang=en_us
 setglobal visualbell
-setglobal printfont=:h7.5
-setglobal printoptions=number:y,duplex:off,left:5mm,top:5mm,bottom:5mm,right:5mm
+if ! has("nvim")
+   setglobal printfont=:h7.5
+   setglobal printoptions=number:y,duplex:off,left:5mm,top:5mm,bottom:5mm,right:5mm
+endif
 setglobal virtualedit=block
 setglobal noignorecase
 setglobal smartcase
@@ -660,11 +662,6 @@ function! SetBufferOpts()
          if filereadable(fpath.'/.gitignore')
             let b:searchroot = fpath
          endif
-         if 0 && filereadable(fpath.'/cscope.out')
-            if match(execute('cscope show'), fpath.'/cscope.out') < 0
-               execute 'cscope add '.fpath.'/cscope.out'
-            endif
-         endif
          exe 'setlocal path+='.fpath
       endif
       if strlen(glob(fpath.'/include'))
@@ -1090,16 +1087,6 @@ command! -count -nargs=?  Grep  call GrepHere#Grep(<count>, 'vimgrep', <q-args>)
 command! -bang -count -nargs=? -complete=expression BGrep 
                \ call GrepCommands#Grep(<count>, 'vimgrep<bang>', GrepCommands#Buffers(), <q-args>)|
                \ call qfutil#reformat('BufGrep: '.<q-args>)
-
-func! CsSearch(pattern)
-   execute 'cscope find c '.a:pattern
-   call s:TransientHls(a:pattern)
-   call qfutil#reformat('CScope: '.a:pattern, 15)
-   cwindow 20
-   redraw!
-endfunc
-command! -nargs=1 Cscope   call CsSearch("<args>")
-set cscopequickfix=c-
 
 func! OpenSpec(str)
    let Str = a:str

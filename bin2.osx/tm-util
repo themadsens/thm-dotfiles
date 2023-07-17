@@ -33,6 +33,7 @@ tmprune() {
 }
 
 tmbackup() {
+    diskutil mount "$VOL"
     tmfree >/dev/null || exit 1
     echo "==> $(date) - $(tminfo)" >> /tmp/tm-backup.log
     (( $(tmfree) < MINFREE )) && tmprune | tee -a /tmp/tm-backup.log
