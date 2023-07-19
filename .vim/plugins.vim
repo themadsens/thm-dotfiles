@@ -66,14 +66,14 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/juneedahamed/vc.vim'
   Plug 'https://github.com/fcpg/vim-colddeck'
 
-"if has('nvim')
+if has('nvim')
   "Plug 'andymass/vim-matchup'
   "Plug 'nvim-treesitter/nvim-treesitter'
+  Plug 'https://github.com/rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+endif
   Plug 'https://github.com/neoclide/coc.nvim', {'branch': 'release'}
   Plug 'https://github.com/Yggdroot/LeaderF'
   Plug 'https://github.com/sychen52/smart-term-esc.nvim'
-  Plug 'https://github.com/rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
-"endif
 
 call plug#end()
 
