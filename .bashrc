@@ -88,6 +88,7 @@ if [ -n "$PS1" ] ;then
                                 print(p2 and (p1..(" "):rep(n)..x..p2) or l)
                               end'; }
       ll() {      exa -laaB "$@" --group-directories-first --colour=always | _green_to_thousands; }
+      llh(){      exa -laa "$@" --group-directories-first --colour=always | _green_to_thousands; }
       alias ls='  exa --group-directories-first'
       tree()      { exa -laB --tree --color=always "$@" | _green_to_thousands; }
       lth()       { exa -laB -s modified -r --color=always "$@" | head -20 | _green_to_thousands; }
