@@ -223,6 +223,8 @@ setglobal complete=.,w,b,u,d         " The ,t,i from the default was too much, n
 setglobal isfname-==                 " No = allows 'gf' in File=<Path> Constructs
 setglobal shiftwidth=4
 setglobal softtabstop=4
+setglobal numberwidth=5
+setlocal  numberwidth=5
 setglobal number
 setlocal  number
 setglobal expandtab
@@ -582,12 +584,6 @@ function! SetFileTypeOpts()
       setlocal includeexpr=JspPath(v:fname)
       setlocal cinkeys-=:
    endif
-   if ft ==# 'javascript'
-      compiler jshint
-      setlocal sw=2 ts=2 et
-      "setlocal cindent
-      "setlocal indentexpr& " The provided indent file is hopeless
-   endif
    if ft ==# 'sh'
       call TextEnableCodeSnip('lua', '--LUA--', '--EOF--')
       call TextEnableCodeSnip('awk', '#AWK#', '#EOF#')
@@ -765,9 +761,14 @@ function! MakePrg(mkArg)
          compiler jshint
       endif
    elseif &ft ==# 'javascript'
-      setlocal makeprg=jslint
+      if ! filereadable('package.json')
+         setlocal makeprg=jslint
+         let makeArgs = '%'
+      else
+         set makeprg<
+         let makeArgs = 'lint'
+      endif
       compiler jshint
-      let makeArgs = '%'
    elseif &makeprg ==# 'mmvn' || &makeprg ==# 'mvn' || (exists('current_compiler') && g:current_compiler ==# 'mvn')
       setlocal makeprg=mmvn
       if makeArgs =~# '\<here\>'
@@ -1537,13 +1538,6 @@ let g:Hexokinase_highlighters = ['virtual', 'backgroundfull']
 "coc
 imap <expr><M-C> coc#start()
 nmap zh :CocCommand document.toggleInlayHint<CR>
-
-"LeaderF
-let _ = timer_start(100, {-> execute("let g:Lf_PreviewResult = { 'Mru': 0 }")})
-let g:Lf_PopupPreviewPosition = 'top'
-let g:Lf_WindowPosition = 'popup'
-let g:Lf_WindowHeight = 0.9
-let g:Lf_PopupWidth = 0.8
 
 " echo "DONE sourcing"
 

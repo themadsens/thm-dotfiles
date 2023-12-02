@@ -5,6 +5,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'https://github.com/JalaiAmitahl/maven-compiler.vim'
   Plug 'https://github.com/junegunn/vim-easy-align'
   Plug 'https://github.com/pangloss/vim-javascript'
+  Plug 'https://github.com/jonsmithers/vim-html-template-literals'
 " Plug 'https://github.com/othree/yajs.vim'
 " Plug 'https://github.com/jelera/vim-javascript-syntax.git'
   Plug 'https://github.com/othree/javascript-libraries-syntax.vim'
