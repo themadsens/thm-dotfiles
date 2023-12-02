@@ -13,6 +13,7 @@ ProxyTimeout 99000
 ErrorDocument 503 /error/en/503.html
 ProxyPass /error/ !
 ProxyPass /documentation/ !
+ProxyPass /gui-ng/ !
 ProxyPass /favicon.ico !
 
 ProxyPass /greenwise http://${VHOST}:8000/greenwise
@@ -63,6 +64,12 @@ ProxyPassReverse /exporting-server http://${VHOST}:8000/highcharts-export-web
 #Common-ui
 ProxyPass /common-ui http://${VHOST}:8000/common-ui
 ProxyPassReverse /common-ui http://${VHOST}:8000/common-ui
+ProxyPass /main-ui http://${VHOST}:8000/main-ui
+ProxyPassReverse /main-ui http://${VHOST}:8000/main-ui
+
+#Main-ui
+ProxyPass /main-ui http://${VHOST}:8000/main-ui
+ProxyPassReverse /main-ui http://${VHOST}:8000/main-ui
 
 #Checkmark
 ProxyPass /cm-listener-ws ws://${VHOST}:30005
