@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+import difflib
+import fileinput
+
+def display_diff(diff):
+    for item in diff:
+        action, data = item[0], item[2:]
+        if action == ' ':
+            print(data, end='')
+        elif action == '-':
+            print(f"\033[91m{data}\033[0m", end='')  # Use red color for deletions
+        elif action == '+':
+            print(f"\033[92m{data}\033[0m", end='')  # Use green color for additions
+
+prevline = None
+for line in fileinput.input():
+    if prevline is None:
+        prevline = line
+        continue
+
+    diff = difflib.ndiff(prevline, line)
+    display_diff(diff)
+    prevline = line
+

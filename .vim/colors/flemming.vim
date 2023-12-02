@@ -55,6 +55,7 @@ highlight CursorLine cterm=NONE ctermbg=186 guibg=#d7d787
 highlight CursorLineNr term=bold cterm=bold ctermbg=186 ctermfg=130 guibg=#d7d787 guifg=#af5f00
 highlight CursorColumn cterm=NONE ctermbg=186 guibg=#d7d787
 highlight SignColumn cterm=NONE ctermbg=187 guibg=#d7d7af
+highlight ColorColumn cterm=NONE ctermbg=255 guibg=#eeeeee
 
 hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey
 hi StatusLine     term=reverse      cterm=NONE ctermbg=grey  ctermfg=black    gui=NONE guibg=darkgrey
