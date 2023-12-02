@@ -24,7 +24,7 @@ if [ -n "$PS1" ] ;then
       export TERM=${TERM}-256color
    fi
 
-   if [[ -x /opt/homebrew/bin/brew ]] ;then
+   if [[ -x /opt/homebrew/bin/brew && $PATH != */opt/homebrew/bin:* ]] ;then
       eval "$(/opt/homebrew/bin/brew shellenv)"
    fi
    if [[ ! "$GOPATH" && -d $HOME/go/bin ]] ;then
@@ -747,3 +747,8 @@ if [ -n "$PS1" ] ;then
 fi
 
 # vim: set sw=3 sts=3 et:
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH
+
