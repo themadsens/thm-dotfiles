@@ -47,7 +47,7 @@ local segs = {
 }
 local segs_ = {
   topNode = 4,
-  server = "fmmba",
+  server = "localhost",
   {name = "2900100006", node = 386, on=1},
   {name = "133-2",  node = 90, on=1},
   {name = "133",   node = 5},
