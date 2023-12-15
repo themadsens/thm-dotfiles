@@ -265,9 +265,9 @@ function! WithQfInfo(cmd)
         echohl WarningMsg | echo v:exception[3:] | echohl None
         let exception = v:exception
     endtry
-    let info = getqflist({'nr': 0, 'size': 1, 'idx':1, 'winid':1})
+    let info = getqflist({'all':1})
     if exception == '' && info.winid > 0
-        let err = getqflist()[info.idx-1]
+        let err = info.items[info.idx-1]
         echo "("..info.idx.." of "..info.size.."): "..err.text
     endif
 endfunction
