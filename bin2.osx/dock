@@ -1,2 +1,8 @@
 #!/bin/sh
+if [[ $# -gt 0 ]] ;then
+    side=left
+    [[ $1 = [rR]* ]] && side=right
+    osascript -e 'tell application "System Events" to tell dock preferences' -e ' set screen edge to '$side -e 'end tell'
+    exit
+fi
 open -b com.apple.systempreferences /System/Library/PreferencePanes/Dock.prefPane
