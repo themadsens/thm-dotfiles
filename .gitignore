@@ -3,5 +3,5 @@
 .vim/.netrwhist
 .tmux/plugins/
 .DS_Store
-apache/ssh
+apache/ssl
 apache/www/phppgadmin
