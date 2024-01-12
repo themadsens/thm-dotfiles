@@ -239,7 +239,8 @@ setglobal noignorecase
 setglobal smartcase
 setglobal nofoldenable
 setglobal wildoptions=pum,tagfile
-"setglobal undofile
+set undofile
+setglobal undofile
 setglobal cursorline
 set cursorline
 if has('nvim')
