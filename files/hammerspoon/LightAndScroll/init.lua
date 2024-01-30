@@ -30,8 +30,8 @@ local spoon = {
   author = "Flemming <hammerspoon@themadsens.dk>",
   homepage = "https://github.com/Hammerspoon/Spoons",
   license = "MIT - https://opensource.org/licenses/MIT",
-  user = "amplexfm",
-  pw = "ccswe124",
+  user = "knaptryk",
+  pw = "hestsakspapir",
 }
 setmetatable(spoon, spoon)
 spoon.__gc = function(t)
