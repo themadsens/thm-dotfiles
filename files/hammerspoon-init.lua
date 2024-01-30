@@ -195,6 +195,14 @@ eventTimer = hs.timer.delayed.new(2, function()
   print("EVENT timer trigger")
   wifiTimer:start(1)
   mspoon.refresh()
+  for _,scr in ipairs(hs.screen.allScreens()) do
+    local dims = scr:fullFrame()
+    if dims.w == 1950 then
+      scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20140827_184036-IMG_4844.JPG')
+    else
+      scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20210928_075054-IMG_2076.HEIC')
+    end
+  end
 end)
 wakeEv = {[hs.caffeinate.watcher.screensaverDidStop] = "ssStop", [hs.caffeinate.watcher.screensDidUnlock] = "scrUnlk",
           [hs.caffeinate.watcher.screensDidWake] = "scrWake", [hs.caffeinate.watcher.systemDidWake] = "sysWake"}
