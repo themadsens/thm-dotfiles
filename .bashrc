@@ -444,8 +444,8 @@ if [ -n "$PS1" ] ;then
      [[ $1 = '-H' ]] && HEADERS=()
 
      #echo "P: $P"
-     curl -w '\n--- CURL STAT ---\n%{http_code}: %{size_header} + %{size_download}B TIME:%{time_total}-%{time_pretransfer}\n' \
-        $LOGIN --anyauth --silent -k "${HEADERS[@]}" \
+     curl -w '\n--- CURL STAT ---\n%{http_code}: SIZE:%{size_header}+%{size_download} TIME:%{time_total}-%{time_pretransfer}\n' \
+        $LOGIN --anyauth --silent -k --compressed "${HEADERS[@]}" \
         -X$OPER $SCHM://$(wsHost $HOST)"$PURL" "$@" \
      | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
    }
