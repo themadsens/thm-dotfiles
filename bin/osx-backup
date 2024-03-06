@@ -26,8 +26,8 @@ if [ "$Suffix" ] ;then
         done
     done
     for h in one.gridlight.dk ;do 
-        for p in gridCPU gridDOT ;do
-            curl --fail --silent -X GET "${HEADERS[@]}" -u amplexfm:ccswe124 https://${h}/aasws/moduleproddata/${p} \
+        for p in gridCPU gridDOT gridCPU_LTE gridDOT_LTE ;do
+            curl --fail --silent -X GET "${HEADERS[@]}" -u amplexfm:'mal$124dk' https://${h}/aasws/moduleproddata/${p} \
                 | bzip2 > /Users/fm/tmp/prod-backup/${h}-${p}-${Suffix}.json.bz2
         done
     done
