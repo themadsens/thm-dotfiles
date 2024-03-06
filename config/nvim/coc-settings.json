@@ -89,5 +89,6 @@
 
   },
   "Lua.telemetry.enable": false,
-  "snippets.ultisnips.pythonPrompt": false
+  "snippets.ultisnips.pythonPrompt": false,
+  "coc.preferences.extensionUpdateCheck": "daily"
 }
