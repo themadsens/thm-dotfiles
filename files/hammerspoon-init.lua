@@ -197,11 +197,15 @@ eventTimer = hs.timer.delayed.new(2, function()
   mspoon.refresh()
   for _,scr in ipairs(hs.screen.allScreens()) do
     local dims = scr:fullFrame()
-    if dims.w == 1950 then
+    print(string.format("SCREEN: '%s' W:%s H:%s", scr:name(), dims.w, dims.h))
+    if dims.w > 1900 then
       scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20140827_184036-IMG_4844.JPG')
     else
       scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20210928_075054-IMG_2076.HEIC')
     end
+    hs.timer.usleep(500*1000)
+    hs.execute("killall TopNotch")
+    hs.execute("open /Applications/TopNotch.app")
   end
 end)
 wakeEv = {[hs.caffeinate.watcher.screensaverDidStop] = "ssStop", [hs.caffeinate.watcher.screensDidUnlock] = "scrUnlk",
