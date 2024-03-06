@@ -3,6 +3,7 @@
 " vint: -ProhibitImplicitScopeVariable -ProhibitAbbreviationOption
 "
 scriptencoding utf-8
+language en_US.UTF-8
 if has('win32')
    " Use CCI standard setup. This happens automatically on UNIX
    if filereadable($VIM . '/vimrc')
