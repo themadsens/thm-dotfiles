@@ -1,0 +1,24 @@
+#!/bin/bash
+source /etc/profile 
+KEY=$(awk '$1=="amplexfm-api" {print $2}' ~/.api-keys)
+HEADERS=(-H "Content-type: application/json" -H "Accept: application/json" -H "X-Amplex-apikey: $KEY");
+Suffix=''
+if [[ $(date +%u) -eq 5 ]] ;then # Friday
+    week=$(date +%V)
+    if  [[ $((week % 10)) -ne 0 ]] ;then
+        week=$((week % 10))
+    fi
+    Suffix=Wk$week
+elif [[ $(date +%u) -lt 5 ]] ;then
+    Suffix=$(date +%a)
+fi
+echo "$0: Backup for: $Suffix"
+if [ "$Suffix" ] ;then
+    echo "Backup prod-db at $(date)"
+    for h in one.gridlight.dk ;do 
+        for p in gridCPU gridDOT gridCPU_LTE gridDOT_LTE ;do
+            curl --fail --silent -X GET "${HEADERS[@]}" https://${h}/aasws/moduleproddata/${p} \
+                | bzip2 > /Users/fm/tmp/prod-backup/${h}-${p}-${Suffix}.json.bz2
+        done
+    done
+fi
