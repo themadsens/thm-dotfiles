@@ -1,6 +1,7 @@
 #bash
 SHELL=$BASH
 export LC_CTYPE=en_US.UTF-8
+export LANG=en_US.UTF-8
 umask 022
 
 if [ -n "$PS1" ] ;then
@@ -43,7 +44,8 @@ if [ -n "$PS1" ] ;then
    fi
 
    export SVN_EDITOR=vi
-   export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home/
+   export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home/
+   [[ -d $JAVA_HOME ]] || export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home/
    [[ -d $JAVA_HOME ]] || export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_361.jdk/Contents/Home/
    [[ -d $JAVA_HOME ]] || export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
    [[ -d $JAVA_HOME ]] || export JAVA_HOME=/tmp/NONE
@@ -399,54 +401,26 @@ if [ -n "$PS1" ] ;then
          command locate "$@"
       fi
    }
-   wsHost() { # Resolve host from ~/.ssh/config
-     cat ~/.ssh/config 2>/dev/null \
-     | awk -v H="$1" '
-        tolower($1) == "host" {
-           found = 0;
-           for (i = 1; i <= NF; i++) { if ($i == H) found = 1; }
-        }
-        tolower($1) == "hostname" && found { print $2; found = 2; exit; }
-        END { if (found != 2) print H; }
-     '
-   }
-   wsLogin() {
-     local HOST=$(wsHost $2)
-     local SCHM="https"
-     if [[ $HOST = *://* ]] ;then
-       SCHM=${HOST%://*}
-       HOST=${HOST#*://}
-     fi
-     local LOGIN="--cookie /tmp/curl-cookie-jar.$1-$HOST --cookie-jar /tmp/curl-cookie-jar.$1-$HOST"
-     local CODE=$(umask 077; curl -s -k -w '%{http_code}\n' $LOGIN $SCHM://$HOST/aasws/nodes -o /dev/null)
-     if [[ $CODE = 403 ]] ;then
-       CODE=$(umask 077; curl -s -k --user $1 -w '%{http_code}\n' $LOGIN $SCHM://$HOST/aasws/nodes -o /dev/null)
-     fi
-     if [[ $CODE != 200 ]] ;then
-       LOGIN="--user $1"
-     fi
-     echo $LOGIN
-   }
    function ws2 () {
      local OPER=$1
      local USER=$2
      local HOST=$3
      local PURL=$4
      shift 4
-     local LOGIN=$(wsLogin $USER $HOST)
-     local HOST=$(wsHost $HOST)
+     source /opt/toolchain/utils/scripts/lib/func.sh
+     curl_login $USER $HOST
      local SCHM="https"
      if [[ $HOST = *://* ]] ;then
        SCHM=${HOST%://*}
-       HOST=${HOST#*://}
+       SERVER=${HOST#*://}
      fi
-     HEADERS=(-H "Content-type: application/json" -H "Accept: application/json")
+     local HEADERS=(-H "Content-type: application/json" -H "Accept: application/json")
      [[ $1 = '-H' ]] && HEADERS=()
 
      #echo "P: $P"
      curl -w '\n--- CURL STAT ---\n%{http_code}: SIZE:%{size_header}+%{size_download} TIME:%{time_total}-%{time_pretransfer}\n' \
         $LOGIN --anyauth --silent -k --compressed "${HEADERS[@]}" \
-        -X$OPER $SCHM://$(wsHost $HOST)"$PURL" "$@" \
+        -X$OPER $SCHM://$SERVER"$PURL" "$@" \
      | mawk '/^--- CURL STAT ---$/ {d=1} d==0 {print} d==1 {print > "/dev/stderr"}'
    }
    function ws () {

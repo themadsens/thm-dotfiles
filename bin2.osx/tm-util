@@ -22,7 +22,8 @@ tmprune() {
         if (( FREE < MINFREE )) ;then
             local OLDEST=$($TMUTIL listbackups -d "$MNT" | grep backup | sort | head -1)
             echo "Free: $FREE; Purge: $OLDEST at $MNT"
-            local TS=${OLDEST%.backup}
+            local TS=${OLDEST##*/}
+            TS=${TS%.backup}
             sudo $TMUTIL delete -d "$MNT" -t "$TS"
             sleep 30 # Apparantly needs some grace time to stabilize free space
         else
@@ -41,6 +42,7 @@ tmbackup() {
 }
 
 tminfo() {
+    diskutil mount "$VOL"
     echo "Time machine on '$VOL' at '$MNT'"
     echo "Free space $(tmfree) GB. Enforce $MINFREE GB"
 }

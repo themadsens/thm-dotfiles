@@ -191,10 +191,7 @@ end
 wifiTimer = hs.timer.delayed.new(5, function() toggleWifi() end)
 print("WiFi timer", wifiTimer:start(2))
 
-eventTimer = hs.timer.delayed.new(2, function() 
-  print("EVENT timer trigger")
-  wifiTimer:start(1)
-  mspoon.refresh()
+local function loadDeskBg()
   for _,scr in ipairs(hs.screen.allScreens()) do
     local dims = scr:fullFrame()
     print(string.format("SCREEN: '%s' W:%s H:%s", scr:name(), dims.w, dims.h))
@@ -207,6 +204,13 @@ eventTimer = hs.timer.delayed.new(2, function()
     hs.execute("killall TopNotch")
     hs.execute("open /Applications/TopNotch.app")
   end
+end
+
+eventTimer = hs.timer.delayed.new(2, function() 
+  print("EVENT timer trigger")
+  wifiTimer:start(1)
+  mspoon.refresh()
+  loadDeskBg()
 end)
 wakeEv = {[hs.caffeinate.watcher.screensaverDidStop] = "ssStop", [hs.caffeinate.watcher.screensDidUnlock] = "scrUnlk",
           [hs.caffeinate.watcher.screensDidWake] = "scrWake", [hs.caffeinate.watcher.systemDidWake] = "sysWake"}
@@ -230,6 +234,7 @@ print("hs.screen.watcher", hs.screen.watcher.new(function()
   eventTimer:start()
 end):start())
 
+hs.urlevent.bind("loadDeskBg", loadDeskBg)
 
 -- Toggle WiFi based on Ethernet being connected or not
 -- local systemWatcher = hs.caffeinate.watcher.new(handleMyWifi)

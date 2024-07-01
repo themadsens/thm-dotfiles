@@ -1541,6 +1541,15 @@ let g:Hexokinase_highlighters = ['virtual', 'backgroundfull']
 imap <expr><M-C> coc#start()
 nmap zh :CocCommand document.toggleInlayHint<CR>
 
-" echo "DONE sourcing"
+" vim-closetag
+let g:closetag_filetypes = 'html,xhtml,phtml,javascript,typescript'
+let g:closetag_regions = {
+      \ 'typescript.tsx': 'jsxRegion,tsxRegion,litHtmlRegion',
+      \ 'javascript.jsx': 'jsxRegion,litHtmlRegion',
+      \ 'javascript':     'litHtmlRegion',
+      \ 'typescript':     'litHtmlRegion',
+      \ }
+
+" echo 'DONE sourcing'
 
 " vim: set sw=3 sts=3 et:
