@@ -83,17 +83,17 @@ if [ -n "$PS1" ] ;then
       alias fd='  fd --no-ignore-vcs --hidden'
       alias fdf=' fd --no-ignore-vcs --hidden -t f'
    fi
-   if type -p exa > /dev/null ;then
+   if type -p eza > /dev/null ;then
       _green_to_thousands() { luajit -e 'for l in io.stdin:lines() do
-                                local p1,s,p2 = l:match("(.-\x1b%[1;32m)([%d,.]+)(\x1b.*)")
+                                local p1,s,p2 = l:match("(.-\x1b%[1?;?3[0-7]m)([%d,.]+)(\x1b.*)")
                                 local x,n = (s or ""):gsub("(%d)[,.]","\x1b[4m%1\x1b[24m")
                                 print(p2 and (p1..(" "):rep(n)..x..p2) or l)
                               end'; }
-      ll() {      exa -laaB "$@" --group-directories-first --colour=always | _green_to_thousands; }
-      llh(){      exa -laa "$@" --group-directories-first --colour=always | _green_to_thousands; }
-      alias ls='  exa --group-directories-first'
-      tree()      { exa -laB --tree --color=always "$@" | _green_to_thousands; }
-      lth()       { exa -laB -s modified -r --color=always "$@" | head -20 | _green_to_thousands; }
+      ll() {      eza -laaB "$@" --group-directories-first --colour=always | _green_to_thousands; }
+      llh(){      eza -laa "$@" --group-directories-first --colour=always | _green_to_thousands; }
+      alias ls='  eza --group-directories-first'
+      tree()      { eza -laB --tree --color=always "$@" | _green_to_thousands; }
+      lth()       { eza -laB -s modified -r --color=always "$@" | head -20 | _green_to_thousands; }
    else
       ll() { ls -la "$*"; }
       if [[ $(uname -s) = Darwin ]] ;then
@@ -352,7 +352,7 @@ if [ -n "$PS1" ] ;then
    espmon ()
    {
       itit MON-${1##*/};
-      python3 -m serial.tools.miniterm --rts 0 --dtr 0 --raw $1 ${2:-115200}
+      python3 -m serial.tools.miniterm --rts 0 --dtr 0 --raw --eol LF $1 ${2:-115200}
    }
 
    eof() {
@@ -726,3 +726,4 @@ fi
 export BUN_INSTALL="$HOME/.bun"
 export PATH=$BUN_INSTALL/bin:$PATH
 
+. "$HOME/.cargo/env"

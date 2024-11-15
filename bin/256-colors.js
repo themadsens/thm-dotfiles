@@ -1,4 +1,4 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node
 // jshint esversion: 6
 // ported to Node from https://gist.github.com/graven/921334
 // Demonstrate using es6 generators

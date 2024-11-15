@@ -1000,7 +1000,7 @@ function! SetCHdr()
 endfunction
 
 " From http://vim.wikia.com/wiki/VimTip857
-function! TextEnableCodeSnip(filetype,start,end) abort
+function! TextEnableCodeSnip(filetype,start,endpat) abort
   let ft=toupper(a:filetype)
   let group='textGroup'.ft
   if exists('b:current_syntax')
@@ -1021,7 +1021,7 @@ function! TextEnableCodeSnip(filetype,start,end) abort
   endif
   exe  'syntax region textSnip'.ft.
   \ ' matchgroup=textSnip '.
-  \ ' start="'.a:start.'" end="'.a:end.'" '.
+  \ ' keepend start="'.a:start.'" end="'.a:endpat.'" '.
   \ ' contains=@'.group.' containedin=ALL'
   hi link textSnip SpecialComment
 endfunction
@@ -1330,11 +1330,13 @@ call SetBufferOpts() " Why is this needed ?? it is mapped to BufNewFile!!
 let loaded_explorer=1 " Don't want plugin/explorer.vim
 
 let g:jsx_ext_required = 1
+set signcolumn=auto:2
 
 "let g:changes_vcs_check = 1
 "let g:changes_linehi_diff = 0 " Experimental!
 "let g:changes_sign_text_utf8 = 0
 "nmap zv :ToggleChangeView<CR>
+
 let g:quickfixsigns_classes = ['qfl', 'loc', 'marks']
 highlight SignColumn cterm=NONE ctermbg=187
 let g:quickfixsigns#vcsdiff#extra_args_git = '-w'

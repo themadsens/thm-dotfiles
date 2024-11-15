@@ -51,8 +51,13 @@ while true do
       else
         local cmd
         if cmdread("uname") == "Linux" then
-          cmd = "ps --no-headers --format tty --pid " .. pid
-          tty.s = cmdread(cmd)
+          cmd = "ps --no-headers --format tty,ppid,command --pid " .. pid
+          cmdread(cmd):gsub("([^ ]+) +([^ ]+) +(.*)", function(ttys, ppid, cmd)
+            tty.s = ttys
+            if ttys == "?" and cmd:match(" %-%-embed") then
+              tty.s = cmdread("ps --no-headers --format tty --pid " .. ppid)
+            end
+          end)
         else
           cmd = "ps -o tty=,ppid=,command= -p " .. pid
           cmdread(cmd):gsub("([^ ]+) +([^ ]+) +(.*)", function(ttys, ppid, cmd)

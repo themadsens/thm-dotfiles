@@ -1,20 +1,27 @@
 #!/bin/bash
 #
-#   This file echoes a bunch of 24-bit color codes
-#   to the terminal to demonstrate its functionality.
+#   This file echoes four gradients with 24-bit color codes
+#   to the terminal to demonstrate their functionality.
 #   The foreground escape sequence is ^[38;2;<r>;<g>;<b>m
 #   The background escape sequence is ^[48;2;<r>;<g>;<b>m
 #   <r> <g> <b> range from 0 to 255 inclusive.
 #   The escape sequence ^[0m returns output to default
 
-setBackgroundColor()
-{
-    echo -en "\x1b[48;2;$1;$2;$3""m"
+# Source
+# https://github.com/tmux/tmux/blob/master/tools/24-bit-color.sh
+#
+# From
+# https://github.com/gnachman/iTerm2/blob/master/tests/24-bit-color.sh
+# and presumably covered by
+# https://github.com/gnachman/iTerm2/blob/master/LICENSE
+#
+
+setBackgroundColor() {
+    echo -en "\033[48:2:$1:$2:$3""m"
 }
 
-resetOutput()
-{
-    echo -en "\x1b[0m\n"
+resetOutput() {
+    echo -en "\033[0m\n"
 }
 
 # Gives a color $1/255 % along HSV
@@ -22,8 +29,7 @@ resetOutput()
 # Echoes "$red $green $blue" where
 # $red $green and $blue are integers
 # ranging between 0 and 255 inclusive
-rainbowColor()
-{ 
+rainbowColor() { 
     let h=$1/43
     let f=$1-43*$h
     let t=$f*255/43
@@ -53,45 +59,45 @@ rainbowColor()
     fi
 }
 
-for i in `seq 0 127`; do
+for i in {0..127}; do
     setBackgroundColor $i 0 0
     echo -en " "
 done
 resetOutput
-for i in `seq 255 128`; do
+for i in {255..128}; do
     setBackgroundColor $i 0 0
     echo -en " "
 done
 resetOutput
 
-for i in `seq 0 127`; do
+for i in {0..127}; do
     setBackgroundColor 0 $i 0
     echo -n " "
 done
 resetOutput
-for i in `seq 255 128`; do
+for i in {255..128}; do
     setBackgroundColor 0 $i 0
     echo -n " "
 done
 resetOutput
 
-for i in `seq 0 127`; do
+for i in {0..127}; do
     setBackgroundColor 0 0 $i
     echo -n " "
 done
 resetOutput
-for i in `seq 255 128`; do
+for i in {255..128}; do
     setBackgroundColor 0 0 $i
     echo -n " "
 done
 resetOutput
 
-for i in `seq 0 127`; do
+for i in {0..127}; do
     setBackgroundColor `rainbowColor $i`
     echo -n " "
 done
 resetOutput
-for i in `seq 255 128`; do
+for i in {255..128}; do
     setBackgroundColor `rainbowColor $i`
     echo -n " "
 done
