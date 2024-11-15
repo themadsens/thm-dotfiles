@@ -410,6 +410,7 @@ if [ -n "$PS1" ] ;then
      source /opt/toolchain/utils/scripts/lib/func.sh
      curl_login $USER $HOST
      local SCHM="https"
+     [[ $SERVER = *://* ]] && HOST=$SERVER
      if [[ $HOST = *://* ]] ;then
        SCHM=${HOST%://*}
        SERVER=${HOST#*://}

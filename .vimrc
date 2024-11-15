@@ -345,6 +345,8 @@ let g:ftplugin_sql_omni_key_left  = '<C-C><Left>'
 nmap <F12> <Cmd>set nopaste<CR>
 lnoremap <F12> <C-O><Cmd>set nopaste<CR>
 
+imap :w<CR> <Esc>:w<CR>
+
 " Movement with "2x3" block navigation keys. Customize to your liking
 nnoremap <PageUp>   <C-U>
 nnoremap <PageDown> <C-D>

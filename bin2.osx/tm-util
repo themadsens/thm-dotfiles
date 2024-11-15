@@ -44,6 +44,7 @@ tmbackup() {
 tminfo() {
     diskutil mount "$VOL"
     echo "Time machine on '$VOL' at '$MNT'"
+    echo "List backup dirs with: tmutil listbackups -d '$MNT'"
     echo "Free space $(tmfree) GB. Enforce $MINFREE GB"
 }
 

@@ -290,7 +290,7 @@ spoon.pingTimer = hs.timer.delayed.new(330, function()
   print("WS Timeout")
   spoon.refresh()
 end)
-spoon.pingSender = hs.timer.delayed.new(300, function()
+spoon.pingSender = hs.timer.delayed.new(30, function()
   if wsNotice then
       wsNotice:send(hs.json.encode {
       type = "navigation", username = spoon.user,
@@ -339,9 +339,9 @@ function spoon.wsNotify()
             }, false)
           end)
         elseif s.status == "ok" then
-          -- Periodidally set up subscr as heartbeat
           -- print("WS Heartbeat")
           spoon.pingTimer.start()
+          -- Periodidally set up subscr as heartbeat
           spoon.pingSender.start()
         else
           spoon.notified(s)

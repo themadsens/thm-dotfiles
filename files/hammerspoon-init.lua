@@ -198,7 +198,7 @@ local function loadDeskBg()
     if dims.w > 1900 then
       scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20140827_184036-IMG_4844.JPG')
     else
-      scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20210928_075054-IMG_2076.HEIC')
+      scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20210928_075054-IMG_2076.jpg')
     end
     hs.timer.usleep(500*1000)
     hs.execute("killall TopNotch")

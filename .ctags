@@ -35,10 +35,10 @@
 --regex-javascript2=/\.service *\( *'([A-Za-z0-9_$]+)' *,/\1/C,constant/
 --regex-javascript2=/\.directive *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/C,constant/
 --regex-javascript2=/\.constant *\([ \t]*'([A-Za-z0-9_$]+)'[ \t]*,/\1/C,constant/
---regex-javascript2=/(,|(;|^)[ \t]*(var|let|const|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*([A-Za-z_$][A-Za-z0-9_$]*[ \t]*)?\(/\5/f,function/
---regex-javascript2=/^[ \t]*(export)?[ \t]*(async)?[ \t]*function[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)[ \t]*\(/\3/f,function/
+--regex-javascript2=/(,|(;|^)[ \t]*(var|let|const|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*(async[ \t]+)?function[ \t]*([A-Za-z_$][A-Za-z0-9_$]*[ \t]*)?\(/\5/f,function/
+--regex-javascript2=/^[ \t]*(export[ \t]+)?(async[ \t]+)?function[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)[ \t]*\(/\3/f,function/
 --regex-javascript2=/^[ \t]+([A-Za-z_$][A-Za-z0-9_$.]+)[ \t]*\:[ \t]+function[ \t]*\(/\1/f,function/
---regex-javascript2=/^[ \t]*(export )?[ \t]*(let|var|const)[ \t]([A-Za-z0-9_$]+)[ \t]*=[^(]+$/\3/v,global/
+--regex-javascript2=/^(export[ \t]+)?(let|var|const)[ \t]([A-Za-z0-9_$]+)[ \t]*=[^(]+$/\3/v,global/
 --regex-javascript2=/^window\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 --regex-javascript2=/^global\.([A-Za-z0-9_$]+)[ \t]+=[ \t]+/\1/v,global/
 
