@@ -200,9 +200,9 @@ local function loadDeskBg()
     else
       scr:desktopImageURL('file:///Users/fm/Desktop/Slides/FL-20210928_075054-IMG_2076.jpg')
     end
-    hs.timer.usleep(500*1000)
-    hs.execute("killall TopNotch")
-    hs.execute("open /Applications/TopNotch.app")
+    --hs.timer.usleep(500*1000)
+    --hs.execute("killall TopNotch")
+    --hs.execute("open /Applications/TopNotch.app")
   end
 end
 

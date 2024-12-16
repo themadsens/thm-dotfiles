@@ -32,7 +32,7 @@ function* col8ln(l) {
 	}
 }
 
-function* col240ln(l) {
+function* col240ln() {
 	while (true) {
 		let res="  ", c, str;
 		for (let i = 0; i < 6; i++) {

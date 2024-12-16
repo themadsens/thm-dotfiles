@@ -74,6 +74,18 @@ let g:tagbar_type_rust = {
       \ 'P': 'method',
   \ },
 \ }
+
+let g:tagbar_type_zig = {
+    \ 'ctagstype': 'zig',
+    \ 'kinds' : [
+        \'f:functions',
+        \'s:structs',
+        \'e:enums',
+        \'u:unions',
+        \'E:errors'
+    \]
+\}
+
 nmap <F3> :TagbarToggle<CR>
 
 setglobal tags=/opt/toolchain/include/tags,/usr/include/tags
@@ -506,6 +518,9 @@ augroup Private
    autocmd BufNewFile  * call SetBufferOpts()
    if has("nvim")
        autocmd DirChanged  * call SetBufferOpts()
+       autocmd FileType lua lua vim.treesitter.stop()
+       " https://github.com/neovim/neovim/pull/30390 Fix 'final'
+       autocmd FileType java hi link javaConceptKind javaStorageClass
    endif
    autocmd FileType    * call SetFileTypeOpts()
    " autocmd CursorMoved * call qfutil#followLine(0)
@@ -1160,6 +1175,11 @@ function! ShowSyn()
    return 0 ==# &spell ? '' : synIDattr(synID(line('.'), col('.'), 1), 'name').' '
 endfunc
 
+function! SynGroup()
+    let l:s = synID(line('.'), col('.'), 1)
+    echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
+endfun
+
 function! JumpBuffers()
    let byName = {}
    let byIndex = []
@@ -1456,12 +1476,15 @@ nmap <leader>j] <Plug>JCallerJump
 nmap <leader>jh <Plug>JCallerOpen
 nmap <leader>jc <Plug>JCallerClear
 let g:JavaComplete_ImportSortType = 'packageName'
+let g:JavaComplete_ImportOrder = ['java.', 'javax.', 'jakarta.', 'com.', 'org.', 'net.']
 nmap <Leader>jS <Plug>(JavaComplete-Imports-RemoveUnused)<Plug>(JavaComplete-Imports-SortImports)
 
 " Ctrl-P
 
 " vim-lsc
 " let g:lsc_server_commands = {'java': $HOME.'/stuff/java-language-server/dist/lang_server_mac.sh'}
+
+let g:lua_subversion = 4
 
 " Fugitive
 nmap gy :Git log --pretty=oneline %<CR>
