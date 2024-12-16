@@ -89,11 +89,21 @@ if [ -n "$PS1" ] ;then
                                 local x,n = (s or ""):gsub("(%d)[,.]","\x1b[4m%1\x1b[24m")
                                 print(p2 and (p1..(" "):rep(n)..x..p2) or l)
                               end'; }
-      ll() {      eza -laaB "$@" --group-directories-first --colour=always | _green_to_thousands; }
-      llh(){      eza -laa "$@" --group-directories-first --colour=always | _green_to_thousands; }
       alias ls='  eza --group-directories-first'
       tree()      { eza -laB --tree --color=always "$@" | _green_to_thousands; }
-      lth()       { eza -laB -s modified -r --color=always "$@" | head -20 | _green_to_thousands; }
+      lth()       { eza -laB -s newest -r --color=always "$@" | head -20 | _green_to_thousands; }
+      ll() {
+          local OPTIND OPTARG OPTS o B="B"
+          while getopts ":ht" o ;do
+              case $o in
+                  h) B="" ;;
+                  t) OPTS=$OPTS" -s newest" ;;
+                  \?) OPTS=$OPTS" -$OPTARG" ;;
+              esac
+          done
+          shift $((OPTIND - 1))
+          eza -laa${B} $OPTS "$@" --group-directories-first --colour=always | _green_to_thousands
+      }
    else
       ll() { ls -la "$*"; }
       if [[ $(uname -s) = Darwin ]] ;then
