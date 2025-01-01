@@ -1103,7 +1103,8 @@ command! -nargs=1 SearchW  call <SID>AgSearch("<args>", 1)
 nmap              qr      :call qfutil#reformat()<CR>
 nnoremap <silent> qn      :<C-u>call <SID>GrepHereHL('')<CR>
 nnoremap <silent> qm      :<C-u>call <SID>GrepHereHL(GrepHere#SetCword(0))<CR>
-command! -count -nargs=?  Grep  call GrepHere#Grep(<count>, 'vimgrep', <q-args>)|call qfutil#reformat('Grep: '.<q-args>)
+"command! -count -nargs=?  Grep  call GrepHere#Grep(<count>, 'vimgrep', <q-args>)|call qfutil#reformat('Grep: '.<q-args>)
+command! -bang -count -nargs=? -complete=expression Grep    call GrepCommands#Grep(<count>, 'vimgrep<bang>',    GrepCommands#Buffers(),    <q-args>)|call qfutil#reformat('Grep: '.<q-args>)
 command! -bang -count -nargs=? -complete=expression BGrep 
                \ call GrepCommands#Grep(<count>, 'vimgrep<bang>', GrepCommands#Buffers(), <q-args>)|
                \ call qfutil#reformat('BufGrep: '.<q-args>)
