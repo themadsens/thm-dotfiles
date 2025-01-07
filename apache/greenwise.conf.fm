@@ -16,6 +16,9 @@ ProxyPass /documentation/ !
 ProxyPass /gui-ng/ !
 ProxyPass /favicon.ico !
 
+ProxyPass /greenwise/subscribe ws://${VHOST}:8000/greenwise/subscribe
+ProxyPassReverse /greenwise/subscribe ws://${VHOST}:8000/greenwise/subscribe
+
 ProxyPass /greenwise http://${VHOST}:8000/greenwise
 ProxyPassReverse /greenwise http://${VHOST}:8000/greenwise
 ProxyPass /gridlight  http://${VHOST}:8000/gridlight
@@ -30,6 +33,8 @@ ProxyPass /hschanges ws://${VHOST}:8009/hschanges
 
 ProxyPass /birt  http://${VHOST}:8000/birt
 ProxyPassReverse /birt http://${VHOST}:8000/birt
+ProxyPass /reports  http://${VHOST}:8000/reports
+ProxyPassReverse /reports http://${VHOST}:8000/reports
 
 #Keep old urls for GridLight App
 ProxyPass /services/gw  http://${VHOST}:8000/greenwise/rs
