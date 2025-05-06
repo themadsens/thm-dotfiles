@@ -1,14 +1,14 @@
 #!/bin/bash
 
-PGOLD=/Applications/Postgres.app/Contents/Versions/9.4
-DATAOLD="/Volumes/ToolChain/Postgres/var-9.4"
+PGOLD=/Applications/Postgres.app/Contents/Versions/10
+DATAOLD="/Volumes/Option/Postgres/var-10"
 PGNEW=/Applications/Postgres.app/Contents/Versions/14/
 DATANEW="/Volumes/Option/Postgres/var-14"
-PG=/Applications/Postgres.app/Contents/Versions/10/
-DATA="/Volumes/Option/Postgres/var-10"
+PG=/Applications/Postgres.app/Contents/Versions/14/
+DATA="/Volumes/Option/Postgres/var-14"
 if [[ ! -d $PG ]] ;then
-    PG=/Applications/Postgres.10/Postgres.app/Contents/Versions/10/
-    DATA="/Volumes/ToolChain/Postgres/var-10"
+    PG=/Applications/Postgres.10/Postgres.app/Contents/Versions/14/
+    DATA="/Volumes/ToolChain/Postgres/var-14"
 fi
 
 if [[ "$1" = old ]] ;then
@@ -42,8 +42,10 @@ case $1 in
         $PG/bin/pg_ctl reload -D "$DATA"
         ;;
     init)
-        mkdir -p "$DATA"
-        $PG/bin/initdb -D "$DATA" --locale=en_US.UTF-8
+        if [[ ! -f "$DATA" ]] ;then
+            mkdir -p "$DATA"
+            $PG/bin/initdb -D "$DATA" --locale=en_US.UTF-8
+        fi
         ;;
     migrate)
         $PGNEW/bin/pg_upgrade -b $PG/bin -B $PGNEW/bin -d "$DATA" -D "$DATANEW"
@@ -59,6 +61,6 @@ case $1 in
         shift ; exec "$@"
         ;;
     *)
-        echo "Usage: $0 startfg|status|reload|stop|pgcmd"
+        echo "Usage: $0 [old|new] startfg|start|status|reload|stop|pgcmd"
         ;;
 esac

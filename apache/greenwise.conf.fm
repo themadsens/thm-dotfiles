@@ -87,6 +87,7 @@ ProxyPass /cm-listenerX http://${VHOST}:30005
 ProxyPassReverse /cm-listenerX http://${VHOST}:30005
 
 Header set WWW-Authenticate "OC_Basic realm=\"gridlight\""
+SetOutputFilter DEFLATE
 AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
 
 #ProxyPass / http://${VHOST}:8000/common-ui

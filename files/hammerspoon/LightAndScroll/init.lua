@@ -30,8 +30,6 @@ local spoon = {
   author = "Flemming <hammerspoon@themadsens.dk>",
   homepage = "https://github.com/Hammerspoon/Spoons",
   license = "MIT - https://opensource.org/licenses/MIT",
-  user = "knaptryk",
-  pw = "hestsakspapir",
 }
 setmetatable(spoon, spoon)
 spoon.__gc = function(t)
@@ -41,6 +39,19 @@ end
 local segs = {
   topNode = 1197,
   server = "demo.gridlight.dk",
+  url       = "http://gridlight-demo:8029",
+  wsurl     = "ws://gridlight-demo:8029/greenwise/subscribe",
+  user = "importer",
+  pw = "importer",
+  {name = "Fri", node = 1199, on=1},
+  {name = "Kantine",  node = 1210, on=1},
+  {name = "Kælder",   node = 1209},
+}
+local segs__ = {
+  topNode = 1197,
+  server = "demo.gridlight.dk",
+  user = "knaptryk",
+  pw = "hestsakspapir",
   {name = "Fri", node = 1199, on=1},
   {name = "Kantine",  node = 1210, on=1},
   {name = "Kælder",   node = 1209},
@@ -48,6 +59,8 @@ local segs = {
 local segs_ = {
   topNode = 4,
   server = "localhost",
+  user = "knaptryk",
+  pw = "hestsakspapir",
   {name = "2900100006", node = 386, on=1},
   {name = "133-2",  node = 90, on=1},
   {name = "133",   node = 5},
@@ -224,16 +237,16 @@ function spoon.start()
 end
 
 local function makeUrl(url, repl)
-  repl.user = spoon.user
-  repl.pw = spoon.pw
+  repl.user = segs.user
+  repl.pw = segs.pw
   return url:gsub('{{([%w_-]+)}}',repl)
 end
 
 -- local wsNotice
 function spoon.refresh()
-  local url = makeUrl("https://"..segs.server.."/gridlight/rs/segment/below/{{node}}", {node=segs.topNode})
+  local url = makeUrl((segs.url or ("https://"..segs.server)).."/gridlight/rs/segment/below/{{node}}", {node=segs.topNode})
   local headers = {['content-type']='application/json'}
-  headers.authorization = "Basic "..hs.base64.encode(spoon.user..":"..spoon.pw)
+  headers.authorization = "Basic "..hs.base64.encode(segs.user..":"..segs.pw)
   hs.http.asyncGet(url, headers, function(code_, body, rethdrs_)
     print("URL", url, "CODE", code_, pp(headers), pp(rethdrs_), "#BODY", #body)
     local r, s = pcall(hs.json.decode, body)
@@ -259,9 +272,9 @@ end
 function toggleLight(_, menuItem)
   print(pp(menuItem, 2))
   local seg = menuItem.seg
-  local url = makeUrl("https://"..segs.server.."/gridlight/rs/segment/action/{{node}}", {node=seg.node})
+  local url = makeUrl((segs.url or ("https://"..segs.server)).."/gridlight/rs/segment/action/{{node}}", {node=seg.node})
   local headers = {['content-type']='application/json'}
-  headers.authorization = "Basic "..hs.base64.encode(spoon.user..":"..spoon.pw)
+  headers.authorization = "Basic "..hs.base64.encode(segs.user..":"..segs.pw)
   --seg.on = not seg.on
   --menuItem.checked = seg.on
   print(url, hs.http.doRequest(url.."?action="..(seg.on and "off" or "on"), "PUT", "", headers))
@@ -302,10 +315,10 @@ function spoon.wsNotify()
   if wsNotice then
     wsNotice:close()
   end
-  --local headers = { authorization = "Basic "..hs.base64.encode(spoon.user..":"..spoon.pw) }
+  --local headers = { authorization = "Basic "..hs.base64.encode(spoon.user..":"..segs.pw) }
   --wsNotice = hs.websocket.new("wss://"..segs.server.."/changes",  headers, function(typ, msg)
   local ws
-  local wsUrl = "wss://"..segs.server.."/changes"
+  local wsUrl = segs.wsurl or ("wss://"..segs.server.."/changes")
   print("WS open", wsUrl)
   ws = hs.websocket.new(wsUrl, function(typ, msg)
     print("WS:", typ, msg)
@@ -320,7 +333,7 @@ function spoon.wsNotify()
       if msg == "authenticate" then
         print(msg)
         --hs.timer.doAfter(0.2, function()
-          local auth = hs.json.encode({user=spoon.user, pw=spoon.pw})
+          local auth = hs.json.encode({user=segs.user, pw=segs.pw})
           print("Sending auth", ws, ws:status(), pp(auth))
           ws:send(auth, false)
         --end)

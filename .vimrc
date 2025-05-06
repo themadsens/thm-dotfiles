@@ -228,7 +228,7 @@ setglobal incsearch nohlsearch       " Search while typing, 'zx' toggles highlig
 setglobal helpheight=100             " Maximize help windows
 setglobal shortmess=ato              " Brief messages to avoid 'Hit Return' prompts
 setglobal formatoptions=crqlo        " Comment handling / Dont break while typing
-setglobal history=100
+setglobal history=10000
 setglobal viminfo='20,\"500          " Keep history listings across sessions
 "setglobal wildmenu                   " Show completion matches on statusline
 "setglobal wildmode=list:longest,full " Default 'full' in neovim -> wildoptions=pum (popupmenu)
@@ -1514,9 +1514,10 @@ let g:fzf_command_prefix = "Fzf"
 nmap g/ :FzfHistory/<CR>
 nmap g: :FzfHistory:<CR>
 nmap F  :FzfBuffers<CR>
+nmap T  :FzfTags<CR>
 "nmap F  :files<CR>
 let $BAT_THEME = "ansi"
-let $FZF_DEFAULT_OPTS = "--exact --query=^"
+let $FZF_DEFAULT_OPTS = "--query=^"
 let g:fzf_preview_window = ['up', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 

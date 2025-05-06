@@ -32,8 +32,8 @@
 
 	// Specify the path to the database dump utilities for this server.
 	// You can set these to '' if no dumper is available.
-	$conf['servers'][0]['pg_dump_path'] = '/Applications/Postgres.app/Contents/Versions/9.4/bin/pg_dump';
-	$conf['servers'][0]['pg_dumpall_path'] = '/Applications/Postgres.app/Contents/Versions/9.4/bin/pg_dumpall';
+	$conf['servers'][0]['pg_dump_path'] = '/Applications/Postgres.app/Contents/Versions/14/bin/pg_dump';
+	$conf['servers'][0]['pg_dumpall_path'] = '/Applications/Postgres.app/Contents/Versions/14/bin/pg_dumpall';
 
 	$conf['servers'][1]['desc'] = 'amppostgres0 (ocef:qweasdzxc)';
 	$conf['servers'][1]['host'] = 'amppostgres0';

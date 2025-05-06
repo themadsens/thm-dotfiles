@@ -161,6 +161,7 @@ Install:andUse("FadeLogo", {
 })
 
 local wifiIfNames, wifiTimer
+local wasBBG = true
 local function isEthernetConnected()
   ipv4 = hs.network.primaryInterfaces()
   if not wifiIfNames then
@@ -169,6 +170,11 @@ local function isEthernetConnected()
       wifiIfNames[wf] = true
     end
   end
+  local isBBG = ipv4 == 'en5'
+  if wasBBG and isBBG ~= wasBBG then
+    --hs.execute("sh /Users/fm/bin3/ovpn-restart")
+  end
+  wasBBG = isBBG
 
   return ipv4 and not wifiIfNames[ipv4]
 end

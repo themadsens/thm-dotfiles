@@ -41,6 +41,18 @@ tmbackup() {
     $TMUTIL startbackup --auto
 }
 
+tmlist() {
+    $TMUTIL listbackups -d "$MNT" "$@" | sort
+}
+
+tmfindhist() {
+    echo "Mounting backups ..."
+    tmlist -m
+    echo ""
+    echo "Searching backups ..."
+    for f in `tmlist | sort -r` ;do command ls -l $f/Data/Users/fm/.bash_history ; done
+}
+
 tminfo() {
     diskutil mount "$VOL"
     echo "Time machine on '$VOL' at '$MNT'"
@@ -54,7 +66,9 @@ Usage: ${0##*/} <verb>
   help:   This text
   prune:  Prune until free space >= $MINFREE GB
   backup: Prune and then backup with tmutil
+  list:   List backups as paths (-m will mount)
   info:   Show volume & free space in GB
+  findhist: Find .bash_history files of yore
 EOF
 }
 
