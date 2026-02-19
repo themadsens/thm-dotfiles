@@ -5,6 +5,7 @@
 	email = fm@amplex.dk
 [core]
 	excludesfile = /Users/fm/.gitignore_global
+	pager = delta
 [difftool "sourcetree"]
 	cmd = /Users/fm/bin3/editgitversion __DIFF__ $LOCAL $REMOTE $BASE $MERGED
 	path = 
@@ -22,6 +23,7 @@
 	st = status -s
 	co = checkout
 	cdiff = diff --word-diff=color --word-diff-regex=.
+	ddiff = diff delta --color-only --paging never
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 	aliases = alias
 	quickserve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
@@ -30,3 +32,15 @@
 	ui = auto
 [tig]
 	diff-highlight = true
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	light = true
+	line-numbers = true
+	minus-style = bold auto "#e0af87"
+	plus-style = syntax "#d7ffaf"
+	file-style = blue bold white
+	pager = deltaless
+[merge]
+	conflictStyle = zdiff3

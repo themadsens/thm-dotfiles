@@ -4,6 +4,7 @@
   // See https://github.com/neoclide/coc.nvim/issues/1667
   "diagnostic.virtualText": false,
   "diagnostic.checkCurrentLine": true,
+  "tsserver.suppressDiagnosticMessages": [80006],
 
   "Lua.workspace.preloadFileSize": 500,
   "Lua.diagnostics.enable": false,

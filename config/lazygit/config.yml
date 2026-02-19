@@ -1,0 +1,28 @@
+gui:
+  theme:
+    selectedLineBgColor:
+      - '#d7d7af'
+  showFileTree: false
+  enlargedSideViewLocation: top
+
+git:
+  log:
+    showGraph: 'never'
+    order: 'date-order'
+  pagers:
+    - colorArg: always
+      #pager: delta --navigate
+      pager: delta --paging=never
+
+keybinding:
+  universal:
+    scrollUpMain: k
+    scrollDownMain: j
+    prevItem-alt: K
+    nextItem-alt: J
+    prevPage: <pgup>
+    nextPage: <pgdown>
+    nextScreenMode: ','
+    prevScreenMode: .
+    gotoTop: <home>
+    gotoBottom: <end>

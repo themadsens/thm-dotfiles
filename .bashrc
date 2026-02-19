@@ -3,6 +3,7 @@ SHELL=$BASH
 export LC_CTYPE=en_US.UTF-8
 export LANG=en_US.UTF-8
 umask 022
+_split_longopt() { _comp__split_longopt "$@"; } # See https://unix.stackexchange.com/a/781783/185325
 
 if [ -n "$PS1" ] ;then
    _PS1=$PS1
@@ -56,6 +57,8 @@ if [ -n "$PS1" ] ;then
    export PGDATABASE=ampep
    #export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m" # Don't run out of memory while building
    export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
+   export XDG_CONFIG_HOME="$HOME/.config"
+
 
    [[ "$(type -p dircolors)" ]] && eval `dircolors`
    # eval `dircolors ~/.dircolors`
@@ -94,10 +97,12 @@ if [ -n "$PS1" ] ;then
       lth()       { eza -laB -s newest -r --color=always "$@" | head -20 | _green_to_thousands; }
       ll() {
           local OPTIND OPTARG OPTS o B="B"
-          while getopts ":ht" o ;do
+          while getopts ":htrL" o ;do
               case $o in
                   h) B="" ;;
                   t) OPTS=$OPTS" -s newest" ;;
+                  r) OPTS=$OPTS" -s oldest" ;;
+                  L) OPTS=$OPTS" --dereference" ;;
                   \?) OPTS=$OPTS" -$OPTARG" ;;
               esac
           done
@@ -141,7 +146,7 @@ if [ -n "$PS1" ] ;then
    gitdiff() {
       REV=''
       [[ $# > 0 && "$1" != -* ]] && REV=${1}^..${1}; shift;
-      git diff -b $REV "$@";
+      command git diff -b $REV "$@";
    }
    gitup() {
       echo -e "Stashing .. \c"
@@ -325,6 +330,8 @@ if [ -n "$PS1" ] ;then
    alias histload="history -n"
    alias histgrep="history | grep"
    alias dhcp-assigned='ssh amplex@amplan0 "grep DHCPACK /var/log/syslog | tail "'
+   alias tlgst="lazygit status"
+   alias tlg="lazygit log"
 
    case $TERM in
        sun-cmd) stln() { printf "\033]l %s \033" "$*"; } ; itit() { :; }
@@ -538,6 +545,11 @@ if [ -n "$PS1" ] ;then
       fi
    }
 
+   #psql() {
+   #  if [[ $# -gt 0 ]] ;then command psql; return; fi
+   #  rlwrap -a -c -H ~/.psql_history2 psql --no-readline
+   #}
+
    ttprompt() {
       case "$1" in
          1) echo "${TOOLCHAIN_PS1_LABEL:+ }${TOOLCHAIN_PS1_LABEL}" ;;
@@ -736,5 +748,9 @@ fi
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH=$BUN_INSTALL/bin:$PATH
+
+# Brew & python (SUK!) -- https://stackoverflow.com/a/75696359/3697584
+VIRTUAL_ENV_DISABLE_PROMPT=1
+[[ -r $HOME/.py-venv/bin/activate ]] && source $HOME/.py-venv/bin/activate
 
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"

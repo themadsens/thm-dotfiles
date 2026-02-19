@@ -1,4 +1,5 @@
 # vim: set ft=apache:
+AllowEncodedSlashes NoDecode
 DocumentRoot "/Users/fm/thm-dotfiles/apache/www"
 <Directory   "/Users/fm/thm-dotfiles/apache/www">
     # The Options directive is both complicated and important.  Please see

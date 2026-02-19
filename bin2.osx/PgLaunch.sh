@@ -22,15 +22,17 @@ elif [[ "$1" = new ]] ;then
 fi
 PATH=$PG/bin:$PATH
 
+PGOPTIONS='-c timezone=GMT'
+
 case $1 in
     startfg)
-        $PG/bin/pg_ctl start -D "$DATA"
+        TZ=utc $PG/bin/pg_ctl start -D "$DATA" -o "$PGOPTIONS"
         trap '' SIGTERM
         ( trap SIGTERM ; sleep $(( 1000*1000*1000 )) )
         $PG/bin/pg_ctl stop -D "$DATA" -m fast
         ;;
     start)
-        $PG/bin/pg_ctl start -D "$DATA"
+        $PG/bin/pg_ctl start -D "$DATA" -o "$PGOPTIONS"
         ;;
     status)
         $PG/bin/pg_ctl status -D "$DATA"

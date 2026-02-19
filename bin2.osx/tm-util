@@ -45,12 +45,16 @@ tmlist() {
     $TMUTIL listbackups -d "$MNT" "$@" | sort
 }
 
-tmfindhist() {
+tmfindfile() {
     echo "Mounting backups ..."
     tmlist -m
     echo ""
     echo "Searching backups ..."
     for f in `tmlist | sort -r` ;do command ls -l $f/Data/Users/fm/.bash_history ; done
+}
+
+tmfindhist() {
+    tmfindfile .bash_history
 }
 
 tminfo() {
@@ -68,6 +72,7 @@ Usage: ${0##*/} <verb>
   backup: Prune and then backup with tmutil
   list:   List backups as paths (-m will mount)
   info:   Show volume & free space in GB
+  findfile: Find <file> in HOME
   findhist: Find .bash_history files of yore
 EOF
 }

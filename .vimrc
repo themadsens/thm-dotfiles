@@ -770,7 +770,7 @@ function! MakePrg(mkArg)
    if makeArgs ==# 'jshint' || makeArgs ==# 'jslint'
       setlocal makeprg=makeArgs
       let makeArgs = '%'
-   elseif makeArgs ==# 'luacheck' || (&ft ==# 'lua' && !filereadable('Makefile'))
+   elseif makeArgs ==# 'luacheck' || &ft ==# 'lua'
       setlocal makeprg=luacheck\ --no-color
       let makeArgs = '%'
    elseif findfile('pom.xml', '.;') == '' && findfile('gulpfile.js', '.;') != '' && &ft ==# 'javascript'
@@ -1520,6 +1520,7 @@ let $BAT_THEME = "ansi"
 let $FZF_DEFAULT_OPTS = "--query=^"
 let g:fzf_preview_window = ['up', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
+let g:fzf_history_dir = '~/.fzf_vim_history'
 
 " Signify
 autocmd User SignifyHunk call s:show_current_hunk()
@@ -1541,7 +1542,7 @@ if has('nvim-DISABLE')
 endif
 
 if has('nvim')
-   lua require 'smart-term-esc' .setup {key='<Esc>', except={'nvim', 'vim', 'fx', 'fzf'}}
+   lua require 'smart-term-esc' .setup {key='<Esc>', except={'nvim', 'vim', 'fx', 'fzf', 'lazygit'}}
 endif
 
 " Matchup -- treesitter

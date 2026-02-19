@@ -67,6 +67,7 @@ call plug#begin('~/.vim/plugged')
 " Plug 'https://github.com/Rykka/InstantRst'
   Plug 'https://github.com/juneedahamed/vc.vim'
   Plug 'https://github.com/fcpg/vim-colddeck'
+  Plug 'joelbeedle/pseudo-syntax'
 
 if has('nvim')
   "Plug 'andymass/vim-matchup'

@@ -1,4 +1,5 @@
 #!/bin/bash
+# https://stackoverflow.com/a/10660730/3697584
 
 rawurlencode() {
   local string="${1}"
