@@ -1,3 +1,4 @@
-xterm-256color-italic|xterm with 256 colors and italic,
+xterm-256color-italic|xterm with 256 colors and italic - use tc -x to compile,
   sitm=\E[3m, ritm=\E[23m,
+  XT, Ms,
   use=xterm-256color,

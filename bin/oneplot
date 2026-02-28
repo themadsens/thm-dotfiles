@@ -7,48 +7,64 @@ import matplotlib.pyplot as plt
 
 # --- FIND REPO ROOT BY SEARCHING PARENT DIRECTORIES ---
 def find_git_root(path):
-    current = os.path.abspath(path)
-    while current != os.path.dirname(current):  # stop at filesystem root
-        if os.path.isdir(os.path.join(current, ".git")):
-            return current
-        current = os.path.dirname(current)
-    raise FileNotFoundError("No .git directory found in this or parent directories.")
+    current = os.path.abspath(path) 
+    while current != os.path.dirname(current):  # stop at filesystem root 
+        if os.path.isdir(os.path.join(current, ".git")): 
+            return current 
+        current = os.path.dirname(current) 
+    raise FileNotFoundError("No .git directory found in this or parent directories.") 
 
-repo_path = find_git_root(os.getcwd())
-repo = git.Repo(repo_path)
+repo_path = find_git_root(os.getcwd()) 
+repo = git.Repo(repo_path) 
 
 # --- EXTRACT COMMITS ---
-commits_data = []
-for commit in repo.iter_commits():
-    commits_data.append({
-        "author": commit.author.name,
-        "date": commit.committed_datetime.date()
-    })
+commits_data = [] 
+for commit in repo.iter_commits(): 
+    commits_data.append({ 
+        "author": commit.author.name, 
+        "date": commit.committed_datetime.date() 
+    }) 
 
 # --- CONVERT TO DATAFRAME ---
-df = pd.DataFrame(commits_data)
+df = pd.DataFrame(commits_data) 
 
 # --- GROUP BY AUTHOR AND DATE ---
-commit_counts = df.groupby(["date", "author"]).size().unstack(fill_value=0)
+commit_counts = df.groupby(["date", "author"]).size().unstack(fill_value=0) 
 
 # --- ACCUMULATE COMMITS OVER TIME ---
-cumulative_commits = commit_counts.cumsum()
+cumulative_commits = commit_counts.cumsum() 
 
-# --- SORT COLUMNS BY TOTAL COMMITS ---
+# --- SORT AND CONSOLIDATE TO TOP 10 + OTHERS ---
+# Get total commits to identify top authors
 total_commits_per_author = cumulative_commits.iloc[-1].sort_values(ascending=False)
-cumulative_commits = cumulative_commits[total_commits_per_author.index]
+
+if len(total_commits_per_author) > 10:
+    # Separate top 10 from the rest
+    top_10_authors = total_commits_per_author.head(10).index
+    others_authors = total_commits_per_author.iloc[10:].index
+    
+    # Create the 'Others' column by summing the rest
+    top_10_df = cumulative_commits[top_10_authors].copy()
+    top_10_df['Others'] = cumulative_commits[others_authors].sum(axis=1)
+    
+    cumulative_commits = top_10_df
+    # Update total counts for the legend
+    total_commits_per_author = cumulative_commits.iloc[-1]
+else:
+    # Just sort if 10 or fewer
+    cumulative_commits = cumulative_commits[total_commits_per_author.index] 
 
 # --- PLOT ---
-fig, ax = plt.subplots(figsize=(12, 6))
-lines = cumulative_commits.plot(ax=ax)
+fig, ax = plt.subplots(figsize=(12, 6)) 
+lines = cumulative_commits.plot(ax=ax) 
 
 # --- CUSTOM LEGEND WITH TOTAL COMMITS ---
-labels = [f"{author} ({total_commits_per_author[author]})" for author in total_commits_per_author.index]
-ax.legend(labels=labels, title="Developer (Total Commits)")
+labels = [f"{author} ({total_commits_per_author[author]})" for author in cumulative_commits.columns] 
+ax.legend(labels=labels, title="Developer (Total Commits)") 
 
-plt.title("Cumulative Commits per Developer Over Time")
-plt.xlabel("Date")
-plt.ylabel("Total Commits")
-plt.grid(True, linestyle="--", alpha=0.5)
-plt.tight_layout()
-plt.show()
+plt.title("Cumulative Commits per Developer Over Time (Top 10)") 
+plt.xlabel("Date") 
+plt.ylabel("Total Commits") 
+plt.grid(True, linestyle="--", alpha=0.5) 
+plt.tight_layout() 
+plt.show() 
