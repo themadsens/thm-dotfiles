@@ -1511,13 +1511,15 @@ let g:mundo_preview_Height=20
 
 " fzf
 let g:fzf_command_prefix = "Fzf"
+let $FZF_DEFAULT_OPTS = '--exact'
 nmap g/ :FzfHistory/<CR>
 nmap g: :FzfHistory:<CR>
+nmap g? :FzfBLines <C-R>/<CR>
+nmap gL :FzfBLines<CR>
 nmap F  :FzfBuffers<CR>
 nmap T  :FzfTags<CR>
 "nmap F  :files<CR>
 let $BAT_THEME = "ansi"
-let $FZF_DEFAULT_OPTS = "--query=^"
 let g:fzf_preview_window = ['up', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 let g:fzf_history_dir = '~/.fzf_vim_history'
