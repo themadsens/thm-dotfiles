@@ -1080,7 +1080,7 @@ func! s:AgSearch(pattern, wordwise)
       exe 'cd '.fnameescape(b:searchroot)
    endif
    let ign = filereadable('.agignore') ? ' -p .agignore --skip-vcs-ignores' : ''
-   let &grepprg = 'ag'.ign.' --ignore tags --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '')
+   let &grepprg = 'ag'.ign.' --ignore tags --vimgrep --follow '.(a:wordwise ? '-w ' : '').(&ignorecase ? '-i ' : '-s')
    exe 'silent grep! '.shellescape(a:pattern, 1)
    let &grepprg = sgSave
    call histadd('cmd', 'Search'.(a:wordwise ? 'W ' : ' ').fnameescape(a:pattern))
@@ -1261,11 +1261,10 @@ setglobal statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
 " The &background option is set asynch. on the terminal OSC 11 reply
 "autocmd VimEnter * if &background == 'dark' | colorscheme habamax | else | colorscheme flemming | endif
 "" Define the script-local function
+colorscheme flemming
 function! s:CheckBackground(timer)
     if &background == 'dark'
         colorscheme habamax
-    else
-        colorscheme flemming
     endif
 endfunction
 au VimEnter * call timer_start(1, funcref('s:CheckBackground'))

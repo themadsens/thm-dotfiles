@@ -1,12 +1,4 @@
 " Vim color file
-" Maintainer: David Ne\v{c}as (Yeti) <yeti@physics.muni.cz>
-" Last Change: 2003-04-23
-" URL: http://trific.ath.cx/Ftp/vim/colors/peachpuff.vim
-
-" This color scheme uses a peachpuff background (what you've expected when it's
-" called peachpuff?).
-"
-" Note: Only GUI colors differ from default, on terminal it's just `light'.
 
 " First remove all existing highlighting.
 " set background=light
@@ -28,18 +20,18 @@ hi Directory term=bold ctermfg=4 guifg=#0220B2
 "hi ErrorMsg term=standout cterm=bold ctermfg=8 ctermbg=9 gui=bold guifg=White guibg=Red
 hi ErrorMsg term=standout cterm=bold ctermfg=8 ctermbg=9 gui=bold guifg=#555753 guibg=#EF2929
 hi IncSearch term=reverse cterm=reverse gui=reverse
-hi Search term=reverse ctermbg=227 guibg=#ffff5f
+hi Search ctermfg=15 ctermbg=227 guifg=#07080d guibg=#ffff5f
 hi MoreMsg term=bold ctermfg=2 gui=bold guifg=#107A02
-hi ModeMsg term=bold cterm=bold gui=bold
+hi ModeMsg term=bold cterm=bold gui=bold guifg=DarkGreen
 "hi LineNr term=underline ctermfg=3 guifg=Red3
 hi Question term=standout ctermfg=2 gui=bold guifg=#107A02
-"hi StatusLine term=bold,reverse cterm=bold,reverse gui=bold guifg=White guibg=Black
-"hi StatusLineNC term=reverse cterm=reverse gui=bold guifg=PeachPuff guibg=Gray45
+hi StatusLine ctermfg=0 ctermbg=248 guifg=#2c2e33 guibg=DarkGrey
+hi StatusLineNC ctermfg=15 ctermbg=242 guifg=#e0e2ea guibg=Grey
 hi VertSplit term=reverse cterm=reverse gui=bold guifg=White guibg=Gray45
 hi Title term=bold ctermfg=5 gui=bold guifg=#CA30C7
 hi Visual term=reverse ctermbg=249 gui=reverse guifg=#b2b2b2 guibg=fg
 hi WarningMsg term=standout ctermfg=1 gui=bold guifg=#8A252C
-hi WildMenu term=standout ctermfg=0 ctermbg=227 guifg=Black guibg=#ffff5f
+hi WildMenu ctermfg=0 ctermbg=227 guifg=Black guibg=#ffff5f
 hi Folded term=standout ctermfg=4 ctermbg=7 guifg=#0220B2 guibg=#e3c1a5
 hi FoldColumn term=standout ctermfg=4 ctermbg=7 guifg=#0220B2 guibg=#9c9c9c
 hi DiffAdd term=bold ctermbg=36 guibg=#00af87
@@ -49,13 +41,19 @@ hi DiffText term=reverse cterm=bold ctermbg=202 gui=bold guibg=#ff5f00
 hi Cursor guifg=bg guibg=fg
 hi lCursor guifg=bg guibg=fg
 hi SpellBad ctermbg=168 gui=undercurl guisp=Red
+hi MatchParen cterm=bold,underline gui=bold guibg=#9b9ea4
+hi NormalFloat guibg=#eef1f8
+hi CurSearch ctermfg=0 ctermbg=11 guifg=#07080d guibg=#fce094
+hi Pmenu cterm=reverse guibg=#c4c6cd
+hi WinBar cterm=bold gui=bold guifg=#4f5258 guibg=#eef1f8
+hi WinBarNC cterm=bold guifg=#4f5258 guibg=#eef1f8
 
 highlight LineNr cterm=NONE ctermbg=187 ctermfg=3 guifg=#706F00 guibg=#d7d7af
 highlight CursorLine cterm=NONE ctermbg=186 guibg=#d7d787
 highlight CursorLineNr term=bold cterm=bold ctermbg=186 ctermfg=130 guibg=#d7d787 guifg=#af5f00
 highlight CursorColumn cterm=NONE ctermbg=186 guibg=#d7d787
-highlight SignColumn cterm=NONE ctermbg=187 guibg=#d7d7af
-highlight ColorColumn cterm=NONE ctermbg=255 guibg=#eeeeee
+highlight SignColumn cterm=NONE ctermbg=187 guibg=#d7d7af guifg=black
+highlight ColorColumn cterm=NONE ctermbg=255 guibg=#eeeeee guifg=black
 
 hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey
 hi StatusLine     term=reverse      cterm=NONE ctermbg=grey  ctermfg=black    gui=NONE guibg=darkgrey
@@ -78,4 +76,6 @@ hi Type term=underline ctermfg=2 gui=NONE guifg=#107A02
 hi Ignore cterm=bold ctermfg=7 guifg=#9c9c9c
 hi Error term=reverse ctermbg=9 ctermfg=15 guifg=White guibg=#EF2929
 hi Todo term=standout ctermfg=0 ctermbg=11 guifg=Black guibg=#FDEB61
+hi String ctermfg=2 guifg=DarkGreen
+hi Function ctermfg=6 guifg=DarkCyan
 

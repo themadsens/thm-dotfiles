@@ -14,6 +14,13 @@ tmfree() {
     diskutil info -plist "$VOL" | plutil -convert json -o - - | jq '.APFSContainerFree/1024/1024/1024 | floor'
 }
 
+tmunlock() {
+    set +o errexit
+    base64 -d /Users/fm/tmp/.tmvolpw | \
+    diskutil apfs unlockVolume "$VOL" -stdinpassphrase
+    set -o errexit
+}
+
 tmprune() {
     [[ "$MNT" ]] && tmfree >/dev/null || exit 1
     local DIR
@@ -24,8 +31,10 @@ tmprune() {
             echo "Free: $FREE; Purge: $OLDEST at $MNT"
             local TS=${OLDEST##*/}
             TS=${TS%.backup}
+            set -x
             sudo $TMUTIL delete -d "$MNT" -t "$TS"
             sleep 30 # Apparantly needs some grace time to stabilize free space
+            set +x
         else
             echo "Free: $FREE > $MINFREE"
             break
@@ -34,7 +43,7 @@ tmprune() {
 }
 
 tmbackup() {
-    diskutil mount "$VOL"
+    tmunlock
     tmfree >/dev/null || exit 1
     echo "==> $(date) - $(tminfo)" >> /tmp/tm-backup.log
     (( $(tmfree) < MINFREE )) && tmprune | tee -a /tmp/tm-backup.log
@@ -42,12 +51,14 @@ tmbackup() {
 }
 
 tmlist() {
+    tmunlock
     $TMUTIL listbackups -d "$MNT" "$@" | sort
 }
 
 tmfindfile() {
     echo "Mounting backups ..."
-    tmlist -m
+    tmunlock
+    tmlist -m >/dev/null
     echo ""
     echo "Searching backups ..."
     for f in `tmlist | sort -r` ;do command ls -l $f/Data/Users/fm/.bash_history ; done
@@ -58,10 +69,14 @@ tmfindhist() {
 }
 
 tminfo() {
-    diskutil mount "$VOL"
+    tmunlock
     echo "Time machine on '$VOL' at '$MNT'"
     echo "List backup dirs with: tmutil listbackups -d '$MNT'"
     echo "Free space $(tmfree) GB. Enforce $MINFREE GB"
+}
+
+tmeject() {
+    diskutil eject "$VOL"
 }
 
 tmhelp() {
@@ -71,6 +86,7 @@ Usage: ${0##*/} <verb>
   prune:  Prune until free space >= $MINFREE GB
   backup: Prune and then backup with tmutil
   list:   List backups as paths (-m will mount)
+  eject:  Eject TimeMachine drive
   info:   Show volume & free space in GB
   findfile: Find <file> in HOME
   findhist: Find .bash_history files of yore
