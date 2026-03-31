@@ -9,7 +9,7 @@
 " Note: Only GUI colors differ from default, on terminal it's just `light'.
 
 " First remove all existing highlighting.
-set background=light
+" set background=light
 hi clear
 if exists("syntax_on")
   syntax reset

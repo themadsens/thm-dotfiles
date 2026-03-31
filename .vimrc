@@ -1258,7 +1258,18 @@ command! Menu call Menu(1)
 setglobal statusline=%<%f%=\ %{ShowSyn()}%2*%{VimBuddy()}%*\ %([%1*%M\%*%n%R\%Y
               \%{VarExists(',GZ','b:zipflag')},%1*%{CaseStat()}%*]%)\ %02c%V(%02B)C\ %3l/%LL\ %P
 
-colorscheme flemming
+" The &background option is set asynch. on the terminal OSC 11 reply
+"autocmd VimEnter * if &background == 'dark' | colorscheme habamax | else | colorscheme flemming | endif
+"" Define the script-local function
+function! s:CheckBackground(timer)
+    if &background == 'dark'
+        colorscheme habamax
+    else
+        colorscheme flemming
+    endif
+endfunction
+au VimEnter * call timer_start(1, funcref('s:CheckBackground'))
+
 hi User1          term=reverse,bold cterm=NONE,bold ctermfg=red  ctermbg=grey gui=bold guifg=red guibg=gray
 hi User2          term=reverse      cterm=NONE      ctermfg=blue ctermbg=grey guifg=darkblue guibg=gray
 "hi StatusLineNC   term=reverse      cterm=NONE ctermbg=darkgrey  ctermfg=white gui=NONE guibg=grey
