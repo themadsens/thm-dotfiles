@@ -5,7 +5,6 @@
 	email = fm@amplex.dk
 [core]
 	excludesfile = /Users/fm/.gitignore_global
-	pager = delta
 [difftool "sourcetree"]
 	cmd = /Users/fm/bin3/editgitversion __DIFF__ $LOCAL $REMOTE $BASE $MERGED
 	path = 
@@ -42,5 +41,3 @@
 	plus-style = syntax "#d7ffaf"
 	file-style = blue bold white
 	pager = deltaless
-[merge]
-	conflictStyle = zdiff3
