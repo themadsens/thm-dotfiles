@@ -11,10 +11,15 @@
 #replace=\1h\2m\3s
 #======
 
+=====
+# WF Timestamp
+regexp=^[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*,[0-9]*
+colours=blue bold
+=====
 # display this line in yellow and stop further processing
-regexp=.*last message repeated \d+ times$
-colours=yellow
-count=stop
+=regexp=.*last message repeated \d+ times$
+=colours=yellow
+=count=stop
 ======
 # this is date
 regexp=^... (\d| )\d \d\d:\d\d:\d\d(\s[\w\d]+?\s)
@@ -22,9 +27,9 @@ colours=green, green, red
 count=once
 ======
 # everything in parentheses
-regexp=\(.+?\)
-colours=green
-count=more
+=regexp=\(.+?\)
+=colours=green
+=count=more
 ======
 # everything in `'
 regexp=\`.+?\'
@@ -37,13 +42,13 @@ colours=bold green
 count=more
 ======
 # name of process and pid
-regexp=([\w/\.\-]+)(\[\d+?\])
-colours=bold blue, bold red
-count=more
+=regexp=([\w/\.\-]+)(\[\d+?\])
+=colours=bold blue, bold red
+=count=more
 ======
 # ip number
 regexp=\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
-colours=bold magenta
+colours=bold magenta on_yellow
 count=more
 ======
 # connect requires special attention
@@ -54,11 +59,17 @@ count=more
 regexp=amplex
 colours=magenta bold
 =====
+#Keys
+regexp=[a-zA-Z_]+[=:]
+colours=cyan bold
+=====
+# Stack trace
 regexp=\(([a-zA-Z_-]*.java)(:[0-9]*)\)
 colours=magenta,green
 =====
-regexp=^[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*,[0-9]*
-colours=blue bold
+# Log pos
+regexp=\(([a-zA-Z_.-])(:[0-9]*)\):$
+colours=magenta,green
 =====
 regexp=(TRACE|FINE|FINER|FINEST) *\[[^]]*] *(.*)$
 colours=black, bold cyan, red
@@ -66,7 +77,7 @@ colours=black, bold cyan, red
 regexp=(DEBUG) *\[[^]]*] *(.*)$
 colours=blue
 =====
-regexp=(INFO) *\[[^]]*]* *(.*)$
+regexp=(INFO) *\[[^]]*] *(.*)$
 colours=black, bold green, red
 =====
 regexp=(WARN) *\[[^]]*]* *(.*)$

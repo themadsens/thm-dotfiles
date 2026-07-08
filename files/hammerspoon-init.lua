@@ -242,6 +242,47 @@ end):start())
 
 hs.urlevent.bind("loadDeskBg", loadDeskBg)
 
+
+
+local function processDownloadedFile(filePath)
+  -- Put your modification logic here!
+  print("New download detected and ready: " .. filePath)
+
+  if filePath:match("%/gemini%-conversation[^/]*%.md$") then
+    local file = io.open(filePath, "r"):read("a")
+    io.open(filePath, "w"):write(string.gsub(file, "\n%*%*You%:%*%*\n[^\n]*", function(question)
+      return "\n# ➦ "..question:sub(11, 55).."\n"..question
+    end))
+  end
+
+end
+
+-- Watch downloads
+local downloadFolder = os.getenv("HOME") .. "/Downloads"
+downloadWatcher = hs.pathwatcher.new(downloadFolder, function(paths, flagIndices)
+  for i, path in ipairs(paths) do
+    -- Check the flags to see if the file was modified/renamed (Chrome finishing the download)
+    local flags = flagIndices[i]
+    print("Download: "..path.." flags: "..pp(flags))
+
+    -- We look for itemRenamed because Chrome renames the file from .crdownload to final
+    -- Avoid triggering on the modification in processDownloadedFile() or we will loop hard!
+    if flags.itemRenamed and flags.itemChangeOwner and not flags.itemInodeMetaMod and not flags.itemIsDir then
+      -- Make sure it's not the temporary .crdownload file disappearing
+      if not path:match("%.crdownload$") then
+        -- Optional: Give macOS a tiny fraction of a second to release the file lock
+        hs.timer.doAfter(0.5, function()
+          -- Verify the file still exists and isn't a ghost event
+          if hs.fs.attributes(path) then
+            processDownloadedFile(path)
+          end
+        end)
+      end
+    end
+  end
+end):start()
+
+
 -- Toggle WiFi based on Ethernet being connected or not
 -- local systemWatcher = hs.caffeinate.watcher.new(handleMyWifi)
 

@@ -3,7 +3,8 @@ export MAVEN_OPTS="-Xmx1024m"
 [ -f .envrc ]    && . .envrc
 [ -f ../.envrc ] && . ../.envrc
 
-mvn -DskipTests=true -DperformRelease=false "$@"
+#mvn -DskipTests=true -DperformRelease=false  "$@"
+mvn -DskipTests=true -DperformRelease=false  -Dcyclonedx.skip=true "$@"
 if [ $1 = compile  -a -d target/*/WEB-INF/classes ] ;then
     rsync -a -O --out-format="%M %l %n%L" target/classes/ target/*/WEB-INF/classes/
 fi
