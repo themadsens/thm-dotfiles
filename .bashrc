@@ -586,6 +586,8 @@ if [ -n "$PS1" ] ;then
    }
 
    PS1="[$(__col 1)\h $(__col 2)\W$(__col 6)\$(gitps1)\$(bgstatp)$(__col 3)\$(exitrep)\$(ttprompt 1)$(__col 9)]\\\$ "
+   PS1="$PS1"'\[\e]133;B\a\]'             # prompt ends, input starts
+   PS0='\[\e]133;C\a\]'                   # output starts
 
    run() { local A=$1 ; shift ; open "/Applications/${A}.app" "$@"; }
    __run() {
@@ -652,7 +654,13 @@ if [ -n "$PS1" ] ;then
       [[ "$TMUX" ]] && eval $(tmux show-environment -s -t 0)
    }
 
+   __osc133_prompt() {
+       local status=$?                    # must come first, before anything changes $?
+       printf '\e]133;D;%s\a' "$status"   # previous command finished, with its exit code
+       printf '\e]133;A\a'                # prompt starts
+   }
    _prompt_command() {
+      __osc133_prompt
       history -a
       stdir
       hash -r
