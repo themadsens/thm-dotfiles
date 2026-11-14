@@ -6,3 +6,4 @@
 apache/ssl
 apache/www/phppgadmin
 .vim/sessions/
+.bash_completion.d/jira-env.sh
