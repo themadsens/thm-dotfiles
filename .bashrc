@@ -331,11 +331,11 @@ if [ -n "$PS1" ] ;then
          # See https://stackoverflow.com/a/61139251/3697584
          sudo ss --tcp state CLOSE-WAIT --kill
       fi
-      case $(zellij list-sessions -n 2>/dev/null | wc -l | awk '{print $1}') in
+      case $(zellij list-sessions -n 2>/dev/null | grep -v EXITED | wc -l | awk '{print $1}') in
          0) zellij ;;
          1) zellij attach ;;
          *)
-            zellij list-sessions | awk '{print NR-1 ": " $0}'
+            zellij list-sessions | grep -v EXITED | awk '{print NR-1 ": " $0}'
             read -n 1 -p "Select session: " N < /dev/tty > /dev/tty;
             zellij attach --index "$N"
             ;;
