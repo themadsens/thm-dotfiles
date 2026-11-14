@@ -293,7 +293,9 @@ nmap <silent> gp    :call WithQfInfo("cprevious")<CR>
 nmap <silent> <M-p> :call WithQfInfo("cprevious")<CR>
 nmap <silent> gl    :call WithQfInfo("cwindow")<CR>
 nmap <silent> gc    :call WithQfInfo("cc")<CR>
-nmap <silent> gz    :call qfutil#followLine(0)<CR>
+"nmap <silent> gz    :call qfutil#followLine(0)<CR>
+nmap <silent> gz    1z=
+
 nmap gm :Make<CR>
 
 " Various utility keys
@@ -1060,11 +1062,6 @@ delfunction CciPostLoad
 "exe "source  '.expand('<sfile>:h').'/dot/usr/vim/'.'utils.vim'
 "exe 'source  '.expand('<sfile>:h').'/dot/usr/vim/'.'newfmgr.vim'
 
-nmap              gG      :call OpenSpec("GLW::<C-R><C-W>")<CR>
-vmap              gG      :call OpenSpec("GLM::".VisVal())<CR>
-command! -nargs=1 Glimpse  call OpenSpec("GLM::<args>")
-command! -nargs=1 GlimpseW call OpenSpec("GLW::<args>")
-
 func! s:TransientHls(pattern)
    if !&hlsearch
       let @/ = a:pattern
@@ -1498,8 +1495,8 @@ nmap <Leader>jS <Plug>(JavaComplete-Imports-RemoveUnused)<Plug>(JavaComplete-Imp
 let g:lua_subversion = 4
 
 " Fugitive
-nmap gy :Git log --pretty=oneline %<CR>
-nmap gG :Git<CR>
+"nmap gy :Git log --pretty=oneline %<CR>
+"nmap gG :Git<CR>
 
 " NerdTree
 function! NerdTreeFocusToggle()
@@ -1526,6 +1523,7 @@ nmap g/ :FzfHistory/<CR>
 nmap g: :FzfHistory:<CR>
 nmap g? :FzfBLines <C-R>/<CR>
 nmap gL :FzfBLines<CR>
+nmap gG :FzfLines<CR>
 nmap F  :FzfBuffers<CR>
 nmap T  :FzfTags<CR>
 "nmap F  :files<CR>

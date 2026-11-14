@@ -37,7 +37,7 @@ local function findMyWindows(pr)
     elseif app == "Google Chrome" and frame.w > 1000 and not winCache[4]
       and w:screen():position() == 0 and not w:title():match("^GridLight") then
       ix = 4;
-    elseif app == "Google Chrome" and (frame.w > 1000 or w:title():match("^GridLight")) then
+    elseif app == "Google Chrome" and (w:title():match("^GridLight") or w:title():match("%f[%a]realm:")) then
       ix = 5;
     elseif app == "Safari" then
       ix = 6;

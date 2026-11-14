@@ -4,16 +4,14 @@ gui:
       - '#d7d7af'
   showFileTree: false
   enlargedSideViewLocation: top
-
 git:
   log:
     showGraph: 'never'
     order: 'date-order'
-  pagers:
+  diffRenderers:
     - colorArg: always
       #pager: delta --navigate
-      pager: delta --paging=never
-
+      command: delta --paging=never
 keybinding:
   universal:
     scrollUpMain: k

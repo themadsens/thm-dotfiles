@@ -20,7 +20,7 @@ hi Directory term=bold ctermfg=4 guifg=#0220B2
 "hi ErrorMsg term=standout cterm=bold ctermfg=8 ctermbg=9 gui=bold guifg=White guibg=Red
 hi ErrorMsg term=standout cterm=bold ctermfg=8 ctermbg=9 gui=bold guifg=#555753 guibg=#EF2929
 hi IncSearch term=reverse cterm=reverse gui=reverse
-hi Search ctermfg=15 ctermbg=227 guifg=#07080d guibg=#ffff5f
+hi Search ctermfg=0 ctermbg=227 guifg=#07080d guibg=#ffff5f
 hi MoreMsg term=bold ctermfg=2 gui=bold guifg=#107A02
 hi ModeMsg term=bold cterm=bold gui=bold guifg=DarkGreen
 "hi LineNr term=underline ctermfg=3 guifg=Red3

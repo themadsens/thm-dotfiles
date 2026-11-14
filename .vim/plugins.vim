@@ -78,5 +78,9 @@ endif
   Plug 'https://github.com/Yggdroot/LeaderF'
   Plug 'https://github.com/sychen52/smart-term-esc.nvim'
 
+  Plug 'tpope/vim-dadbod'
+  Plug 'kristijanhusak/vim-dadbod-ui'
+  Plug 'kristijanhusak/vim-dadbod-completion' "Optional
+
 call plug#end()
 

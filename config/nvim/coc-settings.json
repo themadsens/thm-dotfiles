@@ -4,12 +4,15 @@
   // See https://github.com/neoclide/coc.nvim/issues/1667
   "diagnostic.virtualText": false,
   "diagnostic.checkCurrentLine": true,
-  "tsserver.suppressDiagnosticMessages": [80006],
-
+  "javascript.validate.enable": true,
+  "diagnostic.showUnused": true,
+  "tsserver.implicitProjectConfig.checkJs": false,
+  "diagnostic.level": "hint",
+  
   "Lua.workspace.preloadFileSize": 500,
   "Lua.diagnostics.enable": false,
   "Lua.diagnostics.disable": [
-      "lowercase-global", "unused-local", "unused-function", "undefined=global"
+      "lowercase-global", "unused-local", "unused-function",
   ],
   "pylsp.plugins.pycodestyle.ignore": ["E501", "E302", "E221", "E251", "E226", "E265", "E305", "E227",
                                        "E261"],
@@ -50,11 +53,11 @@
       "filetypes": ["sh"],
       "ignoredRootPaths": ["~"]
     },*/
-    "ts": {
+    /*"ts": {
       "command": "deno",
       "args": ["lsp"],
       "filetypes": ["ts"]
-    },
+    },*/
     "vimls": {
       // "install_command": "npm install -g vim-language-server",
       // "homepage":        "https://github.com/iamcco/vim-language-server",
@@ -91,5 +94,9 @@
   },
   "Lua.telemetry.enable": false,
   "snippets.ultisnips.pythonPrompt": false,
-  "coc.preferences.extensionUpdateCheck": "daily"
+  "coc.preferences.extensionUpdateCheck": "daily",
+  "json.schemaDownload.trustedDomains": {
+    "https://www.schemastore.org": true,
+    "http://cyclonedx.org": true
+  }
 }

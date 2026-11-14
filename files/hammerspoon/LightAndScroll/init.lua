@@ -36,20 +36,23 @@ spoon.__gc = function(t)
   t:stop()
 end
 
-local segs = {
-  topNode = 1197,
+-- Mirrors the 'demo' config in kaelderlys/spiffs-root/kaelderlys.lua
+local segs__ = {
+  topNodes = {1197, 1476}, -- Amplex Lighting, Carl Blochsgade
   server = "demo.gridlight.dk",
   url       = "http://gridlight-demo:8029",
   wsurl     = "ws://gridlight-demo:8029/greenwise/subscribe",
   user = "importer",
   pw = "importer",
-  {name = "Fri", node = 1199, on=1},
-  {name = "Kantine",  node = 1210, on=1},
-  {name = "Kælder",   node = 1209},
+  -- nodes: segments shown by this item; ctrl: node the toggle action is sent to (default nodes[1])
+  {name = "Fri",      nodes = {1477, 1478}, ctrl = 1476, on=1}, -- Carl Blochsgade 11 + 29
+  {name = "Kantine",  nodes = {1210}, on=1},
+  {name = "Kælder",   nodes = {1209}},
 }
-local segs__ = {
+local segs = {
   topNode = 1197,
-  server = "demo.gridlight.dk",
+  url       = "http://gridlight-demo:8029",
+  wsurl     = "ws://gridlight-demo:8029/greenwise/subscribe",
   user = "knaptryk",
   pw = "hestsakspapir",
   {name = "Fri", node = 1199, on=1},
@@ -175,6 +178,12 @@ end)
 function spoon.start()
   if spoon.menuBar then spoon.stop() end
 
+  -- Accept the older single-node config shape too (topNode / node)
+  segs.topNodes = segs.topNodes or {segs.topNode}
+  for _,seg in ipairs(segs) do
+    seg.nodes = seg.nodes or {seg.node}
+  end
+
   local menu
   menu = {
     {title="Console", checked=false, fn=function()
@@ -236,65 +245,95 @@ function spoon.start()
   return spoon
 end
 
-local function makeUrl(url, repl)
-  repl.user = segs.user
-  repl.pw = segs.pw
-  return url:gsub('{{([%w_-]+)}}',repl)
+local function baseUrl()
+  return segs.url or ("https://"..segs.server)
 end
 
--- local wsNotice
+local function authHeaders()
+  return {
+    ['content-type'] = 'application/json',
+    authorization = "Basic "..hs.base64.encode(segs.user..":"..segs.pw),
+  }
+end
+
+-- Navigation (subscribe) message, as sent by kaelderlys.lua: needs the customerId
+-- of the subscribed node, which comes from the segment/below REST reply.
+local function sendNav(ws, top)
+  print("WS navigation", top, segs.customerId and segs.customerId[top])
+  ws:send(hs.json.encode {
+    type = "navigation",
+    customerId = segs.customerId and segs.customerId[top],
+    data = {type = "node", id = top},
+  }, false)
+end
+
 function spoon.refresh()
-  local url = makeUrl((segs.url or ("https://"..segs.server)).."/gridlight/rs/segment/below/{{node}}", {node=segs.topNode})
-  local headers = {['content-type']='application/json'}
-  headers.authorization = "Basic "..hs.base64.encode(segs.user..":"..segs.pw)
-  hs.http.asyncGet(url, headers, function(code_, body, rethdrs_)
-    print("URL", url, "CODE", code_, pp(headers), pp(rethdrs_), "#BODY", #body)
-    local r, s = pcall(hs.json.decode, body)
-    -- print(r, pp(s,2))
-    if r and s then
-      local segOn = {}
-      for _,seg in pairs(s) do
-        if seg.online then
-          segOn[seg.nodeId] = seg.state ~= 'off'
+  local byNode = {}
+  for _,seg in ipairs(segs) do
+    for _,node in ipairs(seg.nodes) do byNode[node] = seg end
+  end
+  segs.bySeg = {}          -- segment id -> menu seg (light messages carry the segment id)
+  segs.customerId = {}     -- top node -> customerId
+  local segOn, pending, anyOk = {}, #segs.topNodes, false
+
+  for _,top in ipairs(segs.topNodes) do
+    local url = baseUrl().."/gridlight/rs/segment/below/"..top
+    hs.http.asyncGet(url, authHeaders(), function(code, body, rethdrs_)
+      print("URL", url, "CODE", code, "#BODY", body and #body)
+      local r, s = pcall(hs.json.decode, body)
+      if code // 100 == 2 and r and type(s) == 'table' then
+        anyOk = true
+        for _,seg in ipairs(s) do
+          segs.customerId[top] = segs.customerId[top] or seg.customerId
+          local cur = byNode[seg.nodeId]
+          if cur then
+            segs.bySeg[seg.id] = cur
+            if seg.online then
+              segOn[cur] = segOn[cur] or seg.state ~= 'off'
+            end
+          end
+        end
+      else
+        print("REFRESH failed for", top, code, body)
+      end
+      pending = pending - 1
+      if pending == 0 then
+        for _,seg in ipairs(segs) do
+          seg.on = segOn[seg]
+        end
+        print(pp(segs, 2), pp(segs.customerId, 2))
+        setSegs()
+        if anyOk then
+          spoon.wsNotify()
+        else
+          spoon.reconnect:start()
         end
       end
-      for _,seg in ipairs(segs) do
-        seg.on = segOn[seg.node]
-      end
-      print(pp(segs,2), pp(segOn, 2))
-      setSegs()
-      spoon.wsNotify()
-    end
-  end)
+    end)
+  end
   setSegs()
 end
 
 function toggleLight(_, menuItem)
-  print(pp(menuItem, 2))
   local seg = menuItem.seg
-  local url = makeUrl((segs.url or ("https://"..segs.server)).."/gridlight/rs/segment/action/{{node}}", {node=seg.node})
-  local headers = {['content-type']='application/json'}
-  headers.authorization = "Basic "..hs.base64.encode(segs.user..":"..segs.pw)
-  --seg.on = not seg.on
-  --menuItem.checked = seg.on
-  print(url, hs.http.doRequest(url.."?action="..(seg.on and "off" or "on"), "PUT", "", headers))
-  --setDisplay()
+  local ctrl = seg.ctrl or seg.nodes[1]
+  local url = baseUrl().."/gridlight/rs/segment/action2/"..ctrl.."?action="..(seg.on and "off" or "on")
+  print(url, hs.http.doRequest(url, "PUT", hs.json.encode {password = segs.pw}, authHeaders()))
 end
 
 function spoon.notified(msg)
-  if msg.messages then
-    local segOn = {}
-    for _,seg in pairs(msg.messages) do
-      if seg.data and seg.data.event and seg.data.event.type == "light" then
-        segOn[seg.data.event.nodeId] = seg.data.event.entities:find('"state":"on"', 1, true) ~= nil
+  local changed = false
+  for _,m in ipairs(msg.messages or {}) do
+    if m.type == "light" and type(m.data) == 'table' then
+      print("WS light message:", hs.json.encode(m.data))
+      local seg = segs.bySeg and segs.bySeg[m.data.id]
+      if seg then
+        seg.on = m.data.state ~= "off"
+        changed = true
       end
     end
-    for _,seg in ipairs(segs) do
-      if segOn[seg.node] ~= nil then
-        seg.on = segOn[seg.node]
-      end
-    end
-    print(pp(segOn,2))
+  end
+  if changed then
     setSegs()
   end
 end
@@ -303,72 +342,82 @@ spoon.pingTimer = hs.timer.delayed.new(330, function()
   print("WS Timeout")
   spoon.refresh()
 end)
+-- Periodically resend the subscription as a heartbeat
 spoon.pingSender = hs.timer.delayed.new(30, function()
-  if wsNotice then
-      wsNotice:send(hs.json.encode {
-      type = "navigation", username = spoon.user,
-      data = {type = "node", id = segs.topNode, pagerefresh = true},
-    }, false)
+  for top, ws in pairs(spoon.ws or {}) do
+    sendNav(ws, top)
   end
 end)
+-- Re-login + reconnect shortly after a socket drops (kaelderlys does the same after 1.5s)
+spoon.reconnect = hs.timer.delayed.new(5, function()
+  print("WS reconnect")
+  spoon.refresh()
+end)
+
+-- One websocket per top node, opened one after the other, like kaelderlys.lua
 function spoon.wsNotify()
-  if wsNotice then
-    wsNotice:close()
-  end
-  --local headers = { authorization = "Basic "..hs.base64.encode(spoon.user..":"..segs.pw) }
-  --wsNotice = hs.websocket.new("wss://"..segs.server.."/changes",  headers, function(typ, msg)
-  local ws
+  spoon.stop()
+  spoon.wsGen = (spoon.wsGen or 0) + 1
+  local gen = spoon.wsGen
   local wsUrl = segs.wsurl or ("wss://"..segs.server.."/changes")
-  print("WS open", wsUrl)
-  ws = hs.websocket.new(wsUrl, function(typ, msg)
-    print("WS:", typ, msg)
-    if typ == "open" then
-      print("WS open", ws)
-    elseif typ == "closed" then
-      print("WS closed", ws)
-      if wsNotice == ws then
-        wsNotice = nil
-      end
-    elseif typ == "received" then
-      if msg == "authenticate" then
-        print(msg)
-        --hs.timer.doAfter(0.2, function()
-          local auth = hs.json.encode({user=segs.user, pw=segs.pw})
-          print("Sending auth", ws, ws:status(), pp(auth))
-          ws:send(auth, false)
-        --end)
-      elseif msg == "authenticated" then
-        wsNotice = ws
-        print("WS authenticated", ws)
-      else
-        local r, s = pcall(hs.json.decode, msg)
-        print("spoon.notified", r, msg)
-        if s.messages and #s.messages > 0 and s.messages[1].type == "session" then
-          hs.timer.doAfter(0.1, function()
-            print("sending sub")
-            ws:send(hs.json.encode {
-              type = "navigation", username = spoon.user,
-              data = {type = "node", id = segs.topNode, pagerefresh = true},
-            }, false)
-          end)
-        elseif s.status == "ok" then
-          -- print("WS Heartbeat")
-          spoon.pingTimer.start()
-          -- Periodidally set up subscr as heartbeat
-          spoon.pingSender.start()
+
+  local function open(ix)
+    local top = segs.topNodes[ix]
+    if not top or gen ~= spoon.wsGen then return end
+    local ws
+    local authenticated = false
+    print("WS open", ix, top, wsUrl)
+    ws = hs.websocket.new(wsUrl, function(typ, msg)
+      if gen ~= spoon.wsGen then return end   -- stale socket from an earlier wsNotify()
+      print("WS:"..ix, typ, msg)
+      if typ == "closed" or typ == "fail" then
+        if spoon.ws[top] == ws then
+          spoon.ws[top] = nil
+        end
+        spoon.reconnect:start()
+      elseif typ == "received" then
+        if msg == "authenticate" then
+          ws:send(hs.json.encode({user=segs.user, pw=segs.pw}), false)
+        elseif msg == "authenticated" then
+          spoon.ws[top] = ws
+          sendNav(ws, top)
+          if not authenticated then
+            authenticated = true
+            hs.timer.doAfter(0.5, function() open(ix + 1) end)
+          end
         else
+          local r, s = pcall(hs.json.decode, msg)
+          if not r or type(s) ~= 'table' then
+            print("WS bad message", msg)
+            return
+          end
+          if s.status == "ok" then
+            spoon.pingTimer:start()
+            spoon.pingSender:start()
+          end
+          for _,m in ipairs(s.messages or {}) do
+            if m.type == "session" then
+              sendNav(ws, top)
+              break
+            end
+          end
           spoon.notified(s)
         end
       end
-    end
-  end)
-  spoon.pingTimer.start()
-  spoon.pingSender.start()
+    end)
+    table.insert(spoon.sockets, ws)
+  end
+
+  open(1)
+  spoon.pingTimer:start()
+  spoon.pingSender:start()
 end
 
 function spoon.stop()
-  if wsNotice then
-    wsNotice:close()
+  local sockets = spoon.sockets or {}
+  spoon.sockets, spoon.ws = {}, {}
+  for _,ws in ipairs(sockets) do
+    pcall(ws.close, ws)
   end
 end
 

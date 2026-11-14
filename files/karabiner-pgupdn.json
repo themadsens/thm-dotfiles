@@ -1,0 +1,65 @@
+{
+  "title": "ThinkPad SK-8855 Cursor Block Remap",
+  "rules": [
+    {
+      "description": "Remap Page Left (Alt + Left Arrow) to Page Up",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "left_arrow",
+            "modifiers": {
+              "mandatory": ["left_option"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "page_up"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "vendor_id": 6127,
+                  "product_id": 24585
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Remap Page Right (Alt + Right Arrow) to Page Down",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "right_arrow",
+            "modifiers": {
+              "mandatory": ["left_option"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "page_down"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "vendor_id": 6127,
+                  "product_id": 24585
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

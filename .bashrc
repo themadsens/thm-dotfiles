@@ -51,7 +51,7 @@ if [ -n "$PS1" ] ;then
    [[ -d $JAVA_HOME ]] || export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home
    [[ -d $JAVA_HOME ]] || export JAVA_HOME=/tmp/NONE
    export ANDROID_HOME=/usr/local/Cellar/android-sdk/24.4.1_1/
-   export JBOSS_HOME=/opt/wildfly
+   export JBOSS_HOME="/opt/$(readlink /opt/wildfly)"
    export AMPCOM_HOME=/opt/ampcom
    export MAVEN_OPTS="-Xmx1024m"
    export PGDATABASE=ampep
@@ -324,6 +324,28 @@ if [ -n "$PS1" ] ;then
       sshwrap ssh "$@" -A -t 'exec bash -i -c "PS1=tmux-ssh- ; . ~/.bashrc ; tmux-attach"'
       eof; printf '\e[?1000l'
    }
+
+   zell-attach() {
+      # env | grep SSH
+      if type -p ss && ss --tcp state CLOSE-WAIT | grep -q CLOSE_WAIT ;then
+         # See https://stackoverflow.com/a/61139251/3697584
+         sudo ss --tcp state CLOSE-WAIT --kill
+      fi
+      case $(zellij list-sessions -n 2>/dev/null | wc -l | awk '{print $1}') in
+         0) zellij ;;
+         1) zellij attach ;;
+         *)
+            zellij list-sessions | awk '{print NR-1 ": " $0}'
+            read -n 1 -p "Select session: " N < /dev/tty > /dev/tty;
+            zellij attach --index "$N"
+            ;;
+      esac
+   }
+   zell-ssh() {
+      tput smcup
+      sshwrap ssh "$@" -A -t 'exec bash -i -c "PS1=tmux-ssh- ; . ~/.bashrc ; zell-attach"'
+      eof; printf '\e[?1000l'
+   }
    alias tsel='tmux show-buffer'
 
    alias hist="builtin history | tail"
@@ -341,6 +363,8 @@ if [ -n "$PS1" ] ;then
                 itit() { printf "\033]1;%s\007" "$*" ; }
                 [ $WEZTERM_PANE ] &&
                    itit() { printf "\033]1337;SetUserVar=itit=%s\007" "$(echo -n "$*" | base64)"; }
+                [ $ZELLIJ_PANE_ID ] &&
+                   itit() { zellij action rename-tab "$*"; }
                 ;;
        *)       stln() { :; } ; itit() { :; }
        ;;
@@ -353,22 +377,23 @@ if [ -n "$PS1" ] ;then
    fi
    Tty=`tty | cut -c10- | sed 's/^\(0*\)\(..*\)/\2/'`
    HostnTty=`uname -n | cut -d. -f1 | tr a-z A-Z`:$Tty
+   Tab=$([[ $ZELLIJ ]] && echo $((ZELLIJ_PANE_ID+1)) || echo $Tty)
    stdir() {
       local p=${PWD/$AMPROOT/@}
       if [[ $p = @/* ]] ;then Path=${p:2}; else Path=""; fi
       local p=${p/$HOME/\~}
       local V=''
-      if [[ "$TMUX" ]] ;then
-         itit "$Tty-$(cut -c1-3 <<< ${AMPROOT##*/})-${p##*/}"
+      if [[ "$TMUX" || "$ZELLIJ" ]] ;then
+         itit "$Tab-$(cut -c1-3 <<< ${AMPROOT##*/})-${p##*/}"
       else
-         itit "$Tty - $(cut -c1-3 <<< ${AMPROOT##*/}) - ${p##*/}"
+         itit "$Tab - $(cut -c1-3 <<< ${AMPROOT##*/}) - ${p##*/}"
       fi
       stln "-- $HostnTty $(ttprompt 2)- ${AMPROOT##*/} - $p --"
    }
 
    espmon ()
    {
-      itit MON-${1##*/};
+      itit "$Tab: MON-${1##*/}";
       python3 -m serial.tools.miniterm --rts 0 --dtr 0 --raw --eol LF $1 ${2:-115200}
    }
 
@@ -386,7 +411,7 @@ if [ -n "$PS1" ] ;then
       if test -t 1 ;then
          Host=$(command ssh -o 'ProxyCommand=sh -c "echo %h>/tmp/__H"' -o ControlPath=none "$@" 2>/dev/null;
                 cat /tmp/__H; rm -f /tmp/__H)
-         itit "$Tty => $(tr a-z A-Z <<< $Host)"
+         itit "$Tab => $(tr a-z A-Z <<< $Host)"
          if [[ $Host != fm* ]] ;then
             local Term=${TERM%-italic}
             env TERM=${Term/tmux/xterm} $Cmd "$@"
@@ -408,8 +433,8 @@ if [ -n "$PS1" ] ;then
    function ssh()      { if [[ $# -eq 1 ]] ;then sshwrap ssh "$@" ;else command ssh "$@" ;fi; }
    function aussh()    { sshwrap aussh "$@"; }
    function au-sshgw() { sshwrap au-sshgw "$@"; }
-   function tail()     { itit "$Tty - TAIL $@" ; colorize tail "$@"; }
-   function cu()       { itit "$Tty - CU $@"   ; command cu "$@"; }
+   function tail()     { itit "$Tab - TAIL $@" ; colorize tail "$@"; }
+   function cu()       { itit "$Tab - CU $@"   ; command cu "$@"; }
    function locate()
    {
       if [[ $# == 1 ]] ;then

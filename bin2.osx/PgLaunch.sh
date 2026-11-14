@@ -1,24 +1,23 @@
 #!/bin/bash
+set -x
 
-PGOLD=/Applications/Postgres.app/Contents/Versions/10
-DATAOLD="/Volumes/Option/Postgres/var-10"
-PGNEW=/Applications/Postgres.app/Contents/Versions/14/
-DATANEW="/Volumes/Option/Postgres/var-14"
-PG=/Applications/Postgres.app/Contents/Versions/14/
-DATA="/Volumes/Option/Postgres/var-14"
-if [[ ! -d $PG ]] ;then
-    PG=/Applications/Postgres.10/Postgres.app/Contents/Versions/14/
-    DATA="/Volumes/ToolChain/Postgres/var-14"
+PGOLD=/Applications/Postgres.app/Contents/Versions/14
+DATAOLD="/Volumes/Option/Postgres/var-14"
+PGNEW=/Applications/Postgres.app/Contents/Versions/16/
+DATANEW="/Volumes/Option/Postgres/var-16"
+[ -f /opt/wildfly/standalone/configuration/PgVer.rc ] && . /opt/wildfly/standalone/configuration/PgVer.rc
+: ${VER:=old}
+if [[ "$1" = "old" || "$1" = "new" ]] ;then
+  VER=$1
+  shift
 fi
 
-if [[ "$1" = old ]] ;then
+if [[ "$VER" = old ]] ;then
     DATA="$DATAOLD"
     PG=$PGOLD
-    shift
-elif [[ "$1" = new ]] ;then
+elif [[ "$VER" = new ]] ;then
     DATA="$DATANEW"
     PG=$PGNEW
-    shift
 fi
 PATH=$PG/bin:$PATH
 
@@ -27,8 +26,10 @@ PGOPTIONS='-c timezone=GMT'
 case $1 in
     startfg)
         TZ=utc $PG/bin/pg_ctl start -D "$DATA" -o "$PGOPTIONS"
+        echo $$ > /opt/wildfly/standalone/tmp/PgLaunch.pid
         trap '' SIGTERM
         ( trap SIGTERM ; sleep $(( 1000*1000*1000 )) )
+        rm -f  /opt/wildfly/standalone/tmp/PgLaunch.pid
         $PG/bin/pg_ctl stop -D "$DATA" -m fast
         ;;
     start)

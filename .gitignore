@@ -5,3 +5,4 @@
 .DS_Store
 apache/ssl
 apache/www/phppgadmin
+.vim/sessions/
