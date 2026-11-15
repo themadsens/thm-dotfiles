@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""List every terminal pane in every running zellij session with its pty.
+
+Columns: session, tab, pane id, pty, shell pid, foreground command, pane title.
+Pane info comes from `zellij action list-panes`; the pty comes from the pane's
+process (a child of the session's server), matched on its ZELLIJ_PANE_ID.
+"""
+import glob, json, os, re, sqlite3, subprocess, sys
+from subprocess import PIPE  # Python 3.6 compatible (no capture_output)
+
+ZELLIJ = os.environ.get("ZELLIJ_BIN", "zellij")
+LINUX = sys.platform.startswith("linux")
+
+
+def ps(*fields):
+    out = subprocess.run(["ps", "-ax", "-o", ",".join(f + "=" for f in fields)],
+                         stdout=PIPE, stderr=PIPE, universal_newlines=True).stdout
+    return [line.split(None, len(fields) - 1) for line in out.splitlines() if line.strip()]
+
+
+def session_names():
+    """Socket id -> session name, from zellij's session index."""
+    names = {}
+    pattern = ("~/.cache/zellij/*/session_index.sqlite" if LINUX else
+               "~/Library/Caches/org.Zellij-Contributors.Zellij/*/session_index.sqlite")
+    for db in glob.glob(os.path.expanduser(pattern)):
+        try:
+            con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+            names.update(con.execute("SELECT COALESCE(id, name), name FROM sessions"))
+        except sqlite3.Error:
+            pass
+    return names
+
+
+def pane_id_of(pid):
+    try:
+        if LINUX:
+            env = open(f"/proc/{pid}/environ", "rb").read().decode(errors="replace").split("\0")
+        else:
+            env = subprocess.run(["ps", "eww", "-o", "command=", "-p", str(pid)],
+                                 stdout=PIPE, stderr=PIPE, universal_newlines=True).stdout.split()
+    except OSError:
+        return None
+    for item in env:
+        if item.startswith("ZELLIJ_PANE_ID="):
+            return item.split("=", 1)[1]
+    return None
+
+
+def foreground(tty, procs):
+    """The command of the foreground process group leader on this tty."""
+    for pid, pgid, tpgid, ptty, comm in procs:
+        if ptty == tty and pid == pgid == tpgid:
+            return os.path.basename(comm.split()[0]) if comm else "?"
+    return "-"
+
+
+def main():
+    names = session_names()
+    procs = ps("pid", "ppid", "tty", "command")
+    fg_procs = [(p, g, t, tty, c) for p, g, t, tty, c in ps("pid", "pgid", "tpgid", "tty", "comm")]
+    rows = []
+    for pid, ppid, tty, cmd in procs:
+        m = re.search(r"zellij --server (\S+)", cmd)
+        if not m:
+            continue
+        sock_id = os.path.basename(m.group(1))
+        session = names.get(sock_id, sock_id)
+        children = {pane_id_of(c): (c, ctty) for c, pp, ctty, _ in procs if pp == pid}
+        out = subprocess.run([ZELLIJ, "-s", session, "action", "list-panes", "-a", "-j"],
+                             stdout=PIPE, stderr=PIPE, universal_newlines=True, timeout=10, cwd="/")
+        try:
+            panes = json.loads(out.stdout)
+        except json.JSONDecodeError:
+            print(f"{session}: {out.stderr.strip() or 'no pane list'}", file=sys.stderr)
+            continue
+        for p in panes:
+            if p.get("is_plugin"):
+                continue
+            cpid, ctty = children.get(str(p["id"]), ("-", "-"))
+            dev = ctty if ctty in ("-", "??", "?") else (
+                "/dev/" + ctty if LINUX or ctty.startswith("tty") else "/dev/tty" + ctty)
+            rows.append((session, f'{p.get("tab_position", 0) + 1}:{p.get("tab_name", "")}',
+                         f'terminal_{p["id"]}' + (" (float)" if p.get("is_floating") else ""),
+                         dev, cpid, foreground(ctty, fg_procs) if cpid != "-" else "-",
+                         p.get("title", "")))
+    head = ("SESSION", "TAB", "PANE", "PTY", "PID", "RUNNING", "TITLE")
+    widths = [max(len(str(r[i])) for r in rows + [head]) for i in range(len(head) - 1)]
+    for r in [head] + rows:
+        print("  ".join(str(c).ljust(w) for c, w in zip(r, widths)) + "  " + str(r[-1]))
+
+
+if __name__ == "__main__":
+    main()

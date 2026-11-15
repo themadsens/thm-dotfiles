@@ -6,7 +6,7 @@ DATAOLD="/Volumes/Option/Postgres/var-14"
 PGNEW=/Applications/Postgres.app/Contents/Versions/16/
 DATANEW="/Volumes/Option/Postgres/var-16"
 [ -f /opt/wildfly/standalone/configuration/PgVer.rc ] && . /opt/wildfly/standalone/configuration/PgVer.rc
-: ${VER:=old}
+: ${VER:=new}
 if [[ "$1" = "old" || "$1" = "new" ]] ;then
   VER=$1
   shift

@@ -30,9 +30,9 @@ local function findMyWindows(pr)
     local frame = w:frame()
     if app == "Preview" then
       ix = 1;
-    elseif app == "iTerm2" and frame.h > 500 and frame.x < 500 then
+    elseif app == "Ghostty" --[["iTerm2"]] and frame.h > 500 and frame.x < 500 then
       ix = 2;
-    elseif app == "iTerm2" and frame.h > 500 and frame.x > 500 then
+    elseif app == "Ghostty" --[["iTerm2"]] and frame.h > 500 and frame.x > 500 then
       ix = 3;
     elseif app == "Google Chrome" and frame.w > 1000 and not winCache[4]
       and w:screen():position() == 0 and not w:title():match("^GridLight") then
