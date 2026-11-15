@@ -1,0 +1,46 @@
+--- a/zellij-server/src/panes/tiled_panes/mod.rs
++++ b/zellij-server/src/panes/tiled_panes/mod.rs
+@@ -1215,6 +1215,10 @@
+     }
+     pub fn panes_contain(&self, pane_id: &PaneId) -> bool {
+         self.panes.contains_key(pane_id)
++    }
++    // Local patch: forget the last host window title so it is re-sent (eg. after a tab switch)
++    pub fn reset_window_title(&mut self) {
++        self.window_title = None;
+     }
+     pub fn set_force_render(&mut self) {
+         for pane in self.panes.values_mut() {
+--- a/zellij-server/src/panes/floating_panes/mod.rs
++++ b/zellij-server/src/panes/floating_panes/mod.rs
+@@ -504,6 +504,10 @@
+             .filter(|(_p_id, p)| p.selectable())
+             .last()
+             .is_some()
++    }
++    // Local patch: forget the last host window title so it is re-sent (eg. after a tab switch)
++    pub fn reset_window_title(&mut self) {
++        self.window_title = None;
+     }
+     pub fn set_force_render(&mut self) {
+         for pane in self.panes.values_mut() {
+--- a/zellij-server/src/tab/mod.rs
++++ b/zellij-server/src/tab/mod.rs
+@@ -2972,6 +2972,8 @@
+         Ok(())
+     }
+     pub fn add_client(&mut self, client_id: ClientId, mode_info: Option<ModeInfo>) -> Result<()> {
++        self.tiled_panes.reset_window_title();
++        self.floating_panes.reset_window_title();
+         self.tiled_panes.move_client_focus_to_existing_panes();
+         self.floating_panes.move_client_focus_to_existing_panes();
+         let other_clients_exist_in_tab = { !self.connected_clients.borrow().is_empty() };
+@@ -3025,6 +3027,8 @@
+         &mut self,
+         client_ids_to_mode_infos: Vec<(ClientId, ModeInfo)>,
+     ) -> Result<()> {
++        self.tiled_panes.reset_window_title();
++        self.floating_panes.reset_window_title();
+         for (client_id, client_mode_info) in client_ids_to_mode_infos {
+             self.add_client(client_id, None)
+                 .context("failed to add clients")?;

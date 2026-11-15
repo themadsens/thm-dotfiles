@@ -1,0 +1,39 @@
+--- a/default-plugins/bars/src/tab_bar/mod.rs
++++ b/default-plugins/bars/src/tab_bar/mod.rs
+@@ -533,8 +533,9 @@
+         if client.tabs.is_empty() || !client.has_mode_info {
+             return None;
+         }
+-        let dimmed = client.mode_info.session_ascended == Some(true)
+-            || client.mode_info.session_dimmed == Some(true);
++        // Local patch: a nested session that is not descended into keeps a normal (non-dimmed)
++        // tab bar, so the active tab stays visible when the outer zellij is only locked
++        let dimmed = client.mode_info.session_dimmed == Some(true);
+         let mut all_tabs: Vec<LinePart> = vec![];
+         let mut active_tab_index = 0;
+         let mut is_alternate_tab = false;
+--- a/default-plugins/bars/src/compact_bar/line.rs
++++ b/default-plugins/bars/src/compact_bar/line.rs
+@@ -43,7 +43,8 @@
+     hover: CompactHover,
+     session_indicator: &SessionIndicator,
+ ) -> TabLineOutput {
+-    let dimmed = mode_info.session_ascended == Some(true) || mode_info.session_dimmed == Some(true);
++    // Local patch: not dimmed in a nested session that is only locked (not descended into)
++    let dimmed = mode_info.session_dimmed == Some(true);
+     let breadcrumb_ancestry = if mode_info.host_fullscreen == Some(true) {
+         mode_info.session_ancestry.clone()
+     } else {
+--- a/default-plugins/bars/src/compact_bar/mod.rs
++++ b/default-plugins/bars/src/compact_bar/mod.rs
+@@ -1165,8 +1165,8 @@
+     let mut all_tabs = Vec::new();
+     let mut active_tab_index = 0;
+     let mut is_alternate_tab = false;
+-    let dimmed = client.mode_info.session_ascended == Some(true)
+-        || client.mode_info.session_dimmed == Some(true);
++    // Local patch: not dimmed in a nested session that is only locked (not descended into)
++    let dimmed = client.mode_info.session_dimmed == Some(true);
+ 
+     for tab in &client.tabs {
+         let tab_name = get_tab_display_name(client, tab);

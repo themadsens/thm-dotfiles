@@ -1,0 +1,40 @@
+// zjstatus tab bar (no session name) on top, Zellij status bar with key legend at the bottom
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="file:/Users/fm/.config/zellij/plugins/zjstatus.wasm" {
+                format_left   "{mode}{tabs}"
+                format_right  ""
+                format_space  ""
+
+                // Mode is only shown when you are not in normal mode
+                mode_normal          ""
+                mode_locked          "#[bg=#8a252c,fg=#ffffff,bold] LOCKED "
+                mode_default_to_mode "pane"
+                mode_pane            "#[bg=#ca30c7,fg=#ffffff,bold] {name} "
+
+                tab_normal              "#[fg=#484848] {index} "
+                tab_normal_fullscreen   "#[fg=#484848] {index}[] "
+                tab_normal_sync         "#[fg=#484848] {index}<> "
+                tab_active              "#[bg=#107a02,fg=#ffffff,bold] {index} {name} {floating_indicator}"
+                tab_active_fullscreen   "#[bg=#107a02,fg=#ffffff,bold] {index} {name} {fullscreen_indicator}"
+                tab_active_sync         "#[bg=#107a02,fg=#ffffff,bold] {index} {name} {sync_indicator}"
+                tab_rename              "#[bg=#c1deff,fg=#000000] {index} {name} "
+                tab_separator           " "
+                tab_sync_indicator       "<> "
+                tab_fullscreen_indicator "[] "
+                tab_floating_indicator   "⬚ "
+
+                // Keep the bar within 80 columns: inactive tabs show only their number,
+                // and at most 6 tabs are shown around the active one
+                tab_display_count         "6"
+                tab_truncate_start_format "#[fg=#8a252c] <+{count} "
+                tab_truncate_end_format   "#[fg=#8a252c] +{count}> "
+            }
+        }
+        children
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+}

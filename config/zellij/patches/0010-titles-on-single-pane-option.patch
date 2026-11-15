@@ -1,0 +1,135 @@
+--- a/zellij-utils/src/input/theme.rs
++++ b/zellij-utils/src/input/theme.rs
+@@ -22,11 +22,18 @@
+     }
+ }
+ 
++// Local patch: the server's current `ui.pane_frames.titles_on_single_pane`, read when drawing panes
++pub static TITLES_ON_SINGLE_PANE: std::sync::atomic::AtomicBool =
++    std::sync::atomic::AtomicBool::new(false);
++
+ #[derive(Debug, Default, Clone, Copy, PartialEq, Deserialize, Serialize)]
+ pub struct FrameConfig {
+     pub rounded_corners: bool,
+     pub hide_session_name: bool,
++    // Local patch: with pane_frame_style "titles", also draw the title line of a single pane
+     #[serde(default)]
++    pub titles_on_single_pane: bool,
++    #[serde(default)]
+     pub border_style: BorderStyleOverride,
+     #[serde(default)]
+     pub floating_border_style: BorderStyleOverride,
+@@ -37,6 +44,7 @@
+         let mut merged = self.clone();
+         merged.rounded_corners = other.rounded_corners;
+         merged.hide_session_name = other.hide_session_name;
++        merged.titles_on_single_pane = other.titles_on_single_pane;
+         merged.border_style = merged.border_style.merge(&other.border_style);
+         merged.floating_border_style = merged
+             .floating_border_style
+--- a/zellij-utils/src/input/config_settings.rs
++++ b/zellij-utils/src/input/config_settings.rs
+@@ -433,6 +433,7 @@
+     let FrameConfig {
+         rounded_corners,
+         hide_session_name,
++        titles_on_single_pane: _,
+         border_style,
+         floating_border_style,
+     } = pane_frames;
+--- a/zellij-utils/src/kdl/mod.rs
++++ b/zellij-utils/src/kdl/mod.rs
+@@ -7757,6 +7757,9 @@
+             let hide_session_name =
+                 kdl_get_child_entry_bool_value!(pane_frames, "hide_session_name")
+                     .unwrap_or(base_frames.hide_session_name);
++            let titles_on_single_pane =
++                kdl_get_child_entry_bool_value!(pane_frames, "titles_on_single_pane")
++                    .unwrap_or(base_frames.titles_on_single_pane);
+             let border_style =
+                 base_frames
+                     .border_style
+@@ -7774,6 +7777,7 @@
+             let frame_config = FrameConfig {
+                 rounded_corners,
+                 hide_session_name,
++                titles_on_single_pane,
+                 border_style,
+                 floating_border_style,
+             };
+@@ -7798,6 +7802,12 @@
+             let mut hide_session_name = KdlNode::new("hide_session_name");
+             hide_session_name.push(KdlValue::Bool(true));
+             frame_config_children.nodes_mut().push(hide_session_name);
++        }
++        if self.pane_frames.titles_on_single_pane {
++            has_ui_config = true;
++            let mut titles_on_single_pane = KdlNode::new("titles_on_single_pane");
++            titles_on_single_pane.push(KdlValue::Bool(true));
++            frame_config_children.nodes_mut().push(titles_on_single_pane);
+         }
+         if border_style_override_to_kdl_children(
+             &self.pane_frames.border_style,
+--- a/zellij-server/src/lib.rs
++++ b/zellij-server/src/lib.rs
+@@ -1265,6 +1265,11 @@
+                 );
+             }
+             let pane_frame_style = PaneFrameStyle::from_options(&new_config.options);
++            // Local patch: keep the single-pane titles setting current on config reloads
++            zellij_utils::input::theme::TITLES_ON_SINGLE_PANE.store(
++                new_config.ui.pane_frames.titles_on_single_pane,
++                std::sync::atomic::Ordering::Relaxed,
++            );
+             let shared_keybinds = match converted_keybinds
+                 .iter()
+                 .find(|(keybinds, _)| Arc::ptr_eq(keybinds, &new_config.keybinds))
+@@ -3921,6 +3926,11 @@
+                 let switch_context = cli_assets.switch_context.clone().unwrap_or_default();
+                 let mut initial_panes = cli_assets.initial_panes.clone();
+                 let (config, mut layout) = cli_assets.load_config_and_layout();
++                // Local patch: the single-pane titles setting, read when drawing panes
++                zellij_utils::input::theme::TITLES_ON_SINGLE_PANE.store(
++                    config.ui.pane_frames.titles_on_single_pane,
++                    std::sync::atomic::Ordering::Relaxed,
++                );
+                 layout.populate_plugin_aliases_in_swap_layouts(&config.plugins);
+                 let layout_is_welcome_screen = cli_assets.layout
+                     == Some(LayoutInfo::BuiltIn("welcome".to_owned()))
+--- a/zellij-server/src/panes/tiled_panes/mod.rs
++++ b/zellij-server/src/panes/tiled_panes/mod.rs
+@@ -668,12 +668,15 @@
+         self.pane_frame_style = pane_frame_style;
+         let draws_full_frames = pane_frame_style.draws_full_frames();
+         let draws_titles = pane_frame_style.draws_titles();
+-        let single_selectable_tiled_pane = self
+-            .panes
+-            .values()
+-            .filter(|p| p.selectable() && !p.borderless())
+-            .count()
+-            == 1;
++        // Local patch: ui.pane_frames.titles_on_single_pane keeps the title line of a single pane
++        let single_selectable_tiled_pane = !zellij_utils::input::theme::TITLES_ON_SINGLE_PANE
++            .load(std::sync::atomic::Ordering::Relaxed)
++            && self
++                .panes
++                .values()
++                .filter(|p| p.selectable() && !p.borderless())
++                .count()
++                == 1;
+         let viewport = *self.viewport.borrow();
+         let no_ui_fullscreen_pane_id = if *self.fullscreen_covers_ui.borrow() {
+             self.fullscreen_is_active
+@@ -1294,7 +1297,11 @@
+             .iter()
+             .filter(|(_, p)| p.selectable() && !p.borderless())
+             .count();
+-        let omit_pane_title = self.pane_frame_style.draws_titles() && content_pane_count == 1;
++        // Local patch: ui.pane_frames.titles_on_single_pane keeps the title line of a single pane
++        let omit_pane_title = self.pane_frame_style.draws_titles()
++            && content_pane_count == 1
++            && !zellij_utils::input::theme::TITLES_ON_SINGLE_PANE
++                .load(std::sync::atomic::Ordering::Relaxed);
+         macro_rules! log_render_error {
+             ($logged:expr, $failed:ident, $pane_id:expr, $err_context:expr, $result:expr) => {
+                 if let Err(e) = $result {

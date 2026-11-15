@@ -1,0 +1,30 @@
+--- a/zellij-server/src/panes/grid.rs
++++ b/zellij-server/src/panes/grid.rs
+@@ -2468,6 +2468,13 @@
+             scrollback.push('\n');
+         }
+         scrollback.push_str(&viewport);
++        // Local patch: also include the lines below the viewport (present while scrolled up),
++        // so a full dump (eg. for EditScrollback) is not cut off at the current scroll position
++        let below: String = dump_screen!(self.lines_below);
++        if !below.is_empty() {
++            scrollback.push('\n');
++            scrollback.push_str(&below);
++        }
+         scrollback
+     }
+     pub fn mark_unseen_output_start(&mut self) {
+@@ -2524,6 +2531,13 @@
+             scrollback.push('\n');
+         }
+         scrollback.push_str(&viewport);
++        // Local patch: also include the lines below the viewport (present while scrolled up),
++        // so a full dump (eg. for EditScrollback) is not cut off at the current scroll position
++        let below: String = dump_screen_with_ansi!(self.lines_below);
++        if !below.is_empty() {
++            scrollback.push('\n');
++            scrollback.push_str(&below);
++        }
+         scrollback
+     }
+     pub fn move_viewport_up(&mut self, count: usize) {

@@ -1,0 +1,43 @@
+--- a/default-plugins/bars/src/compact_bar/mod.rs
++++ b/default-plugins/bars/src/compact_bar/mod.rs
+@@ -31,6 +31,10 @@
+ static ARROW_SEPARATOR: &str = "";
+ 
+ const CONFIG_IS_TOOLTIP: &str = "is_tooltip";
++
++// Local patch: `tooltip_position` ("bottom-left" (default), "bottom-right", "top-left", "top-right")
++// places the key hints tooltip in that corner
++static TOOLTIP_POSITION: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+ const CONFIG_TOGGLE_TOOLTIP_KEY: &str = "tooltip";
+ const MSG_TOGGLE_TOOLTIP: &str = "toggle_tooltip";
+ const MSG_TOGGLE_PERSISTED_TOOLTIP: &str = "toggle_persisted_tooltip";
+@@ -188,6 +192,9 @@
+         let config = slot.configuration.clone();
+         if let Some(prefix) = config.get("prefix") {
+             line::set_prefix_text(prefix.clone());
++        }
++        if let Some(position) = config.get("tooltip_position") {
++            let _ = TOOLTIP_POSITION.set(position.trim().to_lowercase());
+         }
+         let is_tooltip = config
+             .get(CONFIG_IS_TOOLTIP)
+@@ -965,8 +972,17 @@
+ 
+         let width = tooltip_cols + 4;
+         let height = tooltip_rows + 2;
+-        let x_position = 2;
+-        let y_position = client.display_area_rows.saturating_sub(height + 2);
++        let position = TOOLTIP_POSITION.get().map(|s| s.as_str()).unwrap_or("bottom-left");
++        let x_position = if position.ends_with("right") {
++            client.display_area_cols.saturating_sub(width + 2)
++        } else {
++            2
++        };
++        let y_position = if position.starts_with("top") {
++            1
++        } else {
++            client.display_area_rows.saturating_sub(height + 2)
++        };
+ 
+         FloatingPaneCoordinates::new(
+             Some(x_position.to_string()),

@@ -1,0 +1,17 @@
+// Compact layout (one compact bar per tab, as the built-in "compact") that starts with 7 tabs.
+// Tabs opened later use the same template.
+layout {
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="compact-bar"
+        }
+    }
+    tab name="Tab 1" focus=true
+    tab name="Tab 2"
+    tab name="Tab 3"
+    tab name="Tab 4"
+    tab name="Tab 5"
+    tab name="Tab 6"
+    tab name="Tab 7"
+}

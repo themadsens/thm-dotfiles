@@ -1,0 +1,49 @@
+--- a/default-plugins/bars/src/compact_bar/keybind_utils.rs	2026-11-15 15:52:15
++++ b/default-plugins/bars/src/compact_bar/keybind_utils.rs	2026-11-15 15:52:15
+@@ -276,7 +276,46 @@
+         });
+     }
+ 
++    // Local patch: also list user-defined `Run` bindings (labelled with the
++    // command's file name), which the fixed per-mode lists below leave out
+     pub fn get_tooltip_entries(mode_info: &ModeInfo, mode: InputMode) -> Vec<TooltipEntry> {
++        let mut entries = Self::predetermined_tooltip_entries(mode_info, mode);
++        if !matches!(mode, InputMode::Normal | InputMode::Locked) {
++            entries.extend(Self::run_command_entries(mode_info, mode));
++        }
++        entries
++    }
++
++    fn run_command_entries(mode_info: &ModeInfo, mode: InputMode) -> Vec<TooltipEntry> {
++        let mut by_label: Vec<(String, Vec<(String, Vec<Action>)>)> = Vec::new();
++        for (key, actions) in mode_info.get_keybinds_for_mode(mode) {
++            let command = match actions.first() {
++                Some(Action::Run { command, .. }) | Some(Action::RunInBackground { command }) => {
++                    command
++                },
++                _ => continue,
++            };
++            let label = command
++                .command
++                .file_name()
++                .map(|n| n.to_string_lossy().to_string())
++                .unwrap_or_else(|| command.command.to_string_lossy().to_string());
++            let keyed = (format!("{}", key), actions.clone());
++            match by_label.iter_mut().find(|(l, _)| *l == label) {
++                Some((_, keys)) => keys.push(keyed),
++                None => by_label.push((label, vec![keyed])),
++            }
++        }
++        by_label
++            .into_iter()
++            .map(|(description, keys)| TooltipEntry {
++                chunks: Self::group_key_chunks(&keys, true, false),
++                description,
++            })
++            .collect()
++    }
++
++    fn predetermined_tooltip_entries(mode_info: &ModeInfo, mode: InputMode) -> Vec<TooltipEntry> {
+         match mode {
+             InputMode::Locked => {
+                 let ordered_predicates = vec![|action: &Action| {

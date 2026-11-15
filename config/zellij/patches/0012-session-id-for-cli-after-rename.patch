@@ -1,0 +1,142 @@
+--- a/zellij-utils/src/envs.rs	2026-11-15 16:11:55
++++ b/zellij-utils/src/envs.rs	2026-11-15 16:11:55
+@@ -26,6 +26,18 @@
+     set_var(SESSION_NAME_ENV_KEY, v);
+ }
+ 
++// Local patch: the session's stable id (its socket name), which unlike ZELLIJ_SESSION_NAME stays
++// valid in already running shells after the session is renamed
++pub const SESSION_ID_ENV_KEY: &str = "ZELLIJ_SESSION_ID";
++
++pub fn get_session_id() -> Result<String> {
++    Ok(var(SESSION_ID_ENV_KEY)?)
++}
++
++pub fn set_session_id(v: String) {
++    set_var(SESSION_ID_ENV_KEY, v);
++}
++
+ pub const SOCKET_DIR_ENV_KEY: &str = "ZELLIJ_SOCKET_DIR";
+ 
+ pub const ENV_BEFORE_CONFIG_KEY: &str = "ZELLIJ_ENV_BEFORE_CONFIG";
+--- a/zellij-server/src/lib.rs	2026-11-15 16:11:55
++++ b/zellij-server/src/lib.rs	2026-11-15 16:11:55
+@@ -3783,6 +3783,10 @@
+         .file_name()
+         .map(|f| f.to_string_lossy().to_string())
+         .unwrap_or_default();
++    // Local patch: panes inherit the stable session id, for `zellij action` after a rename
++    if !session_id.is_empty() {
++        envs::set_session_id(session_id.clone());
++    }
+ 
+     let (to_server, server_receiver): ChannelWithContext<ServerInstruction> = channels::bounded(50);
+     let to_server = SenderWithContext::new(to_server);
+--- a/src/commands.rs	2026-11-15 16:11:55
++++ b/src/commands.rs	2026-11-15 16:11:55
+@@ -521,6 +521,18 @@
+ /// Client entrypoint for all [`zellij_utils::cli::CliAction`]
+ ///
+ /// Checks session to send the action to and attaches with client
++// Local patch: the current name of the session this shell runs in, looked up by its stable id
++// (ZELLIJ_SESSION_ID). ZELLIJ_SESSION_NAME goes stale in running shells when the session is
++// renamed, so it is only the fallback.
++pub(crate) fn env_session() -> anyhow::Result<String> {
++    match envs::get_session_id() {
++        Ok(id) if !id.is_empty() && zellij_utils::consts::session_id_socket_path(&id).exists() => {
++            Ok(zellij_utils::sessions::display_name_for_session_id(&id))
++        },
++        _ => envs::get_session_name(),
++    }
++}
++
+ pub(crate) fn send_action_to_session(
+     cli_action: zellij_utils::cli::CliAction,
+     requested_session_name: Option<String>,
+@@ -570,7 +582,7 @@
+                     list_sessions(false, false, true);
+                     std::process::exit(1);
+                 }
+-            } else if let Ok(session_name) = envs::get_session_name() {
++            } else if let Ok(session_name) = env_session() {
+                 attach_with_cli_client(cli_action, &session_name, config);
+             } else {
+                 eprintln!("Please specify the session name to send actions to. The following sessions are active:");
+@@ -620,7 +632,7 @@
+                     list_sessions(false, false, true);
+                     std::process::exit(1);
+                 }
+-            } else if let Ok(session_name) = envs::get_session_name() {
++            } else if let Ok(session_name) = env_session() {
+                 session_name
+             } else {
+                 eprintln!("Please specify the session name to subscribe to. The following sessions are active:");
+@@ -642,7 +654,7 @@
+     requested_session_name: Option<String>,
+     config: Option<Config>,
+ ) -> ! {
+-    let session_name = match requested_session_name.or_else(|| envs::get_session_name().ok()) {
++    let session_name = match requested_session_name.or_else(|| env_session().ok()) {
+         Some(session_name) => session_name,
+         None => {
+             eprintln!("zellij prompt must be run inside a Zellij session");
+--- a/src/lib.rs	2026-11-15 16:11:55
++++ b/src/lib.rs	2026-11-15 16:11:55
+@@ -10,7 +10,6 @@
+     consts::{create_config_and_cache_folders, VERSION},
+     data::UnblockCondition,
+     distribution::set_distribution,
+-    envs,
+     input::config::Config,
+     logging::*,
+     setup::Setup,
+@@ -335,7 +334,7 @@
+             .session
+             .as_ref()
+             .cloned()
+-            .or_else(|| envs::get_session_name().ok())
++            .or_else(|| commands::env_session().ok()) // Local patch: survives a session rename
+         {
+             let config = Config::try_from(&opts).ok();
+             let options = Setup::from_cli_args(&opts).ok().map(|r| r.2);
+--- a/zellij-client/src/cli_client.rs	2026-11-15 16:11:55
++++ b/zellij-client/src/cli_client.rs	2026-11-15 16:11:55
+@@ -30,6 +30,12 @@
+             .unwrap_or_else(|| sock_dir.join(session_name))
+     };
+     crate::check_ipc_pipe_length(&zellij_ipc_pipe);
++    // Local patch: connecting retries forever, so fail at once when there is no socket
++    #[cfg(unix)]
++    if !zellij_ipc_pipe.exists() {
++        eprintln!("Session '{}' not found (no socket at {:?})", session_name, zellij_ipc_pipe);
++        process::exit(1);
++    }
+     if let Err(e) = os_input.connect_to_server(&*zellij_ipc_pipe) {
+         eprintln!("{}", crate::connect_error_message(e));
+         process::exit(1);
+@@ -432,6 +438,12 @@
+             .unwrap_or_else(|| sock_dir.join(session_name))
+     };
+     crate::check_ipc_pipe_length(&zellij_ipc_pipe);
++    // Local patch: connecting retries forever, so fail at once when there is no socket
++    #[cfg(unix)]
++    if !zellij_ipc_pipe.exists() {
++        eprintln!("Session '{}' not found (no socket at {:?})", session_name, zellij_ipc_pipe);
++        process::exit(1);
++    }
+     if let Err(e) = os_input.connect_to_server(&*zellij_ipc_pipe) {
+         eprintln!("{}", crate::connect_error_message(e));
+         process::exit(1);
+@@ -819,6 +831,12 @@
+             .unwrap_or_else(|| sock_dir.join(session_name))
+     };
+     crate::check_ipc_pipe_length(&zellij_ipc_pipe);
++    // Local patch: connecting retries forever, so fail at once when there is no socket
++    #[cfg(unix)]
++    if !zellij_ipc_pipe.exists() {
++        eprintln!("Session '{}' not found (no socket at {:?})", session_name, zellij_ipc_pipe);
++        process::exit(1);
++    }
+     if let Err(e) = os_input.connect_to_server(&*zellij_ipc_pipe) {
+         eprintln!("{}", crate::connect_error_message(e));
+         process::exit(1);

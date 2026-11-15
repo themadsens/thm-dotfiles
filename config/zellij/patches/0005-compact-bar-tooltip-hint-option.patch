@@ -1,0 +1,15 @@
+--- a/default-plugins/bars/src/compact_bar/mod.rs
++++ b/default-plugins/bars/src/compact_bar/mod.rs
+@@ -1059,7 +1059,11 @@
+                     &client.mode_info,
+                     tab_data,
+                     cols,
+-                    slot.toggle_tooltip_key.clone(),
++                    // Local patch: `tooltip_hint "false"` hides the "<key> > Tooltip >" hint
++                    // while keeping the tooltip key working
++                    slot.toggle_tooltip_key.clone().filter(|_| {
++                        slot.config.get("tooltip_hint").map(|v| v.trim()) != Some("false")
++                    }),
+                     self.tooltip_is_active,
+                     hover,
+                     &self.session_indicator,

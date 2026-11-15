@@ -1,0 +1,9 @@
+#!/bin/sh
+# Copy the visible screen of the zellij pane it was started from to the macOS clipboard as rich
+# text (colors and bold kept). Run by the session mode "y" binding with `background true`, so
+# zellij sets ZELLIJ_PANE_ID to that pane. Add --full to the dump-screen line for the scrollback.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"; export PATH
+tmp=$(mktemp -t zellij-rich) || exit 1
+trap 'rm -f "$tmp"' EXIT
+zellij action dump-screen --ansi ${ZELLIJ_PANE_ID:+--pane-id "$ZELLIJ_PANE_ID"} --path "$tmp" || exit 1
+aha < "$tmp" | textutil -stdin -format html -convert rtf -stdout | pbcopy

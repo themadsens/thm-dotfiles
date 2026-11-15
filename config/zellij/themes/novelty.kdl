@@ -1,0 +1,148 @@
+// Novelty — converted from iTerm2 profile "Novelty"
+// Palette: bg #ddd9c3, fg #000000, selection #c1deff
+themes {
+    novelty {
+        text_unselected {
+            base 0 0 0
+            background 221 217 195
+            emphasis_0 138 37 44
+            emphasis_1 2 32 178
+            emphasis_2 16 122 2
+            emphasis_3 202 48 199
+        }
+        text_selected {
+            base 0 0 0
+            background 193 222 255
+            emphasis_0 138 37 44
+            emphasis_1 2 32 178
+            emphasis_2 16 122 2
+            emphasis_3 202 48 199
+        }
+        ribbon_selected {
+            base 255 255 255
+            background 16 122 2
+            emphasis_0 192 190 75
+            emphasis_1 193 222 255
+            emphasis_2 255 255 255
+            emphasis_3 255 119 255
+        }
+        ribbon_unselected {
+            base 255 255 255
+            background 72 72 72
+            emphasis_0 222 74 76
+            emphasis_1 193 222 255
+            emphasis_2 65 197 66
+            emphasis_3 255 119 255
+        }
+        ribbon_hover {
+            base 255 255 255
+            background 112 112 112
+            emphasis_0 222 74 76
+            emphasis_1 193 222 255
+            emphasis_2 65 197 66
+            emphasis_3 255 119 255
+        }
+        table_title {
+            base 16 122 2
+            background 221 217 195
+            emphasis_0 138 37 44
+            emphasis_1 2 32 178
+            emphasis_2 16 122 2
+            emphasis_3 202 48 199
+        }
+        table_cell_selected {
+            base 0 0 0
+            background 193 222 255
+            emphasis_0 138 37 44
+            emphasis_1 2 32 178
+            emphasis_2 16 122 2
+            emphasis_3 202 48 199
+        }
+        table_cell_unselected {
+            base 72 72 72
+            background 221 217 195
+            emphasis_0 138 37 44
+            emphasis_1 2 32 178
+            emphasis_2 16 122 2
+            emphasis_3 202 48 199
+        }
+        list_selected {
+            base 0 0 0
+            background 193 222 255
+            emphasis_0 138 37 44
+            emphasis_1 2 32 178
+            emphasis_2 16 122 2
+            emphasis_3 202 48 199
+        }
+        list_unselected {
+            base 72 72 72
+            background 221 217 195
+            emphasis_0 138 37 44
+            emphasis_1 2 32 178
+            emphasis_2 16 122 2
+            emphasis_3 202 48 199
+        }
+        frame_selected {
+            base 16 122 2
+            background 0
+            emphasis_0 222 74 76
+            emphasis_1 2 32 178
+            emphasis_2 202 48 199
+            emphasis_3 202 48 199
+        }
+        frame_highlight {
+            base 202 48 199
+            background 0
+            emphasis_0 2 32 178
+            emphasis_1 202 48 199
+            emphasis_2 222 74 76
+            emphasis_3 222 74 76
+        }
+        exit_code_success {
+            base 16 122 2
+            background 0
+            emphasis_0 2 32 178
+            emphasis_1 221 217 195
+            emphasis_2 202 48 199
+            emphasis_3 79 85 197
+        }
+        exit_code_error {
+            base 222 74 76
+            background 0
+            emphasis_0 112 111 0
+            emphasis_1 138 37 44
+            emphasis_2 202 48 199
+            emphasis_3 2 32 178
+        }
+        multiplayer_user_colors {
+            player_1 202 48 199
+            player_2 2 32 178
+            player_3 16 122 2
+            player_4 112 111 0
+            player_5 79 85 197
+            player_6 0 131 131
+            player_7 222 74 76
+            player_8 138 37 44
+            player_9 255 119 255
+            player_10 66 198 198
+        }
+        terminal_colors {
+            black 0 0 0
+            red 138 37 44
+            green 16 122 2
+            yellow 112 111 0
+            blue 2 32 178
+            magenta 202 48 199
+            cyan 0 131 131
+            white 156 156 156
+            bright_black 72 72 72
+            bright_red 222 74 76
+            bright_green 65 197 66
+            bright_yellow 192 190 75
+            bright_blue 79 85 197
+            bright_magenta 255 119 255
+            bright_cyan 66 198 198
+            bright_white 255 255 255
+        }
+    }
+}

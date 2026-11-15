@@ -1,0 +1,24 @@
+#!/bin/sh
+# Scrollback editor/viewer for zellij. It is named "vim" only because zellij passes the current
+# scroll position ("+<line> <file>") just to editors with certain names. Keep this folder off PATH.
+#   scroll mode e  (EditScrollback, plain dump)    -> opens nvim at that line
+#   scroll mode v  (EditScrollback with ansi true) -> opens less with colors at that line, with a
+#                                                     "line <top>/<total>" prompt
+# The two are told apart by escape codes in the dump; a colorless scrollback opens nvim either way.
+# Prefer a less installed in ~/.local/bin (fm-m73: less 710 built there; the system one is too old)
+PATH="$HOME/.local/bin:$PATH"; export PATH
+line=
+case "$1" in
+    +[0-9]*) line=${1#+}; shift ;;
+esac
+if grep -q "$(printf '\033')" "$@" 2>/dev/null; then
+    prompt='line %lt?L/%L.%t'
+    if [ -n "$line" ]; then
+        exec less -R -P"$prompt" "+${line}g" "$@"
+    fi
+    exec less -R -P"$prompt" "$@"
+fi
+if [ -n "$line" ]; then
+    exec nvim "+$line" "$@"
+fi
+exec nvim "$@"

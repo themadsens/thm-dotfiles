@@ -1,0 +1,138 @@
+--- a/default-plugins/bars/src/tab_bar/line.rs
++++ b/default-plugins/bars/src/tab_bar/line.rs
+@@ -8,6 +8,20 @@
+ use zellij_tile_utils::style;
+ 
+ pub(crate) const PREFIX_TEXT: &str = " Zellij ";
++
++// Local patch: the prefix can be overridden with the plugin config key `prefix`
++static PREFIX_OVERRIDE: std::sync::OnceLock<String> = std::sync::OnceLock::new();
++
++pub(crate) fn set_prefix_text(prefix: String) {
++    let _ = PREFIX_OVERRIDE.set(prefix);
++}
++
++pub(crate) fn prefix_text() -> &'static str {
++    PREFIX_OVERRIDE
++        .get()
++        .map(|s| s.as_str())
++        .unwrap_or(PREFIX_TEXT)
++}
+ 
+ #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+ pub struct TabLineHover {
+@@ -199,7 +213,7 @@
+     breadcrumb_ancestry: &[String],
+     breadcrumb_hovered: bool,
+ ) -> (Vec<LinePart>, Option<(usize, usize)>) {
+-    let prefix_text = PREFIX_TEXT.to_string();
++    let prefix_text = prefix_text().to_string();
+ 
+     let running_text_len = display_width(&prefix_text);
+     let text_color = palette.text_unselected.base;
+--- a/default-plugins/bars/src/tab_bar/mod.rs
++++ b/default-plugins/bars/src/tab_bar/mod.rs
+@@ -18,7 +18,7 @@
+     tab_parts_in_line, TabDrag, TabPart, TabSegment,
+ };
+ use crate::ClientSeed;
+-use line::{tab_line, TabLineHover, PREFIX_TEXT};
++use line::{prefix_text, set_prefix_text, tab_line, TabLineHover, PREFIX_TEXT};
+ use tab::tab_style;
+ 
+ #[derive(Debug, Default)]
+@@ -153,6 +153,9 @@
+     }
+ 
+     pub fn slot_added(&mut self, slot: &Slot) {
++        if let Some(prefix) = slot.configuration.get("prefix") {
++            set_prefix_text(prefix.clone());
++        }
+         self.slots.insert(
+             slot.id,
+             SlotConfig {
+@@ -537,7 +540,7 @@
+         let mut is_alternate_tab = false;
+         let max_tab_width = cols
+             .saturating_sub(1)
+-            .saturating_sub(zellij_tile::graphemes::display_width(PREFIX_TEXT));
++            .saturating_sub(zellij_tile::graphemes::display_width(prefix_text()));
+         for t in &client.tabs {
+             let mut tabname = t.name.clone();
+             if t.active && client.mode_info.mode == InputMode::RenameTab {
+--- a/default-plugins/bars/src/compact_bar/line.rs
++++ b/default-plugins/bars/src/compact_bar/line.rs
+@@ -7,6 +7,20 @@
+ use zellij_tile_utils::style;
+ 
+ pub(crate) const PREFIX_TEXT: &str = " Zellij ";
++
++// Local patch: the prefix can be overridden with the plugin config key `prefix`
++static PREFIX_OVERRIDE: std::sync::OnceLock<String> = std::sync::OnceLock::new();
++
++pub(crate) fn set_prefix_text(prefix: String) {
++    let _ = PREFIX_OVERRIDE.set(prefix);
++}
++
++pub(crate) fn prefix_text() -> &'static str {
++    PREFIX_OVERRIDE
++        .get()
++        .map(|s| s.as_str())
++        .unwrap_or(PREFIX_TEXT)
++}
+ 
+ pub struct TabLineOutput {
+     pub parts: Vec<LinePart>,
+@@ -471,7 +485,7 @@
+     }
+ 
+     fn create_zellij_part(&self) -> LinePart {
+-        let prefix_text = PREFIX_TEXT;
++        let prefix_text = prefix_text();
+         let colors = self.get_text_colors();
+         let text_style = if self.dimmed {
+             style!(colors.text, colors.background).italic()
+--- a/default-plugins/bars/src/compact_bar/mod.rs
++++ b/default-plugins/bars/src/compact_bar/mod.rs
+@@ -186,6 +186,9 @@
+ 
+     pub fn slot_added(&mut self, slot: &Slot) {
+         let config = slot.configuration.clone();
++        if let Some(prefix) = config.get("prefix") {
++            line::set_prefix_text(prefix.clone());
++        }
+         let is_tooltip = config
+             .get(CONFIG_IS_TOOLTIP)
+             .and_then(|v| v.parse().ok())
+@@ -1158,7 +1161,7 @@
+     cols: usize,
+ ) -> TabRenderData {
+     let max_tab_width =
+-        cols.saturating_sub(zellij_tile::graphemes::display_width(line::PREFIX_TEXT));
++        cols.saturating_sub(zellij_tile::graphemes::display_width(line::prefix_text()));
+     let mut all_tabs = Vec::new();
+     let mut active_tab_index = 0;
+     let mut is_alternate_tab = false;
+--- a/zellij-server/src/plugins/shared.rs
++++ b/zellij-server/src/plugins/shared.rs
+@@ -209,10 +209,19 @@
+     if let Some(shared) = running_plugin.store.data_mut().shared.as_mut() {
+         shared.slots.insert(slot_id, slot.clone());
+     }
++    // Local patch: replace `{hostname}` in plugin configuration values with the short hostname
++    let short_hostname = zellij_utils::session_index::hostname()
++        .map(|h| h.split('.').next().unwrap_or("").to_owned())
++        .unwrap_or_default();
++    let configuration = slot
++        .configuration
++        .into_iter()
++        .map(|(k, v)| (k, v.replace("{hostname}", &short_hostname)))
++        .collect();
+     let protobuf_slot: ProtobufSlot = Slot {
+         id: slot_id,
+         kind: slot.kind,
+-        configuration: slot.configuration,
++        configuration,
+     }
+     .into();
+     wasi_write_object(running_plugin.store.data(), &protobuf_slot.encode_to_vec())?;
