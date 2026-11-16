@@ -493,6 +493,16 @@ if [ -n "$PS1" ] ;then
          | xargs -I '{}' svn up -r$REVISION '{}'
    }
 
+   # Keep a stable link to the agent forwarded by the latest ssh login, and let shells inside
+   # zellij use it, so they reach the current agent after a re-attach (zellij has no
+   # update-environment like tmux)
+   if [[ -z "$ZELLIJ" && "$SSH_CONNECTION" && -S "$SSH_AUTH_SOCK" && "$SSH_AUTH_SOCK" != ~/.ssh/ssh_auth_sock ]] ;then
+      ln -sfn "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
+   fi
+   if [[ "$ZELLIJ" && "$SSH_CONNECTION" ]] ;then
+      export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
+   fi
+
    if [[ -d ~/.keychain && "$UID" -ne 0 && -z "$SSH_AUTH_SOCK" ]] ;then
       #keychain --quiet ~/.ssh/id_dsa --timeout 1440  # 24 hours.
       HOSTNAME=$(uname -n) ; export HOSTNAME=${HOSTNAME%%.*}
