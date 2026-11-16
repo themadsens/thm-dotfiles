@@ -106,3 +106,20 @@ rename-tab` after a rename. Two changes:
   `ZELLIJ_SESSION_NAME`.
 - When the session's socket doesn't exist, the command-line client reports
   "Session '…' not found" and exits instead of retrying forever (Unix only).
+
+## 0013 – Pane title line in the theme's frame background
+
+Zellij only uses the `base` color of the `frame_*` theme components; their `background` is
+ignored. The pane title line (with frames, with `pane_frame_style "titles"`, and in stacked panes)
+now gets that background: `frame_selected` for the focused pane and `frame_unselected` for the
+others, or `frame_selected` when the theme has no `frame_unselected`. Characters that already have
+a background keep it. The theme preview in the settings screen (the configuration plugin) draws
+its sample frames' titles the same way, so this needs the rebuilt `configuration.wasm` as well:
+
+```kdl
+frame_selected {
+    base 16 122 2
+    background 210 210 210
+    ...
+}
+```

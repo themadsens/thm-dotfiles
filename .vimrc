@@ -1166,7 +1166,7 @@ function! CaseStat()
 endfunc
 
 function! Modified()
-    return &modified > 0 ? '✚ ' : ''
+    return &modified > 0 ? '🍎 ' : ''
 endfunc
 
 function! ShowSyn()

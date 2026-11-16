@@ -81,10 +81,8 @@ def main():
             dev = ctty if ctty in ("-", "??", "?") else (
                 "/dev/" + ctty if LINUX or ctty.startswith("tty") else "/dev/tty" + ctty)
             rows.append((session, f'{p.get("tab_position", 0) + 1}:{p.get("tab_name", "")}',
-                         f'terminal_{p["id"]}' + (" (float)" if p.get("is_floating") else ""),
-                         dev, cpid, foreground(ctty, fg_procs) if cpid != "-" else "-",
-                         p.get("title", "")))
-    head = ("SESSION", "TAB", "PANE", "PTY", "PID", "RUNNING", "TITLE")
+                         dev, cpid, p.get("pane_cwd", "")))
+    head = ("SESSION", "TAB", "PTY", "PID", "CWD")
     widths = [max(len(str(r[i])) for r in rows + [head]) for i in range(len(head) - 1)]
     for r in [head] + rows:
         print("  ".join(str(c).ljust(w) for c, w in zip(r, widths)) + "  " + str(r[-1]))

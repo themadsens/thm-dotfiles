@@ -5,5 +5,5 @@
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"; export PATH
 tmp=$(mktemp -t zellij-rich) || exit 1
 trap 'rm -f "$tmp"' EXIT
-zellij action dump-screen --ansi ${ZELLIJ_PANE_ID:+--pane-id "$ZELLIJ_PANE_ID"} --path "$tmp" || exit 1
-aha < "$tmp" | textutil -stdin -format html -convert rtf -stdout | pbcopy
+zellij action dump-screen --ansi ${ZELLIJ_PANE_ID:+--pane-id "$ZELLIJ_PANE_ID"} --path "$tmp" "$@" || exit 1
+aha < "$tmp" | tee /tmp/screen-y.html | textutil -stdin -format html -convert rtf -stdout | pbcopy

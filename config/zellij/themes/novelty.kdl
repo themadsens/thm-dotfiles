@@ -84,7 +84,7 @@ themes {
         }
         frame_selected {
             base 16 122 2
-            background 0
+            background 210 210 210 // pane title line (patched zellij)
             emphasis_0 222 74 76
             emphasis_1 2 32 178
             emphasis_2 202 48 199
@@ -92,7 +92,7 @@ themes {
         }
         frame_highlight {
             base 202 48 199
-            background 0
+            background 210 210 210 // pane title line (patched zellij)
             emphasis_0 2 32 178
             emphasis_1 202 48 199
             emphasis_2 222 74 76

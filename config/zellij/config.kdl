@@ -37,7 +37,8 @@ keybinds preset="unlock-first" unlock="Ctrl g" {
     }
     // y: copy the visible screen of the current pane to the clipboard as rich text (macOS)
     session {
-        bind "y" { Run "/Users/fm/.config/zellij/bin/copy-rich" { background true; }; SwitchToMode "Locked"; }
+        bind "y" { Run "/Users/fm/.config/zellij/bin/yank-rich" { background true; }; SwitchToMode "Locked"; }
+        bind "Y" { Run "/Users/fm/.config/zellij/bin/yank-rich" "--full" { background true; }; SwitchToMode "Locked"; }
     }
 }
 
@@ -192,6 +193,13 @@ scroll_buffer_size 99000
 // Default: true
 // 
 // copy_on_select true
+ 
+// Triple-click selects the line, not the whole OSC 133 command block (shell integration)
+osc133_command_selection false
+ 
+// Double-click word boundaries, same as Ghostty's selection-word-chars (whitespace always separates).
+// Shift+double-click goes to Ghostty, which selects whole paths/URLs.
+word_separators "'\"`|:;,()[]{}<>$/"
  
 // Path to the default editor to use to edit pane scrollbuffer
 // Default: $EDITOR or $VISUAL
