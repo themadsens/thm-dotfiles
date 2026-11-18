@@ -1,0 +1,127 @@
+# This is the configuration file for Ghostty.
+#
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   {[path]s}
+#
+# The template does not set any default options, since Ghostty ships
+# with sensible defaults for all options. Users should only need to set
+# options that they want to change from the default.
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Additionally, each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+
+# Config syntax crash course
+# ==========================
+# # The config file consists of simple key-value pairs,
+# # separated by equals signs.
+# font-family = Iosevka
+# window-padding-x = 2
+#
+# # Spacing around the equals sign does not matter.
+# # All of these are identical:
+# key=value
+# key= value
+# key =value
+# key = value
+#
+# # Any line beginning with a # is a comment. It's not possible to put
+# # a comment after a config option, since it would be interpreted as a
+# # part of the value. For example, this will have a value of "#123abc":
+# background = #123abc
+#
+# # Empty values are used to reset config keys to default.
+# key =
+#
+# # Some config options have unique syntaxes for their value,
+# # which is explained in the docs for that config option.
+# # Just for example:
+# resize-overlay-duration = 4s 200ms
+#
+
+#macos-titlebar-style = transparent
+title = "Ghostty / Zellij"
+macos-titlebar-style = hidden
+#macos-titlebar-style = tabs
+# keep the block cursor at the shell prompt too (shell integration would switch it to a bar)
+shell-integration-features = no-title,no-cursor
+
+# --- Settings matched from iTerm2 "Novelty" profile ---
+theme = Novelty
+
+config-file = ?font-config
+
+# JetBrains Mono 2.304 stretched 5% vertically (~/.config/fonts-src/stretch-y.py)
+#font-family = JetBrains Mono Tall
+#adjust-cell-height = -5%
+#font-size = 10.5
+# no programming ligatures (-> != === etc. stay separate characters); JetBrains Mono does them via calt
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+
+font-family = MonacoB
+font-family-bold = MonacoB2
+font-family-bold-italic = MonacoB2
+font-size = 10
+
+font-thicken = true
+font-thicken-strength = 200
+command = /opt/homebrew/bin/bash
+working-directory = home
+window-width = 80
+window-height = 25
+cursor-style = block
+cursor-style-blink = false
+# thicker bar/underline cursor when a program switches away from the block (e.g. vim insert mode)
+adjust-cursor-thickness = 2
+# thicker text underlines (single, double, curly, dotted, dashed); also strikethrough to match
+#adjust-underline-thickness = 50%
+adjust-strikethrough-thickness = 50%
+macos-option-as-alt = left
+background-opacity = 0.97
+background-blur = 11
+
+# --- Cmd+1-9 (as Alt+F1-F9) and Cmd+Left/Right (as Ctrl+Alt+Left/Right) go to zellij for tab navigation ---
+keybind = super+digit_1=csi:1;3P
+keybind = super+1=csi:1;3P
+keybind = super+digit_2=csi:1;3Q
+keybind = super+2=csi:1;3Q
+keybind = super+digit_3=csi:1;3R
+keybind = super+3=csi:1;3R
+keybind = super+digit_4=csi:1;3S
+keybind = super+4=csi:1;3S
+keybind = super+digit_5=csi:15;3~
+keybind = super+5=csi:15;3~
+keybind = super+digit_6=csi:17;3~
+keybind = super+6=csi:17;3~
+keybind = super+digit_7=csi:18;3~
+keybind = super+7=csi:18;3~
+keybind = super+digit_8=csi:19;3~
+keybind = super+8=csi:19;3~
+keybind = super+digit_9=csi:20;3~
+keybind = super+9=csi:20;3~
+keybind = super+arrow_left=csi:1;7D
+keybind = super+arrow_right=csi:1;7C
+
+# Pass Option+Left/Right through as real Alt+arrow keys (for zellij) instead of Alt+b / Alt+f
+keybind = alt+arrow_left=unbind
+keybind = alt+arrow_right=unbind
+
+# Ctrl+? (Ctrl+Shift+/ on a US layout) is sent as Ctrl+F12, which zellij uses to toggle its status bar
+keybind = ctrl+shift+slash=csi:24;5~
+
+# Copy selected text to the system clipboard automatically
+copy-on-select = clipboard
+
+# Quake-style drop-down terminal, toggled from any app with Option+Space (global keybinds need
+# Ghostty to be allowed under System Settings > Privacy & Security > Accessibility)
+keybind = global:alt+space=toggle_quick_terminal
+quick-terminal-position = top
+quick-terminal-size = 40%
+# hide it again when another app gets focus
+quick-terminal-autohide = true

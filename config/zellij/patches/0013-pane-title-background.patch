@@ -1,0 +1,82 @@
+--- a/zellij-server/src/ui/pane_boundaries_frame.rs	2026-11-15 23:18:11
++++ b/zellij-server/src/ui/pane_boundaries_frame.rs	2026-11-15 23:18:11
+@@ -1426,6 +1426,29 @@
+         }
+         false
+     }
++    // Local patch: give the title line the theme's frame background: `frame_selected` for the
++    // focused pane, `frame_unselected` (or else `frame_selected`) for the others. Zellij otherwise
++    // only uses the frame colors' `base`. Characters that already have a background keep it.
++    fn title_background(&self) -> PaletteColor {
++        let colors = &self.style.colors;
++        if self.is_main_client {
++            colors.frame_selected.background
++        } else {
++            colors
++                .frame_unselected
++                .map(|frame| frame.background)
++                .unwrap_or(colors.frame_selected.background)
++        }
++    }
++    fn with_title_background(&self, mut characters: Vec<TerminalCharacter>) -> Vec<TerminalCharacter> {
++        let background = AnsiCode::from(self.title_background());
++        for character in characters.iter_mut() {
++            if character.styles.background.is_none() {
++                character.styles.update(|styles| styles.background = Some(background));
++            }
++        }
++        characters
++    }
+     pub fn render(&self) -> Result<(Vec<CharacterChunk>, Option<String>)> {
+         let err_context = || "failed to render pane frame";
+         let mut character_chunks = vec![];
+@@ -1434,7 +1457,7 @@
+         }
+         if let Some(entry) = &self.stack_list_entry {
+             character_chunks.push(CharacterChunk::new(
+-                self.render_stack_list_entry(entry),
++                self.with_title_background(self.render_stack_list_entry(entry)),
+                 self.geom.x,
+                 self.geom.y,
+             ));
+@@ -1462,7 +1485,7 @@
+             };
+ 
+             character_chunks.push(CharacterChunk::new(
+-                one_line_title,
++                self.with_title_background(one_line_title),
+                 self.geom.x,
+                 y_coords_of_title,
+             ));
+@@ -1470,7 +1493,9 @@
+             for row in 0..self.geom.rows {
+                 if row == 0 {
+                     // top row
+-                    let title = self.render_title().with_context(err_context)?;
++                    let title = self.with_title_background(
++                        self.render_title().with_context(err_context)?,
++                    );
+                     let x = self.geom.x;
+                     let y = self.geom.y + row;
+                     character_chunks.push(CharacterChunk::new(title, x, y));
+--- a/default-plugins/configuration/src/theme_sample.rs	2026-11-15 23:18:11
++++ b/default-plugins/configuration/src/theme_sample.rs	2026-11-15 23:18:11
+@@ -164,10 +164,17 @@
+         let colour = declaration.map(|declaration| declaration.base);
+         let title_part = format!(" {} ", title);
+         let rule = inner - title_part.chars().count().min(inner);
++        // Local patch: the title line gets the frame's background, as in the patched pane frames
++        // (an unset frame_unselected falls back to frame_selected)
++        let title_background = Some(
++            declaration
++                .map(|declaration| declaration.background)
++                .unwrap_or(styling.frame_selected.background),
++        );
+         block[0].push(
+             &format!("┌{}{}┐", title_part, "─".repeat(rule)),
+             colour,
+-            None,
++            title_background,
+             false,
+         );
+         block[1].push(&format!("│{}│", " ".repeat(inner)), colour, None, false);

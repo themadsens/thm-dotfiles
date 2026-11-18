@@ -42,6 +42,15 @@ keybinds preset="unlock-first" unlock="Ctrl g" {
     }
 }
 
+// Alt (Option) + drag/double/triple-click selects text in zellij even when the app in the pane
+// (nvim, lazygit, ...) has taken the mouse; app_first=false keeps the click away from the app.
+// Shift + mouse stays with Ghostty. Alt+click on a pane frame still toggles pane grouping.
+mousebinds {
+    shared {
+        bind "Alt Left" on="content" app_first=false { Select; }
+    }
+}
+
 // Plugin aliases - can be used to change the implementation of Zellij
 // changing these requires a restart to take effect
 plugins {
